@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import random
 import time
 
@@ -125,6 +123,19 @@ def compute_importance_score(gating_scores, partial_output):
     attention_val = sum(abs(x) for x in partial_output) / len(partial_output)
     importance = gamma * sum_gating + (1 - gamma) * attention_val
     return importance
+
+def reasoning_discriminator(query_text):
+    """
+    Determines whether reasoning is required based on:
+    - `P_fact`: Probability that input is a factual statement.
+    - `C_comp`: Computational complexity score.
+    """
+    P_fact = random.uniform(0, 1)
+    C_comp = random.randint(1, 5)
+
+    if P_fact >= 0.85 and C_comp <= 3:
+        return "N"
+    return "Y"
 
 def pruning_and_summarization(importance, partial_output, threshold):
     """

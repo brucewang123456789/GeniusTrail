@@ -170,6 +170,20 @@ def pruning_and_summarization(importance, partial_output, threshold):
     else:
         # 'Compress' is trivially the same partial_output for demonstration
         return partial_output
+    
+def reasoning_discriminator(query_text):
+    """
+    Determines whether reasoning is required.
+    Uses:
+    - `P_fact`: Probability that input is a factual/common-sense statement.
+    - `C_comp`: Computational complexity score.
+    """
+    P_fact = random.uniform(0, 1)  # Placeholder for a real classification model
+    C_comp = random.randint(1, 5)  # Placeholder for a complexity estimation function
+
+    if P_fact >= 0.85 and C_comp <= 3:
+        return "N"  # No reasoning required, directly output answer
+    return "Y"  # Requires CoT reasoning
 
 def dynamic_cot_controller(moe_outputs):
     """
