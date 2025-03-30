@@ -286,6 +286,95 @@ def iterative_subband_interference(wave_subs_list, alpha=0.1, subband_thresh=0.5
     return wave_subs_list
 
 
+# [BCO ADDED] -- BEGIN
+def blockwise_concurrency_orchestrator(wave_subs_list, block_size=2, alpha=0.05):
+    """
+    (NEW MODULE) Blockwise Concurrency Orchestrator (BCO)
+    ----------------------------------------------------
+    This small module re-checks each wave's subbands in blockwise groups
+    to fix ordering and coherence issues in parallel, using a partial 
+    resonance synergy function.
+
+    Mathematically (simplified):
+        W_{i,b}^{(new)} = W_{i,b} + alpha * sum_{(i',b') in sameBlock(i,b)} Gamma(W_{i,b}, W_{i',b'})
+
+    where 'sameBlock(i,b)' indicates wave-subband pairs grouped with (i,b),
+    and Gamma(...) measures amplitude coherence. This yields a one-pass
+    partial resonance that preserves wave order without confusion across blocks.
+
+    Args:
+        wave_subs_list: List of waves, each wave is a list of subband dicts
+                        wave_subs_list[i][b]['amplitude'] => amplitude array
+        block_size:     number of wave-subband pairs in each block 
+        alpha:          synergy scaling factor for amplitude updates
+
+    Returns:
+        wave_subs_list: the updated wave subs with blockwise concurrency fix
+    """
+    import math
+
+    # Flatten wave-subband pairs to form blocks
+    all_pairs = []
+    for i, wave_subs in enumerate(wave_subs_list):
+        for b, subdict in enumerate(wave_subs):
+            all_pairs.append((i, b, subdict['amplitude']))
+
+    # Partition into blocks of size 'block_size'
+    blocks = []
+    start_idx = 0
+    while start_idx < len(all_pairs):
+        end_idx = start_idx + block_size
+        blocks.append(all_pairs[start_idx:end_idx])
+        start_idx = end_idx
+
+    # Define synergy function "Gamma"
+    def gamma_synergy(arrA, arrB):
+        # partial resonance measure => scaled by coherence
+        dot_val = 0.0
+        length = min(len(arrA), len(arrB))
+        for k in range(length):
+            dot_val += arrA[k]* arrB[k]
+        normA = math.sqrt(sum(x*x for x in arrA))
+        normB = math.sqrt(sum(x*x for x in arrB))
+        if normA < 1e-12 or normB < 1e-12:
+            return [0.0]*length
+        coherence = dot_val / (normA * normB + 1e-12)
+        # incremental update = coherence*(arrB - arrA)
+        inc = []
+        for k in range(length):
+            inc.append(coherence*(arrB[k] - arrA[k]))
+        return inc
+
+    # Single-pass blockwise update
+    updated_pairs = {}
+    for blk in blocks:
+        synergy_map = {}
+        for (iA, bA, arrA) in blk:
+            synergy_map[(iA,bA)] = [0.0]* len(arrA)
+        # accumulate synergy
+        for (iA, bA, arrA) in blk:
+            for (iB, bB, arrB) in blk:
+                if (iA,bA) != (iB,bB):
+                    inc = gamma_synergy(arrA, arrB)
+                    # scale by alpha, add to synergy_map
+                    for idx, val in enumerate(inc):
+                        synergy_map[(iA,bA)][idx] += alpha* val
+        # apply synergy updates
+        for (iA, bA, arrA) in blk:
+            new_arr = []
+            for idx, val in enumerate(arrA):
+                new_arr.append(val + synergy_map[(iA,bA)][idx])
+            updated_pairs[(iA,bA)] = new_arr
+
+    # Write updated amplitudes back
+    for (i, b, arr) in all_pairs:
+        if (i,b) in updated_pairs:
+            wave_subs_list[i][b]['amplitude'] = updated_pairs[(i,b)]
+
+    return wave_subs_list
+# [BCO ADDED] -- END
+
+
 def self_resonance_field(waves, num_subbands=4, alpha=0.1, subband_thresh=0.5):
     """
     Integrates subband approach:
@@ -602,6 +691,34 @@ def run_entire_pipeline(raw_text):
         subband_thresh=0.6
     )
     
+    # [BCO ADDED] -- BEGIN
+    print("\n=== BLOCKWISE CONCURRENCY ORCHESTRATOR (BCO) ===")
+    # Re-decompose sr_waves to subbands for BCO
+    bco_sub_lists = []
+    for w in sr_waves:
+        sb = subband_decomposition(w, num_subbands=4)
+        sb_dicts = initialize_amplitude_phase(sb)
+        bco_sub_lists.append(sb_dicts)
+
+    bco_fixed_subs = blockwise_concurrency_orchestrator(
+        bco_sub_lists,
+        block_size=2,
+        alpha=0.05
+    )
+
+    bco_waves = []
+    for sb_list in bco_fixed_subs:
+        max_len = max(len(sb['amplitude']) for sb in sb_list)
+        combined = [0.0]*max_len
+        for sb in sb_list:
+            amp = sb['amplitude']
+            for idx, val in enumerate(amp):
+                combined[idx]+= val
+        bco_waves.append(combined)
+
+    sr_waves = bco_waves
+    # [BCO ADDED] -- END
+
     ################
     # (3) WORMHOLE MEMORY
     ################
