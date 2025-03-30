@@ -233,7 +233,7 @@ def compute_grad(wave_pred, wave_target):
 
 def blockwise_concurrency_orchestrator_train(waves_list, block_size=2, alpha=0.05):
     """
-    (NEW MODULE) BCO for Training:
+    Blockwise Concurrency Orchestrator (BCO) for Training:
     ----------------------------------
     Performs a single pass of local concurrency updates across wave arrays
     in block chunks, using partial amplitude synergy. 
@@ -332,7 +332,7 @@ def train_wave_model(train_dataset, param, epochs=5, batch_size=2):
             grads_accum= [0.0]* len(param.weights)
             
             for (wave_in, wave_target) in batch:
-                # [BCO ADDED] - BEGIN
+                # Blockwise Concurrency Orchestrator
                 # For demonstration, we apply a quick BCO synergy fix 
                 # on wave_in before we do param.forward
                 wave_in_bco = blockwise_concurrency_orchestrator_train(
@@ -340,7 +340,6 @@ def train_wave_model(train_dataset, param, epochs=5, batch_size=2):
                     block_size=2, 
                     alpha=0.05
                 )
-                # [BCO ADDED] - END
 
                 # 1) param forward
                 wave_pred= param.forward(wave_in_bco)

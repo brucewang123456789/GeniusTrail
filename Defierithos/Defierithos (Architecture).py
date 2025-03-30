@@ -15,6 +15,7 @@ Implements the final revised architecture:
        => Coherence Estimation
        => Amplitude Update & Threshold
        => Repeat or Converge
+       => Blockwise Concurrency Orchestrator
 
 3) Wormhole Memory Space
    - Compress/Index subbands
@@ -288,7 +289,7 @@ def iterative_subband_interference(wave_subs_list, alpha=0.1, subband_thresh=0.5
 
 def blockwise_concurrency_orchestrator(wave_subs_list, block_size=2, alpha=0.05):
     """
-    (NEW MODULE) Blockwise Concurrency Orchestrator (BCO)
+    Blockwise Concurrency Orchestrator (BCO)
     ----------------------------------------------------
     This small module re-checks each wave's subbands in blockwise groups
     to fix ordering and coherence issues in parallel, using a partial 
@@ -689,7 +690,7 @@ def run_entire_pipeline(raw_text):
         subband_thresh=0.6
     )
     
-    # [BCO ADDED] -- BEGIN
+    # Blockwise Concurrency Orchestrator
     print("\n=== BLOCKWISE CONCURRENCY ORCHESTRATOR (BCO) ===")
     # Re-decompose sr_waves to subbands for BCO
     bco_sub_lists = []
@@ -715,7 +716,6 @@ def run_entire_pipeline(raw_text):
         bco_waves.append(combined)
 
     sr_waves = bco_waves
-    # [BCO ADDED] -- END
 
     ################
     # (3) WORMHOLE MEMORY
