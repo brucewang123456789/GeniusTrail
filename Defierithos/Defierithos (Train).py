@@ -231,7 +231,6 @@ def compute_grad(wave_pred, wave_target):
     return grad
 
 
-# [BCO ADDED] - BEGIN
 def blockwise_concurrency_orchestrator_train(waves_list, block_size=2, alpha=0.05):
     """
     (NEW MODULE) BCO for Training:
@@ -309,7 +308,6 @@ def blockwise_concurrency_orchestrator_train(waves_list, block_size=2, alpha=0.0
         new_wave.append(val + synergy_map[iA])
 
     return new_wave
-# [BCO ADDED] - END
 
 
 def train_wave_model(train_dataset, param, epochs=5, batch_size=2):

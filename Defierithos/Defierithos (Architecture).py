@@ -286,7 +286,6 @@ def iterative_subband_interference(wave_subs_list, alpha=0.1, subband_thresh=0.5
     return wave_subs_list
 
 
-# [BCO ADDED] -- BEGIN
 def blockwise_concurrency_orchestrator(wave_subs_list, block_size=2, alpha=0.05):
     """
     (NEW MODULE) Blockwise Concurrency Orchestrator (BCO)
@@ -372,7 +371,6 @@ def blockwise_concurrency_orchestrator(wave_subs_list, block_size=2, alpha=0.05)
             wave_subs_list[i][b]['amplitude'] = updated_pairs[(i,b)]
 
     return wave_subs_list
-# [BCO ADDED] -- END
 
 
 def self_resonance_field(waves, num_subbands=4, alpha=0.1, subband_thresh=0.5):
