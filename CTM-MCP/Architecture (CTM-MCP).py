@@ -1,5 +1,5 @@
 """
-CTM + MCP CONTROL STACK  (final architecture, October 2025)
+CTM + MCP CONTROL STACK  (May 2025)
 
 Blocks:
   • Multi-Modal Sensor Ingestion
