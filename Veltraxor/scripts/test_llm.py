@@ -1,13 +1,18 @@
 from llm_client import LLMClient
 
-if __name__ == "__main__":
-    # Replace "gpt-3.5-turbo" or your chosen model name
-    client = LLMClient(model="gpt-3.5-turbo")
-    # Simple test message
-    messages = [{"role": "user", "content": "Hello"}]
+def main():
+    client = LLMClient(model="grok-3-latest")
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user",   "content": "Hello, what can you do?"}
+    ]
+
     try:
-        resp = client.chat(messages)
-        # Expect a JSON with 'choices' etc.
-        print("Success:", resp.get("choices")[0].get("message").get("content"))
+        result = client.chat(messages)
+        assistant_msg = result["choices"][0]["message"]["content"]
+        print("Success:", assistant_msg)
     except Exception as e:
         print("Error:", e)
+
+if __name__ == "__main__":
+    main()
