@@ -1,94 +1,96 @@
 # Dynamic CoT Controller Demo
 
-This README describes the demo stub for the Dynamic Chain-of-Thought (CoT) controller used by Veltraxor. It is intended to show the public API and overall flow without exposing proprietary tuning parameters or full implementation details.
+This README illustrates a public-facing demo of the Dynamic Chain-of-Thought (CoT) controller used by Veltraxor. It shows the API and flow without revealing proprietary logic or tuning.
 
-## 1. Overview
+## 1. Demo Stub
 
-`dynamic_cot_controller_example.py` provides:
+The file `dynamic_cot_controller_example.py` provides:
 
-* Function signatures and module structure:
+* **Function signatures**:
 
   * `classify_question(q: str) -> str`
   * `quality_gate(reply: str) -> bool`
   * `decide_cot(question: str, first_reply: str) -> bool`
   * `integrate_cot(client, system_prompt, user_question, first_reply) -> str`
-* Simplified stub logic to illustrate control flow:
+* **Control flow placeholders** for:
 
-  * FAST/LIGHT/DEEP classification
-  * Quality gating based on reply length and uncertainty keywords
-  * Iterative CoT rounds placeholder
+  * FAST / LIGHT / DEEP classification
+  * Quality gating based on token count and uncertainty keywords
+  * Iterative CoT rounds (stubbed)
 
-**Note:** This stub **does not** contain production-tuned regular expressions, thresholds, or adaptive algorithms. It cannot reproduce the real behavior; it is for demonstration only.
+> **Note:** This stub does **not** implement production thresholds, adaptive scoring, or attention-based metrics.
 
-## 2. File Location
+## 2. File Layout
 
-Place the demo stub in your project to show the interface without running real CoT:
+Place files as follows:
 
 ```
 project_root/
 ├─ cot_demo/
 │  ├─ dynamic_cot_controller_example.py
-│  └─ README.md    ← (this file)
-├─ dynamic_cot_controller.py      # private core, not in public repo
+│  └─ README.md               ← this file
+├─ dynamic_cot_controller.py   # private core, excluded from public repo
 ├─ veltraxor.py
-└─ .env.example
+├─ .env.example
+└─ logs/                      # example run logs (v1–v6)
 ```
 
-Alternatively, keep the demo stub in the root:
+## 3. Usage Instructions
 
+To switch from the private controller to the demo stub:
+
+```bash
+mv dynamic_cot_controller.py dynamic_cot_controller_private.py
+cp cot_demo/dynamic_cot_controller_example.py dynamic_cot_controller.py
+python veltraxor.py
 ```
-project_root/
-├─ dynamic_cot_controller.py      # private core, not in public repo
-├─ dynamic_cot_controller_example.py
-├─ veltraxor.py
-└─ .env.example
+
+Veltraxor will run with placeholder CoT behavior and log decisions.
+
+## 4. Example Run Logs (v1–v6)
+
+The `logs/` directory contains example logs, one file per version:
+
+* **FAST/DEEP classification**
+* **Quality gate result** (pass / fail)
+* **CoT trigger** and **round count**
+* **Final answer**
+
+Sample `logs/run_v2.log`:
+
+```text
+# run_v2.log — trial with short answer
+[Info] classify_question → DEEP
+[Info] quality_gate  → failed (reply length < threshold)
+[Info] trigger CoT round 1
+[Result] "The surgeon is the boy's mother."
 ```
 
-## 3. Usage
+> These logs illustrate decision points without exposing core algorithms.
 
-By default, `veltraxor.py` imports the private `dynamic_cot_controller`. To use the demo stub:
+## 5. Environment Variables
 
-1. Rename or move your real controller:
-
-   ```bash
-   mv dynamic_cot_controller.py dynamic_cot_controller_private.py
-   ```
-2. Copy the demo stub into place:
-
-   ```bash
-   cp cot_demo/dynamic_cot_controller_example.py dynamic_cot_controller.py
-   ```
-3. Run Veltraxor as usual:
-
-   ```bash
-   python veltraxor.py
-   ```
-
-   You will see placeholder CoT steps and stub behavior.
-
-## 4. Environment Configuration
-
-All thresholds and patterns are loaded from environment variables. A demo `.env.example` is provided:
+Configuration is loaded from `.env`. Example entries:
 
 ```dotenv
-# minimum tokens to consider a reply 'good enough'
 COT_MIN_TOKENS=25
-# regex for FAST question classification
-COT_FAST_REGEX="\b(what\s+is|who\s+is)\b"
-# regex for DEEP question classification
+COT_FAST_REGEX="\b(what is|who is)\b"
 COT_DEEP_REGEX="\b(knight|logic)\b"
-# maximum CoT rounds in demo stub
 COT_MAX_ROUNDS=2
 ```
 
-Copy `.env.example` to `.env` and adjust values if desired. The demo stub uses these defaults and can be customized without modifying code.
+Adjust as needed. The stub respects these settings.
 
-## 5. Integration Notes
+## 6. Reverting to Real Controller
 
-* **API Compatibility:** The stub matches the function signatures of the real controller. No changes needed in `veltraxor.py` beyond import target.
-* **Documentation:** This demo shows how Veltraxor decides when to run CoT and how it iterates. The real controller includes additional adaptive scoring, importance metrics, and production thresholds.
-* **Switch Back:** To restore real behavior, move `dynamic_cot_controller_private.py` back to `dynamic_cot_controller.py` and remove or rename the stub.
+To restore full functionality:
 
-## 6. Contact & Contributions
+```bash
+mv dynamic_cot_controller_private.py dynamic_cot_controller.py
+rm dynamic_cot_controller_example.py
+```
 
-For issues or questions about the demo stub, please open an issue or pull request. Contributions to documentation and example improvements are welcome. For core algorithm enhancements, refer to the private repository or contact the author directly.
+## 7. Contributions and Issues
+
+* Documentation updates and example improvements welcome via pull requests.
+* Core algorithm enhancements remain in the private repository.
