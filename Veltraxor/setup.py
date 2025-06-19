@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name="veltraxor",
-    version="0.1.0",
+    version="0.1.1",
     description="CLI / API chatbot with Dynamic CoT controller",
     author="YOUR_NAME",
     python_requires=">=3.9",
