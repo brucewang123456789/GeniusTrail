@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "veltraxor"
+version = "0.1.0"
+description = "CLI chatbot with Dynamic CoT controller"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "python-dotenv>=1.0.0",
+  "requests>=2.25.1",
+]
+
+[project.scripts]
+veltraxor = "veltraxor:main"

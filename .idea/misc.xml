@@ -3,4 +3,7 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.13 (聊天机器人)" />
   </component>
+  <component name="PythonCompatibilityInspectionAdvertiser">
+    <option name="version" value="3" />
+  </component>
 </project>
