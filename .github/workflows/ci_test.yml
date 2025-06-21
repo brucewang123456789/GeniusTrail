@@ -44,8 +44,13 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies      # Install required packages in Veltraxor folder
-        working-directory: Veltraxor
+      - name: Install redis-cli tool
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-tools
+
+      - name: Install Python dependencies    # in GeniusTrail/Veltraxor folder
+        working-directory: GeniusTrail/Veltraxor
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt pytest jsonschema redis psycopg2-binary
@@ -54,26 +59,12 @@ jobs:
         run: |
           until pg_isready -h localhost -p 5432 -U test; do sleep 5; done
 
-      - name: Wait for Redis to be ready via Python
-        working-directory: Veltraxor
+      - name: Wait for Redis to be ready
         run: |
-          python - << 'EOF'
-import time, redis
-host = "localhost"; port = 6379
-for _ in range(30):
-    try:
-        r = redis.Redis(host=host, port=port, socket_connect_timeout=1)
-        if r.ping():
-            print("Redis is ready")
-            exit(0)
-    except Exception:
-        time.sleep(2)
-print("Redis did not become ready in time", flush=True)
-exit(1)
-EOF
+          until redis-cli -h localhost ping; do sleep 5; done
 
-      - name: Run all tests               # Run pytest in Veltraxor/test
-        working-directory: Veltraxor
+      - name: Run all tests                # execute pytest in GeniusTrail/Veltraxor/test
+        working-directory: GeniusTrail/Veltraxor
         env:
           VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
           PYTHONUTF8: "1"

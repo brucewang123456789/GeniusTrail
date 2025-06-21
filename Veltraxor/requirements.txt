@@ -1,8 +1,0 @@
-# Core runtime libraries
-python-dotenv>=1.0.0
-requests>=2.25.1
-httpx>=0.27.0
-fastapi>=0.115.0
-uvicorn>=0.34.0
-pydantic-settings>=2.1.0
-httpx>=0.27        # llm_client.py imports httpx
