@@ -1,0 +1,96 @@
+# Dynamic CoT Controller Demo
+
+This README illustrates a public-facing demo of the Dynamic Chain-of-Thought (CoT) controller used by Veltraxor. It shows the API and flow without revealing proprietary logic or tuning.
+
+## 1. Demo Stub
+
+The file `dynamic_cot_controller_example.py` provides:
+
+* **Function signatures**:
+
+  * `classify_question(q: str) -> str`
+  * `quality_gate(reply: str) -> bool`
+  * `decide_cot(question: str, first_reply: str) -> bool`
+  * `integrate_cot(client, system_prompt, user_question, first_reply) -> str`
+* **Control flow placeholders** for:
+
+  * FAST / LIGHT / DEEP classification
+  * Quality gating based on token count and uncertainty keywords
+  * Iterative CoT rounds (stubbed)
+
+> **Note:** This stub does **not** implement production thresholds, adaptive scoring, or attention-based metrics.
+
+## 2. File Layout
+
+Place files as follows:
+
+```
+project_root/
+├─ cot_demo/
+│  ├─ dynamic_cot_controller_example.py
+│  └─ README.md               ← this file
+├─ dynamic_cot_controller.py   # private core, excluded from public repo
+├─ veltraxor.py
+├─ .env.example
+└─ logs/                      # example run logs (v1–v6)
+```
+
+## 3. Usage Instructions
+
+To switch from the private controller to the demo stub:
+
+```bash
+mv dynamic_cot_controller.py dynamic_cot_controller_private.py
+cp cot_demo/dynamic_cot_controller_example.py dynamic_cot_controller.py
+python veltraxor.py
+```
+
+Veltraxor will run with placeholder CoT behavior and log decisions.
+
+## 4. Example Run Logs (v1–v6)
+
+The `logs/` directory contains example logs, one file per version:
+
+* **FAST/DEEP classification**
+* **Quality gate result** (pass / fail)
+* **CoT trigger** and **round count**
+* **Final answer**
+
+Sample `logs/run_v2.log`:
+
+```text
+# run_v2.log — trial with short answer
+[Info] classify_question → DEEP
+[Info] quality_gate  → failed (reply length < threshold)
+[Info] trigger CoT round 1
+[Result] "The surgeon is the boy's mother."
+```
+
+> These logs illustrate decision points without exposing core algorithms.
+
+## 5. Environment Variables
+
+Configuration is loaded from `.env`. Example entries:
+
+```dotenv
+COT_MIN_TOKENS=25
+COT_FAST_REGEX="\b(what is|who is)\b"
+COT_DEEP_REGEX="\b(knight|logic)\b"
+COT_MAX_ROUNDS=2
+```
+
+Adjust as needed. The stub respects these settings.
+
+## 6. Reverting to Real Controller
+
+To restore full functionality:
+
+```bash
+mv dynamic_cot_controller_private.py dynamic_cot_controller.py
+rm dynamic_cot_controller_example.py
+```
+
+## 7. Contributions and Issues
+
+* Documentation updates and example improvements welcome via pull requests.
+* Core algorithm enhancements remain in the private repository.

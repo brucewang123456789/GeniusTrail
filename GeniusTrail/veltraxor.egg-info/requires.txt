@@ -1,0 +1,7 @@
+python-dotenv>=1.0.0
+requests>=2.25.1
+
+[dev]
+pytest>=7.0
+uvicorn
+fastapi
