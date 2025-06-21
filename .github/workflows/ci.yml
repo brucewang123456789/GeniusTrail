@@ -17,8 +17,7 @@ jobs:
           POSTGRES_DB: testdb
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-        ports:
-          - 5432:5432
+        ports: [ '5432:5432' ]
         options: >-
           --health-cmd="pg_isready -U test -d testdb"
           --health-interval=10s
@@ -27,8 +26,7 @@ jobs:
 
       redis:
         image: redis:7
-        ports:
-          - 6379:6379
+        ports: [ '6379:6379' ]
         options: >-
           --health-cmd="redis-cli ping"
           --health-interval=10s
@@ -44,24 +42,27 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install redis-cli tool
+      # ───────────────────────────────────────────────────────────────
+      # Install system tools – redis-cli & docker-compose plugin
+      # ───────────────────────────────────────────────────────────────
+      - name: Install system tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y redis-tools
+          sudo apt-get install -y redis-tools docker-compose-plugin
+          # restore legacy binary name expected by some scripts
+          sudo ln -s $(which docker) /usr/local/bin/docker-compose
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
-      # --------------------------------------------
-      # Inject dummy XAI credentials for CI context
-      # (keeps env vars present even if not secret)
-      # --------------------------------------------
-      - name: Inject dummy XAI env
+      # Inject dummy credentials so guards behave predictably
+      - name: Inject dummy env vars
         run: |
-          echo "XAI_API_KEY=dummy"   >> "$GITHUB_ENV"
-          echo "XAI_API_URL=http://localhost/dummy" >> "$GITHUB_ENV"
+          echo "XAI_API_KEY=dummy"   >> $GITHUB_ENV
+          echo "XAI_API_URL=http://localhost/dummy" >> $GITHUB_ENV
+          echo "VELTRAX_API_TOKEN=dummy" >> $GITHUB_ENV
 
       - name: Wait for Postgres to be ready
         run: |
