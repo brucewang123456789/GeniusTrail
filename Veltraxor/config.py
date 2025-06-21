@@ -1,24 +1,18 @@
-from __future__ import annotations
-from dotenv import load_dotenv
-load_dotenv()
-
-"""
-Settings for Veltraxor (Grok-3 edition).
-All values come from environment variables; no null bytes here.
-"""
-
-import os
-from dataclasses import dataclass
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-@dataclass(frozen=True)
-class Settings:
-    XAI_API_KEY: str = os.getenv("XAI_API_KEY", "")
-    XAI_API_URL: str = os.getenv(
-        "XAI_API_URL",
-        "https://api.grok.ai/v1/chat/completions",
+class Settings(BaseSettings):
+    XAI_API_KEY: str
+    XAI_API_URL: str = "https://api.x.ai/v1/chat/completions"
+    VELTRAX_MODEL: str = "grok-3-latest"
+    VELTRAX_API_TOKEN: str | None = None
+    CORS_ORIGINS: str = "*"
+    PORT: int = 8000
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8"
     )
-    VELTRAX_MODEL: str = os.getenv("VELTRAX_MODEL", "grok-3-latest")
 
 
 settings = Settings()

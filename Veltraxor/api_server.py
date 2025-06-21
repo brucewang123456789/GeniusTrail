@@ -1,204 +1,168 @@
-from dotenv import load_dotenv
-from langdetect import detect  # Import language detection
+from __future__ import annotations
 
-# ────────────────────────────── Environment Setup ───────────────────────────
-load_dotenv()
-
-# ───────────────────────────── Standard Library ──────────────────────────────
-import os
+import asyncio
 import json
 import logging
+import os
 import time
-from datetime import datetime
-from typing import List, Dict, AsyncIterator, Callable, Awaitable
+import traceback
+import uuid
 from contextlib import asynccontextmanager
+from typing import AsyncIterator, Awaitable, Callable, Dict, List
 
-# ─────────────────────────── Third-Party Packages ────────────────────────────
-from fastapi import FastAPI, Request, Response, HTTPException, Depends, status
-from fastapi.responses import StreamingResponse
+import httpx
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, HTTPException, Request, Header, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.staticfiles import StaticFiles
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
-from prometheus_client import CollectorRegistry, Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import CollectorRegistry, Counter, Histogram
+from starlette.middleware.base import BaseHTTPMiddleware
 
+# Load environment variables
+load_dotenv()
+
+# Logging setup
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+log = logging.getLogger("api-server")
+
+# Configuration
+MODEL_NAME = os.getenv("VELTRAX_MODEL", "grok-3-latest")
+API_TOKEN = os.getenv("VELTRAX_API_TOKEN")
+SYSTEM_PROMPT = os.getenv("VELTRAX_SYSTEM_PROMPT", "")
+CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")]
+
+# Import LLM client and CoT
 from llm_client import LLMClient
 from dynamic_cot_controller import decide_cot, integrate_cot
 
-# ───────────────────────────── Configuration ────────────────────────────────
-MODEL_NAME = os.getenv("VELTRAX_MODEL", "grok-3-latest")
-API_TOKEN = os.getenv("VELTRAX_API_TOKEN")  # Optional bearer auth
-SYSTEM_PROMPT = os.getenv(
-    "VELTRAX_SYSTEM_PROMPT",
-    "You are Veltraxor, a sharp-tongued assistant. Answer with witty, satirical, and occasionally biting humor—"
-    "think punchlines like a stand-up comedy of history, memes like Elon Musk, and taglines like Trump. "
-    "Remain clever and non-offensive."
-)
-ALLOWED_ORIG = os.getenv("CORS_ORIGINS", "*").split(",")
-LISTEN_PORT = int(os.getenv("PORT", 8000))  # Default to 8000
-
-# ───────────────────────────── Logging Setup ─────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format='{"ts":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}',
-)
-log = logging.getLogger("veltraxor-api")
-
-# ─────────────────────────── Prometheus Metrics ─────────────────────────────
-METRICS_REGISTRY = CollectorRegistry()
-REQ_COUNTER = Counter("http_requests_total", "Total HTTP requests",
-                      ["path", "method", "status"], registry=METRICS_REGISTRY)
-REQ_LATENCY = Histogram("http_request_latency_seconds", "Request latency",
-                        ["path", "method"], registry=METRICS_REGISTRY)
-STREAM_TOKENS = Counter("chat_stream_tokens_total", "Streamed tokens",
-                        ["used_cot"], registry=METRICS_REGISTRY)
-
-# ───────────────────────────── FastAPI App ──────────────────────────────────
 client = LLMClient(model=MODEL_NAME)
 
+# Metrics
+registry = CollectorRegistry()
+REQ_COUNTER = Counter("http_requests_total", "Total HTTP requests", ["path", "method", "status"], registry=registry)
+REQ_LATENCY = Histogram("http_request_latency_seconds", "Request latency", ["path", "method"], registry=registry)
+STREAM_TOKENS = Counter("chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    log.info("Veltraxor API started")
-    log.info("Registered routes: %s", [route.path for route in app.routes])
-    yield
-    log.info("Veltraxor API stopped")
-
-
-app = FastAPI(
-    title="Veltraxor API",
-    version="0.1.0",
-    lifespan=lifespan,
-    docs_url="/docs",
-    redoc_url=None,
-    openapi_url="/openapi.json",
-)
-
-# ─────────────────────────────── Middlewares ─────────────────────────────────
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_ORIG,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-app.add_middleware(GZipMiddleware, minimum_size=1024)
-
-
-class AccessLogMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable[Response]]) -> Response:
-        start = time.time()
+# Middleware for request IDs and access logs
+class RequestIDMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable]):
+        rid = request.headers.get("x-request-id", str(uuid.uuid4()))
+        request.state.rid = rid
         response = await call_next(request)
-        latency_ms = (time.time() - start) * 1000
-        REQ_COUNTER.labels(request.url.path, request.method, response.status_code).inc()
-        REQ_LATENCY.labels(request.url.path, request.method).observe(latency_ms / 1000)
-        log.info("%s %s -> %s %.1fms", request.method, request.url.path, response.status_code, latency_ms)
+        response.headers["x-request-id"] = rid
         return response
 
+class AccessLogMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable]):
+        start = time.time()
+        resp = await call_next(request)
+        latency = time.time() - start
+        REQ_COUNTER.labels(request.url.path, request.method, resp.status_code).inc()
+        REQ_LATENCY.labels(request.url.path, request.method).observe(latency)
+        log.info(f"{request.method} {request.url.path} -> {resp.status_code} {latency*1000:.1f}ms")
+        return resp
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    log.info("API server starting...")
+    yield
+    log.info("API server stopped")
+
+# FastAPI app setup
+app = FastAPI(title="Veltraxor Chat API", version="0.3.0", lifespan=lifespan)
+app.add_middleware(RequestIDMiddleware)
 app.add_middleware(AccessLogMiddleware)
+app.add_middleware(GZipMiddleware, minimum_size=1024)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
 
-
-# ───────────────────────────── Pydantic Models ──────────────────────────────
+# Pydantic models
 class ChatRequest(BaseModel):
     prompt: str
     history: List[Dict[str, str]] | None = None
-
 
 class ChatResponse(BaseModel):
     response: str
     used_cot: bool
     duration_ms: int
 
-
-# ───────────────────────────── Auth Helper ──────────────────────────────────
-def verify_token(request: Request):
-    if API_TOKEN and request.headers.get("authorization") != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
-
-
-# ────────────────────────────── Helper Functions ─────────────────────────────
-def assemble_messages(prompt: str, history: List[Dict[str, str]] | None):
-    user_language = detect(prompt)  # Detect the language of user input
-    language_rule = {
-        "zh-cn": "请用中文回答，保持袁腾飞式毒舌。",
-        "en": "Answer in English with Musk/Trump-style sarcasm.",
-    }.get(user_language, f"Answer in {user_language} with the same sharp tone.")
-
+# Helper to assemble messages
+def assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[str, str]]:
     msgs = history[:] if history else []
-    msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT + "\n" + language_rule})
+    msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     msgs.append({"role": "user", "content": prompt})
     return msgs
 
+# Token verification dependency
+def verify_token(request: Request):
+    hdr = request.headers.get("authorization")
+    if API_TOKEN and hdr != f"Bearer {API_TOKEN}":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")
 
-# ─────────────────────────────── Endpoints ───────────────────────────────────
-@app.get("/healthz")
-async def healthz():
-    return {"status": "ok", "ts": datetime.utcnow().isoformat()}
-
-
-@app.get("/metrics")
-async def metrics():
-    data = generate_latest(METRICS_REGISTRY)
-    return Response(data, media_type=CONTENT_TYPE_LATEST)
-
-
+# Chat endpoint returning full ChatResponse
 @app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_token)])
 async def chat(req: ChatRequest, request: Request):
-    """Assemble messages, optionally apply CoT, call LLMClient.chat, and return response."""
-    raw_body = await request.body()
-    log.info("[DEBUG] /chat raw body: %s", raw_body.decode(errors="ignore"))
-
-    # 1. Build message list
-    msgs = assemble_messages(req.prompt, req.history)
-    log.info("[DEBUG] /chat before CoT messages: %s", msgs)
-
-    # 2. Decide whether to use Chain-of-Thought
-    used_cot = decide_cot(req.prompt, "")  # history not used for decision
-    if used_cot:
-        # Perform iterative CoT with the initial client.chat reply
-        first = client.chat(msgs)["choices"][0]["message"]["content"].strip()
-        msgs = integrate_cot(client, SYSTEM_PROMPT, req.prompt, first)
-        log.info("[DEBUG] /chat after CoT used, final msg: %s", msgs)
-
-    # 3. Call LLM for final response
-    start_ts = time.time()
-    raw = client.chat(msgs)
-    duration_ms = int((time.time() - start_ts) * 1000)
-    log.info("[DEBUG] /chat raw LLM response: %s", raw)
-
-    # 4. Extract content
-    if isinstance(raw, dict) and raw.get("choices"):
-        choice = raw["choices"][0]
-        content = choice.get("message", {}).get("content", "") or choice.get("text", "") or ""
-    else:
-        content = str(raw)
-
-    return ChatResponse(response=content, used_cot=used_cot, duration_ms=duration_ms)
-
-
-@app.post("/chat_stream", dependencies=[Depends(verify_token)])
-async def chat_stream(req: ChatRequest, request: Request):
-    """Streamed variant of /chat using LLMClient.stream_chat."""
-
-    async def generator() -> AsyncIterator[str]:
-        raw_body = await request.body()
-        log.info("[DEBUG] /chat_stream raw body: %s", raw_body.decode(errors="ignore"))
-
-        msgs = assemble_messages(req.prompt, req.history)
+    used_cot = False
+    messages = assemble(req.prompt, req.history)
+    # Decide CoT
+    try:
         used_cot = decide_cot(req.prompt, "")
         if used_cot:
-            first = await client.chat(msgs)["choices"][0]["message"]["content"].strip()
-            msgs = integrate_cot(client, SYSTEM_PROMPT, req.prompt, first)
+            first = client.chat(messages)
+            cot_text = first.get("choices", [{}])[0].get("message", {}).get("content", "")
+            if cot_text:
+                messages = integrate_cot(client, SYSTEM_PROMPT, req.prompt, cot_text) or messages
+    except Exception:
+        used_cot = False
 
-        start_ts = time.time()
-        async for chunk in client.stream_chat(msgs):
-            data = {"chunk": chunk, "used_cot": used_cot, "final": False}
-            STREAM_TOKENS.labels(str(used_cot)).inc()
-            yield json.dumps(data) + "\n"
+    start = time.time()
+    try:
+        raw = client.chat(messages)
+    except Exception as e:
+        log.error("LLM failure: %s", str(e))
+        raise HTTPException(status_code=500, detail="LLM backend failure")
 
-        total_ms = int((time.time() - start_ts) * 1000)
-        yield json.dumps({"chunk": "[DONE]", "used_cot": used_cot, "final": True, "duration_ms": total_ms}) + "\n"
+    duration_ms = int((time.time() - start) * 1000)
+    text = raw.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+    return ChatResponse(response=text, used_cot=used_cot, duration_ms=duration_ms)
 
-    return StreamingResponse(generator(), media_type="application/json")
+# Ping endpoint
+@app.get("/ping")
+async def ping():
+    return {"pong": True}
+
+# Streaming endpoint unchanged
+@app.post("/chat_stream", dependencies=[Depends(verify_token)])
+async def chat_stream(req: ChatRequest, request: Request):
+    async def gen() -> AsyncIterator[str]:
+        msgs = assemble(req.prompt, req.history)
+        used_cot = False
+        try:
+            used_cot = decide_cot(req.prompt, "")
+            if used_cot:
+                first = client.chat(msgs)
+                cot_text = first.get("choices", [{}])[0].get("message", {}).get("content", "")
+                if cot_text:
+                    msgs = integrate_cot(client, SYSTEM_PROMPT, req.prompt, cot_text) or msgs
+        except Exception:
+            used_cot = False
+
+        start = time.time()
+        try:
+            async for chunk in client.stream_chat(msgs):
+                STREAM_TOKENS.labels(str(used_cot)).inc()
+                yield json.dumps({"chunk": chunk, "used_cot": used_cot, "final": False}) + "\n"
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(status_code=502, detail=f"Upstream {e.response.status_code}")
+        except Exception:
+            raise HTTPException(status_code=500, detail="Streaming failure")
+        yield json.dumps({"chunk": "[DONE]", "used_cot": used_cot, "final": True, "duration_ms": int((time.time()-start)*1000)}) + "\n"
+
+    return StreamingResponse(gen(), media_type="application/json")
