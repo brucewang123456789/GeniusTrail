@@ -1,8 +1,11 @@
 name: CI Test
+
 on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:15
@@ -14,29 +17,43 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd="pg_isready -U test -d testdb"
-          --health-interval=10s --health-timeout=5s --health-retries=5
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
       redis:
         image: redis:7
         ports:
           - 6379:6379
         options: >-
           --health-cmd="redis-cli ping"
-          --health-interval=10s --health-timeout=5s --health-retries=5
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
-      - uses: actions/checkout@v3                           # Check out code
-      - uses: actions/setup-python@v4
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'                            # Set Python version
-      - name: Install dependencies
+          python-version: '3.10'
+
+      - name: Install dependencies       # Install required packages
+        working-directory: Veltraxor
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt pytest jsonschema redis psycopg2-binary
-      - name: Wait for services
+
+      - name: Wait for services          # Wait until Postgres and Redis are ready
         run: |
           until pg_isready -h localhost -p 5432 -U test; do sleep 5; done
           until redis-cli -h localhost ping; do sleep 5; done
-      - name: Run tests
+
+      - name: Run all tests              # Run pytest in Veltraxor/test
+        working-directory: Veltraxor
         env:
-          VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}  # Read from repository Secrets
+          VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
           PYTHONUTF8: "1"
-        run: pytest test -q                                 # Execute all tests
+        run: pytest test -q
