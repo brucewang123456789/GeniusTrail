@@ -12,6 +12,7 @@ veltraxor.py
 ./llm_client.py
 ./veltraxor.py
 test/test_api.py
+test/test_chat_request.py
 test/test_invalid_inputs.py
 veltraxor.egg-info/PKG-INFO
 veltraxor.egg-info/SOURCES.txt
