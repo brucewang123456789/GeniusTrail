@@ -1,33 +1,29 @@
-# ---------- build stage ----------
-FROM python:3.13-slim AS builder
+# Dockerfile — full environment for local & CI test runs
 
+FROM python:3.10-slim
+
+# 1. Set working directory
 WORKDIR /app
 
-# Install runtime dependencies first (leverage cache)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# 2. Install system-level tools & clients needed for testing
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       build-essential \
+       netcat-openbsd \
+       redis-tools \
+       postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy project source
+# 3. Copy dependency definitions
+COPY requirements.txt setup.py pytest.ini ./
+
+# 4. Install Python dependencies (runtime + dev/test)
+RUN python -m pip install --upgrade pip \
+    && pip install -e .[dev] \
+    && python -m pip cache purge
+
+# 5. Copy application source
 COPY . .
 
-# Install package in editable mode inside the build image
-RUN pip install --no-cache-dir .
-
-# ---------- runtime stage ----------
-FROM python:3.13-slim
-WORKDIR /app
-
-# Copy everything we just built, including site-packages and source tree
-COPY --from=builder /usr/local /usr/local
-COPY --from=builder /app /app
-
-# Copy entrypoint script and make it executable
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Expose FastAPI port
-EXPOSE 8000
-
-# Use the script above; default to CLI, override with api
-ENTRYPOINT ["/entrypoint.sh"]
-CMD []
+# 6. Default command: run pytest under test/ directory
+CMD ["pytest", "test", "-q"]
