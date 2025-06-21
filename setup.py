@@ -6,7 +6,7 @@ setup(
     description="CLI / API chatbot with Dynamic CoT controller",
     author="YOUR_NAME",
     python_requires=">=3.9",
-    packages=find_packages(where="."),          # discover all packages in project root
+    packages=find_packages(where="."),
     py_modules=[
         "veltraxor",
         "llm_client",
@@ -29,7 +29,7 @@ setup(
     extras_require={
         "dev": [
             "pytest>=7.0",
-            "pytest-asyncio>=0.23",     # 🆕 async-test support
+            "pytest-asyncio>=0.23",
             "psycopg2-binary>=2.9.0",
             "wheel>=0.40",
             "build>=1.0",

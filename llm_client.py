@@ -1,7 +1,7 @@
 """
 LLMClient – wrapper around an external Chat-Completion endpoint.
 
-CI safety:  when CI=true **or** XAI_API_KEY is missing, network calls are
+CI safety:  when CI=true or XAI_API_KEY is missing, network calls are
 short-circuited to a local stub so that tests never hit the real service.
 """
 
@@ -31,8 +31,8 @@ class LLMClient:
 
         # CI stub toggle
         self._stub_mode: bool = (
-            os.getenv("CI", "false").lower() == "true"  # GitHub sets CI=true
-            or not settings.XAI_API_KEY                # no key ⇒ cannot call
+            os.getenv("CI", "false").lower() == "true"
+            or not settings.XAI_API_KEY
             or not self.base_url
         )
         if self._stub_mode:
@@ -43,19 +43,14 @@ class LLMClient:
             "Content-Type": "application/json",
         }
 
-    # ──────────────────────────────────────────────────────────────
-    # Public API – sync chat
-    # ──────────────────────────────────────────────────────────────
     def chat(self, messages: List[Dict[str, str]], **kwargs: Any) -> Dict[str, Any]:
         last_msg = messages[-1].get("content") if messages else ""
         payload = {"model": self.model, "messages": messages, "stream": False} | kwargs
         log.debug("chat payload: %s", payload)
 
-        # STUB branch
         if self._stub_mode:
             return self._stub(last_msg)
 
-        # Real HTTP request
         try:
             response = httpx.post(
                 self.base_url, headers=self.headers, json=payload, timeout=30
@@ -66,9 +61,6 @@ class LLMClient:
             log.error("chat() failed: %s – falling back to stub", exc, exc_info=True)
             return self._stub(last_msg)
 
-    # ──────────────────────────────────────────────────────────────
-    # Public API – async stream
-    # ──────────────────────────────────────────────────────────────
     async def stream_chat(
         self, messages: List[Dict[str, str]], **kwargs: Any
     ) -> AsyncIterator[str]:
@@ -76,7 +68,6 @@ class LLMClient:
         payload = {"model": self.model, "messages": messages, "stream": True} | kwargs
         log.debug("stream_chat payload: %s", payload)
 
-        # STUB branch
         if self._stub_mode:
             yield f"[stub-stream] {last_msg}"
             return
@@ -108,9 +99,6 @@ class LLMClient:
             log.error("stream_chat() failed: %s – fallback stub", exc, exc_info=True)
             yield f"[stub-stream] {last_msg}"
 
-    # ──────────────────────────────────────────────────────────────
-    # Internal helper
-    # ──────────────────────────────────────────────────────────────
     @staticmethod
     def _stub(text: str) -> Dict[str, Any]:
         """Return a deterministic fake response for tests/CI."""
