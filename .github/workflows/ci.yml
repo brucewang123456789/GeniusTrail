@@ -54,6 +54,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[dev]
 
+      # --------------------------------------------
+      # Inject dummy XAI credentials for CI context
+      # (keeps env vars present even if not secret)
+      # --------------------------------------------
+      - name: Inject dummy XAI env
+        run: |
+          echo "XAI_API_KEY=dummy"   >> "$GITHUB_ENV"
+          echo "XAI_API_URL=http://localhost/dummy" >> "$GITHUB_ENV"
+
       - name: Wait for Postgres to be ready
         run: |
           until pg_isready -h localhost -p 5432 -U test; do sleep 5; done
