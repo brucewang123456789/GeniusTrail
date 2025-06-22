@@ -1,4 +1,4 @@
-name: CI Test
+name: CI Test Environment
 
 on:
   push:
@@ -10,22 +10,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Set up Docker
-    steps:
-      - name: Set up Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io docker-compose
-
-    # GitHub Actions services: Redis and Postgres
     services:
       redis:
         image: redis:7
-        ports: ['6379:6379']
+        ports: [ "6379:6379" ]
         options: >-
           --health-cmd="redis-cli ping"
           --health-interval=5s
-          --health-timeout=2s
+          --health-timeout=3s
           --health-retries=5
       postgres:
         image: postgres:15
@@ -33,36 +25,45 @@ jobs:
           POSTGRES_DB: testdb
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-        ports: ['5432:5432']
+        ports: [ "5432:5432" ]
         options: >-
           --health-cmd="pg_isready -U test -d testdb"
           --health-interval=5s
-          --health-timeout=2s
+          --health-timeout=3s
           --health-retries=5
 
     steps:
-      - name: Check out code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
+      - name: Install OS dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential git curl wget unzip netcat-openbsd \
+            libpq-dev redis-tools postgresql-client \
+            libssl-dev libffi-dev
+
+      - name: Set up Python 3.13.5 & cache pip
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.13.5"
+          cache: "pip"
 
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
           pip install -e .[dev]
 
-      - name: Inject environment variables
+      - name: Export environment variables
         run: |
-          echo "XAI_API_KEY=dummy"   >> $GITHUB_ENV
-          echo "XAI_API_URL=http://localhost/dummy" >> $GITHUB_ENV
           echo "VELTRAX_API_TOKEN=${{ secrets.VELTRAX_API_TOKEN }}" >> $GITHUB_ENV
+          echo "CI=true"                     >> $GITHUB_ENV
+          echo "SKIP_SERVICE_START=true"     >> $GITHUB_ENV
+          echo "PYTHONUTF8=1"                >> $GITHUB_ENV
 
       - name: Run pytest
-        env:
-          CI: "true"
-          SKIP_SERVICE_START: "true"
-          PYTHONUTF8: '1'
         run: pytest test -q
