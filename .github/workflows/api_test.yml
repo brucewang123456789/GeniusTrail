@@ -21,41 +21,50 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Create & activate virtual environment, install deps
+      - name: Create virtual environment & install deps
         shell: pwsh
         run: |
           if (Test-Path .\.venv) { Remove-Item .\.venv -Recurse -Force }
           python -m venv .venv
-          .\.venv\Scripts\Activate.ps1
-          python -m pip install --upgrade pip
-          pip install -e .[dev]
-          pip install uvicorn fastapi httpx python-dotenv prometheus_client
+          # ensure pip is fresh
+          .\.venv\Scripts\python.exe -m pip install --upgrade pip
+          # install your editable dev extras + test frameworks + uvicorn
+          .\.venv\Scripts\python.exe -m pip install -e .[dev]
+          .\.venv\Scripts\python.exe -m pip install uvicorn fastapi httpx python-dotenv prometheus_client
 
       - name: Start API server in background
         shell: pwsh
         run: |
-          .\.venv\Scripts\Activate.ps1
-          # launch Uvicorn in the workspace folder and redirect logs
+          # launch Uvicorn via venv python, in this repo root
           Start-Process -NoNewWindow `
             -FilePath .\.venv\Scripts\python.exe `
-            -ArgumentList '-m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info' `
-            -WorkingDirectory $PWD `
-            -RedirectStandardOutput uvicorn.log `
-            -RedirectStandardError uvicorn.err
-          Start-Sleep -Seconds 8
-          # dump a bit of log to help debugging
-          Get-Content uvicorn.log -Tail 10 | Write-Host
+            -ArgumentList @(
+              '-m', 'uvicorn',
+              'api_server:app',
+              '--host', '127.0.0.1',
+              '--port', '8000',
+              '--log-level', 'info'
+            ) `
+            -WorkingDirectory $PWD.Path
+          # give it more time to bind
+          Start-Sleep -Seconds 15
+
+      - name: Debug Uvicorn log tail
+        shell: pwsh
+        run: |
+          if (Test-Path uvicorn.log) {
+            Get-Content uvicorn.log -Tail 10 | Write-Host
+          }
 
       - name: Test /ping endpoint
         shell: pwsh
         run: |
-          .\.venv\Scripts\Activate.ps1
+          # no need to activate, python.exe on path is venv by default in Actions
           Invoke-RestMethod -Uri "http://127.0.0.1:8000/ping" -Method Get | Write-Host
 
       - name: Test /chat endpoint
         shell: pwsh
         run: |
-          .\.venv\Scripts\Activate.ps1
           $body = @{ prompt="Hello"; history=@() } | ConvertTo-Json
           Invoke-RestMethod `
             -Uri "http://127.0.0.1:8000/chat" `
@@ -67,6 +76,4 @@ jobs:
         shell: pwsh
         run: |
           $conn = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
-          if ($conn) {
-            Stop-Process -Id $conn.OwningProcess -Force
-          }
+          if ($conn) { Stop-Process -Id $conn.OwningProcess -Force }
