@@ -1,0 +1,60 @@
+name: API Test
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:    # allow manual runs
+
+jobs:
+  api-test:
+    runs-on: windows-latest
+    env:
+      PYTHONUTF8: "1"
+      VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: C:\Chatbot 8000
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Create & activate virtual environment, install deps
+        run: |
+          if (Test-Path .\.venv) { Remove-Item .\.venv -Recurse -Force }
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+          pip install uvicorn fastapi httpx python-dotenv prometheus_client
+      - name: Start API server in background
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          Start-Process -NoNewWindow `
+            -FilePath .\.venv\Scripts\python.exe `
+            -ArgumentList '-m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info'
+          Start-Sleep -Seconds 5
+      - name: Test /ping endpoint
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          Invoke-RestMethod -Uri "http://127.0.0.1:8000/ping" -Method Get | Write-Host
+      - name: Test /chat endpoint
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          $body = @{ prompt="Hello"; history=@() } | ConvertTo-Json
+          Invoke-RestMethod `
+            -Uri "http://127.0.0.1:8000/chat" `
+            -Method Post `
+            -Headers @{ Authorization="Bearer $Env:VELTRAX_API_TOKEN" } `
+            -Body $body -ContentType "application/json" | Write-Host
+      - name: Tear down server
+        run: |
+          # find the UVicorn process and kill it
+          $pid = (Get-NetTCPConnection -LocalPort 8000).OwningProcess
+          if ($pid) { Stop-Process -Id $pid -Force }
