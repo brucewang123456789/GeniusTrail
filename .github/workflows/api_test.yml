@@ -24,12 +24,10 @@ jobs:
       - name: Create & activate virtual environment, install deps
         shell: pwsh
         run: |
-          # Remove existing venv if present
           if (Test-Path .\.venv) { Remove-Item .\.venv -Recurse -Force }
           python -m venv .venv
           .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
-          # Install editable dev dependencies
           pip install -e .[dev]
           pip install uvicorn fastapi httpx python-dotenv prometheus_client
 
@@ -37,17 +35,21 @@ jobs:
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
+          # launch Uvicorn in the workspace folder and redirect logs
           Start-Process -NoNewWindow `
             -FilePath .\.venv\Scripts\python.exe `
-            -ArgumentList '-m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info'
-          # Wait for the server to start
-          Start-Sleep -Seconds 5
+            -ArgumentList '-m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info' `
+            -WorkingDirectory $PWD `
+            -RedirectStandardOutput uvicorn.log `
+            -RedirectStandardError uvicorn.err
+          Start-Sleep -Seconds 8
+          # dump a bit of log to help debugging
+          Get-Content uvicorn.log -Tail 10 | Write-Host
 
       - name: Test /ping endpoint
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
-          # Expect a valid response (200 OK or JSON/text) from /ping
           Invoke-RestMethod -Uri "http://127.0.0.1:8000/ping" -Method Get | Write-Host
 
       - name: Test /chat endpoint
@@ -64,9 +66,7 @@ jobs:
       - name: Tear down server
         shell: pwsh
         run: |
-          # Kill whatever is listening on port 8000
           $conn = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
           if ($conn) {
-            $pid = $conn.OwningProcess
-            if ($pid) { Stop-Process -Id $pid -Force }
+            Stop-Process -Id $conn.OwningProcess -Force
           }
