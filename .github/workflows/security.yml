@@ -1,11 +1,14 @@
+# .github/workflows/security.yml
 name: Security Scan
 
-# Automatically triggered when the main branch is pushed, and also supports manual scheduling
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   trivy-scan:
@@ -16,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy FS scan
-        uses: aquasecurity/trivy-action@v0.31.3
+        uses: aquasecurity/trivy-action@v0.31.0
         with:
           scan-type: fs
           severity: CRITICAL,HIGH
