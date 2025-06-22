@@ -1,0 +1,28 @@
+# .github/workflows/security.yml
+name: Security Scan
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy FS scan
+        uses: aquasecurity/trivy-action@0.31.0                          :contentReference[oaicite:2]{index=2}
+        with:
+          scan-type: fs
+          severity: CRITICAL,HIGH
+
+  grype-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Grype vulnerability scan
+        uses: anchore/scan-action@v4                                    :contentReference[oaicite:3]{index=3}
+        with:
+          path: .
+          fail-build: true

@@ -7,6 +7,7 @@ Integration test for Redis: skip if the service is not reachable
 (i.e., local dev without Redis; CI provides Redis via GitHub Actions services).
 """
 
+
 @pytest.mark.integration
 def test_redis_set_get():
     host = os.getenv("REDIS_HOST", "localhost")

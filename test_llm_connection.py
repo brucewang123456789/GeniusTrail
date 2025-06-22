@@ -8,12 +8,12 @@ load_dotenv()
 url = os.getenv("XAI_API_URL") or "https://chat.x.ai/api/chat/completions"
 headers = {
     "Authorization": f"Bearer {os.getenv('XAI_API_KEY')}",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
 }
 payload = {
     "model": os.getenv("VELTRAX_MODEL", "grok-3-latest"),
     "messages": [{"role": "user", "content": "ping"}],
-    "stream": False
+    "stream": False,
 }
 
 try:

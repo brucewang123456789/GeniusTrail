@@ -29,6 +29,7 @@ import argparse
 import httpx
 import traceback
 
+
 def is_port_in_use(host: str, port: int) -> bool:
     """
     Return True if binding to (host, port) fails because address is in use.
@@ -40,6 +41,7 @@ def is_port_in_use(host: str, port: int) -> bool:
         except OSError:
             return True
 
+
 def run_uvicorn(log_lines, host: str, port: int):
     """
     Launches Uvicorn as a subprocess, capturing stdout and stderr.
@@ -48,18 +50,18 @@ def run_uvicorn(log_lines, host: str, port: int):
     """
     cmd = [
         sys.executable,
-        "-m", "uvicorn",
+        "-m",
+        "uvicorn",
         "api_server:app",
-        "--host", host,
-        "--port", str(port),
-        "--log-level", "debug"
+        "--host",
+        host,
+        "--port",
+        str(port),
+        "--log-level",
+        "debug",
     ]
     try:
-        proc = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except Exception as e:
         print(f"[wrapper] Failed to start Uvicorn subprocess: {e}")
         sys.exit(1)
@@ -85,6 +87,7 @@ def run_uvicorn(log_lines, host: str, port: int):
     threading.Thread(target=reader, args=(proc.stderr,), daemon=True).start()
     return proc
 
+
 async def send_test_request(host: str, port: int):
     """
     Sends one POST to /chat to test the server.
@@ -93,14 +96,13 @@ async def send_test_request(host: str, port: int):
     """
     token = os.getenv("VELTRAX_API_TOKEN", "").strip()
     if not token:
-        print("[wrapper] Warning: environment variable VELTRAX_API_TOKEN is not set or empty. Skipping test request.")
+        print(
+            "[wrapper] Warning: environment variable VELTRAX_API_TOKEN is not set or empty. Skipping test request."
+        )
         return
 
     url = f"http://{host}:{port}/chat"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     payload = {"prompt": "Supervisor debug: ping", "history": []}
 
     print(f"[wrapper] Sending test request to {url} ...")
@@ -113,14 +115,31 @@ async def send_test_request(host: str, port: int):
         print("[test] Exception during request:")
         traceback.print_exc()
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Launch Uvicorn with debug logs and optional test request.")
-    parser.add_argument("--port", type=int, default=8000, help="Port for Uvicorn (default: 8000)")
-    parser.add_argument("--host", type=str, default="127.0.0.1", help="Host for Uvicorn (default: 127.0.0.1)")
-    parser.add_argument("--test-after-start", action="store_true",
-                        help="If set, send one test request after startup (requires VELTRAX_API_TOKEN).")
-    parser.add_argument("--startup-wait", type=int, default=5,
-                        help="Seconds to wait after starting server before sending test (default: 5)")
+    parser = argparse.ArgumentParser(
+        description="Launch Uvicorn with debug logs and optional test request."
+    )
+    parser.add_argument(
+        "--port", type=int, default=8000, help="Port for Uvicorn (default: 8000)"
+    )
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="127.0.0.1",
+        help="Host for Uvicorn (default: 127.0.0.1)",
+    )
+    parser.add_argument(
+        "--test-after-start",
+        action="store_true",
+        help="If set, send one test request after startup (requires VELTRAX_API_TOKEN).",
+    )
+    parser.add_argument(
+        "--startup-wait",
+        type=int,
+        default=5,
+        help="Seconds to wait after starting server before sending test (default: 5)",
+    )
     args = parser.parse_args()
 
     host = args.host
@@ -128,7 +147,9 @@ def main():
 
     # Check port availability
     if is_port_in_use(host, port):
-        print(f"[wrapper] Error: Port {port} on host {host} appears to be in use. Stop any existing server or choose a different port.")
+        print(
+            f"[wrapper] Error: Port {port} on host {host} appears to be in use. Stop any existing server or choose a different port."
+        )
         sys.exit(1)
 
     log_lines = []
@@ -165,6 +186,7 @@ def main():
         print("\n=== Collected Uvicorn Logs ===")
         for line in log_lines:
             print(line, end="")
+
 
 if __name__ == "__main__":
     main()

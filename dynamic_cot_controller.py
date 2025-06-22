@@ -1,18 +1,23 @@
-# dynamic_cot_controller.py — extracted external call into call_grok
+from __future__ import annotations
 
 import re
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Pattern, cast
 
-log = logging.getLogger("cot-controller")
+log: logging.Logger = logging.getLogger("cot-controller")
 
-FAST_PAT = re.compile(r"\b(what\s+is|who\s+is|chemical\s+formula|capital\s+of|year\s+did)\b", re.I)
-DEEP_PAT = re.compile(r"\b(knight|knave|spy|bulb|switch|prove|logic|integer|determine|min|max)\b", re.I)
+FAST_PAT: Pattern[str] = re.compile(
+    r"\b(what\s+is|who\s+is|chemical\s+formula|capital\s+of|year\s+did)\b", re.I
+)
+DEEP_PAT: Pattern[str] = re.compile(
+    r"\b(knight|knave|spy|bulb|switch|prove|logic|integer|determine|min|max)\b", re.I
+)
+UNCERTAIN: Pattern[str] = re.compile(
+    r"\b(maybe|not\s+sure|uncertain|probably|possibly|guess)\b", re.I
+)
+MIN_TOKENS_GOOD: int = 60
 
-UNCERTAIN = re.compile(r"\b(maybe|not\s+sure|uncertain|probably|possibly|guess)\b", re.I)
-MIN_TOKENS_GOOD = 60
-
-COT_TEMPLATE = (
+COT_TEMPLATE: str = (
     "{question}\n\n"
     "Respond as Veltraxor would: irreverent, sarcastic, razor-sharp. "
     "Reason step by step, showing your chain of thought in brief bullets. "
@@ -38,8 +43,8 @@ def classify_question(question: str) -> str:
 def quality_gate(reply: str) -> bool:
     """Return True if reply is long enough and confident."""
     try:
-        word_count = len(reply.split())
-        unsure = bool(UNCERTAIN.search(reply))
+        word_count: int = len(reply.split())
+        unsure: bool = bool(UNCERTAIN.search(reply))
         return word_count >= MIN_TOKENS_GOOD and not unsure
     except Exception as exc:
         log.error("Error in quality_gate(): %s", exc, exc_info=True)
@@ -48,7 +53,7 @@ def quality_gate(reply: str) -> bool:
 
 def decide_cot(question: str, first_reply: str) -> bool:
     """Decide whether to run chain-of-thought reasoning."""
-    level = classify_question(question)
+    level: str = classify_question(question)
     if level == "FAST":
         return False
     if level == "DEEP":
@@ -62,7 +67,8 @@ def call_grok(client: Any, messages: List[Dict[str, str]]) -> Dict[str, Any]:
     Any exceptions are logged and re-raised.
     """
     try:
-        return client.chat(messages)
+        resp = client.chat(messages)
+        return cast(Dict[str, Any], resp)
     except Exception as exc:
         log.error("Error calling grok API: %s", exc, exc_info=True)
         raise
@@ -80,18 +86,18 @@ def integrate_cot(
     Returns the full messages list.
     """
     messages: List[Dict[str, str]] = [
-        {"role": "system",    "content": system_prompt},
-        {"role": "user",      "content": user_question},
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_question},
         {"role": "assistant", "content": first_reply},
     ]
-    answer = first_reply
+    answer: str = first_reply
 
     for idx in range(max_rounds):
         if quality_gate(answer):
             break
 
         log.info("CoT iteration %d", idx + 1)
-        next_prompt = COT_TEMPLATE.format(question=user_question)
+        next_prompt: str = COT_TEMPLATE.format(question=user_question)
         messages.append({"role": "user", "content": next_prompt})
 
         try:

@@ -3,6 +3,7 @@ import subprocess
 import pytest
 from pathlib import Path
 
+
 @pytest.fixture(scope="session", autouse=True)
 def start_services():
     """
@@ -10,7 +11,10 @@ def start_services():
     Locally, if none of those flags are set, try to docker-compose up.
     """
     skip = os.getenv("SKIP_SERVICE_START", "").lower() in {"1", "true", "yes"}
-    is_ci = os.getenv("CI", "").lower() == "true" or os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+    is_ci = (
+        os.getenv("CI", "").lower() == "true"
+        or os.getenv("GITHUB_ACTIONS", "").lower() == "true"
+    )
     in_docker = os.getenv("IN_DOCKER", "").lower() == "true"
     if skip or is_ci or in_docker:
         return  # services already provided

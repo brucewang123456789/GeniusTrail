@@ -4,6 +4,7 @@ config.py
 dynamic_cot_controller.py
 dynamic_cot_controller_example.py
 llm_client.py
+pyproject.toml
 setup.py
 veltraxor.py
 ./api_server.py

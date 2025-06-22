@@ -1,3 +1,4 @@
+# test_llm.py
 #!/usr/bin/env python3
 """
 test_llm.py
@@ -8,13 +9,12 @@ output are in English.
 Usage: python test_llm.py
 """
 
-import os
 from dotenv import load_dotenv
+from llm_client import LLMClient
 
 # Load .env so that settings in LLMClient pick up XAI_API_URL and XAI_API_KEY
 load_dotenv()
 
-from llm_client import LLMClient
 
 def main():
     # Instantiate client. If VELTRAX_MODEL is set in .env, pass None here to pick it up.
@@ -22,8 +22,11 @@ def main():
 
     # Prepare a sample conversation. "system" prompt then a "user" message.
     messages = [
-        {"role": "system", "content": "You are Veltraxor, a concise and rigorous assistant."},
-        {"role": "user",   "content": "Hello, testing LLMClient.chat"}
+        {
+            "role": "system",
+            "content": "You are Veltraxor, a concise and rigorous assistant.",
+        },
+        {"role": "user", "content": "Hello, testing LLMClient.chat"},
     ]
 
     try:
@@ -36,14 +39,18 @@ def main():
         if isinstance(response, dict) and response.get("choices"):
             choice = response["choices"][0]
             # Typical OpenAI/Grok style: message.content first, fallback to text
-            content = choice.get("message", {}).get("content") or choice.get("text") or ""
+            content = (
+                choice.get("message", {}).get("content") or choice.get("text") or ""
+            )
             print("Extracted content:", content)
         else:
             print("Response is not a dict with 'choices' or has unexpected format.")
-    except Exception as e:
+    except Exception:
         import traceback
+
         print("Exception occurred during LLMClient.chat:")
         traceback.print_exc()
+
 
 if __name__ == "__main__":
     main()

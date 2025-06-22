@@ -1,0 +1,31 @@
+# .github/workflows/lint.yml
+name: Lint and Type Check
+on:
+  pull_request:
+    paths:
+      - '**/*.py'
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Ruff lint
+        uses: astral-sh/ruff-action@v3                                   :contentReference[oaicite:0]{index=0}
+      - name: Black format check
+        uses: psf/black@stable                                           :contentReference[oaicite:1]{index=1}
+      - name: Mypy strict check
+        run: |
+          python -m pip install --upgrade pip
+          pip install mypy
+          mypy --strict .

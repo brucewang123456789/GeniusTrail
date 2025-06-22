@@ -1,3 +1,5 @@
+"""Package metadata for Veltraxor."""
+
 from setuptools import setup, find_packages
 
 setup(

@@ -8,30 +8,34 @@ the whole module is skipped – this keeps CI green without exposing secrets.
 from __future__ import annotations
 
 import os
+from typing import Any  # ← added
 import pytest
 import httpx
 from dotenv import load_dotenv
 
 load_dotenv()  # load variables from .env if available
 
-API_URL = os.getenv("XAI_API_URL")
-API_KEY = os.getenv("XAI_API_KEY")
+# Read raw values (may be None)
+API_URL_RAW: str | None = os.getenv("XAI_API_URL")
+API_KEY_RAW: str | None = os.getenv("XAI_API_KEY")
 
-# ─────────────────────────────────────────────────────────────────────────
-# Automatically skip tests when credentials are missing
-# ─────────────────────────────────────────────────────────────────────────
-if not API_URL or not API_KEY:
+# Skip entire module if missing
+if not API_URL_RAW or not API_KEY_RAW:
     pytest.skip(
         "XAI credentials missing – skipping external XAI integration tests",
         allow_module_level=True,
     )
 
-HEADERS = {
+# At this point, both are non-None, so bind to pure str
+API_URL: str = API_URL_RAW
+API_KEY: str = API_KEY_RAW
+
+HEADERS: dict[str, str] = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json",
 }
 
-PAYLOAD = {
+PAYLOAD: dict[str, Any] = {
     "model": "grok-3-latest",
     "messages": [
         {"role": "system", "content": "You are a test assistant."},

@@ -6,6 +6,7 @@ from api_server import app
 API_TOKEN = os.getenv("VELTRAX_API_TOKEN")
 HEADERS = {"Authorization": f"Bearer {API_TOKEN}"} if API_TOKEN else {}
 
+
 @pytest.mark.asyncio
 async def test_ping():
     transport = ASGITransport(app=app)
@@ -13,6 +14,7 @@ async def test_ping():
         resp = await client.get("/ping")
     assert resp.status_code == 200
     assert resp.json() == {"pong": True}
+
 
 @pytest.mark.asyncio
 async def test_chat_basic():
