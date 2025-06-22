@@ -1,28 +1,35 @@
-# .github/workflows/security.yml
 name: Security Scan
+
+# Automatically triggered when the main branch is pushed, and also supports manual scheduling
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   trivy-scan:
+    name: Trivy Filesystem Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Trivy FS scan
-        uses: aquasecurity/trivy-action@0.31.0                          :contentReference[oaicite:2]{index=2}
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy FS scan
+        uses: aquasecurity/trivy-action@v0.31.3
         with:
           scan-type: fs
           severity: CRITICAL,HIGH
 
   grype-scan:
+    name: Grype Vulnerability Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Grype vulnerability scan
-        uses: anchore/scan-action@v4                                    :contentReference[oaicite:3]{index=3}
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Grype scan
+        uses: anchore/scan-action@v6.1.0
         with:
           path: .
           fail-build: true
