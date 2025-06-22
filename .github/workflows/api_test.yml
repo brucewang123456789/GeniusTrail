@@ -26,16 +26,20 @@ jobs:
         run: |
           if (Test-Path .\.venv) { Remove-Item .\.venv -Recurse -Force }
           python -m venv .venv
-          # ensure pip is fresh
+          # upgrade pip
           .\.venv\Scripts\python.exe -m pip install --upgrade pip
-          # install your editable dev extras + test frameworks + uvicorn
+          # install your package (with any extras), plus requirements.txt
           .\.venv\Scripts\python.exe -m pip install -e .[dev]
-          .\.venv\Scripts\python.exe -m pip install uvicorn fastapi httpx python-dotenv prometheus_client
+          if (Test-Path requirements.txt) {
+            .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+          }
+          # ensure runtime dependencies for config & schema
+          .\.venv\Scripts\python.exe -m pip install pydantic-settings jsonschema
 
       - name: Start API server in background
         shell: pwsh
         run: |
-          # launch Uvicorn via venv python, in this repo root
+          # launch Uvicorn via venv python, in repo root
           Start-Process -NoNewWindow `
             -FilePath .\.venv\Scripts\python.exe `
             -ArgumentList @(
@@ -45,21 +49,17 @@ jobs:
               '--port', '8000',
               '--log-level', 'info'
             ) `
-            -WorkingDirectory $PWD.Path
+            -WorkingDirectory $PWD.Path `
+            -RedirectStandardOutput uvicorn.log `
+            -RedirectStandardError uvicorn.err
           # give it more time to bind
           Start-Sleep -Seconds 15
-
-      - name: Debug Uvicorn log tail
-        shell: pwsh
-        run: |
-          if (Test-Path uvicorn.log) {
-            Get-Content uvicorn.log -Tail 10 | Write-Host
-          }
+          # Emit last few lines of log for debugging
+          Get-Content uvicorn.log -Tail 10 | Write-Host
 
       - name: Test /ping endpoint
         shell: pwsh
         run: |
-          # no need to activate, python.exe on path is venv by default in Actions
           Invoke-RestMethod -Uri "http://127.0.0.1:8000/ping" -Method Get | Write-Host
 
       - name: Test /chat endpoint
