@@ -15,6 +15,8 @@ dependencies = [
     "fastapi>=0.95.0",
     "uvicorn>=0.21.1",
     "pydantic>=1.10.0",
+    "pydantic-settings>=2.1.0",    # newly added
+    "jsonschema>=4.0.0",           # newly added
     "prometheus-client>=0.14.1",
     "redis>=4.5.0",
     "langdetect>=1.0.9",
@@ -25,10 +27,12 @@ dev = [
     "pytest>=7.0",
     "pytest-asyncio>=0.23",
     "mypy>=1.5",
-    "types-setuptools>=67.0.0",
-    "types-requests>=2.25.0",
     "ruff>=0.0.241",
     "black>=23.9.1",
+    "types-setuptools>=67.0.0",
+    "types-requests>=2.25.0",
+    "jsonschema>=4.0.0",           # ensure test contract deps
+    "pydantic-settings>=2.1.0",    # ensure config.py deps
 ]
 
 [project.scripts]
@@ -70,9 +74,4 @@ select = ["E", "F", "W", "C90"]
 ignore = ["E203", "E501"]
 
 [tool.ruff.per-file-ignores]
-# Suppress specific lint errors in api_server.py
 "api_server.py" = ["F401", "F841"]
-# If server_debug_wrapper.py or other scripts trigger long-line or unused-import,
-# you can add entries similarly, for example:
-# "server_debug_wrapper.py" = ["E501"]
-# "veltraxor.py" = ["E501"]
