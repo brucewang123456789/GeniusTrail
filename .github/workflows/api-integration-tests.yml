@@ -1,4 +1,4 @@
-name: API Test (pytest + TestClient)
+name: API Integration Tests
 
 on:
   push:
