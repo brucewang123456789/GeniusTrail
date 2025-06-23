@@ -1,13 +1,15 @@
-name: API Test
+name: API Test (pytest + TestClient)
 
 on:
   push:
+    branches: [ main ]
+  pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
   api-test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest          # Linux runner
     env:
       PYTHONUTF8: "1"
       VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
@@ -21,59 +23,16 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Create virtual environment & install deps
-        shell: pwsh
+      - name: Install dependencies
         run: |
-          if (Test-Path .\.venv) { Remove-Item .\.venv -Recurse -Force }
-          python -m venv .venv
-          # upgrade pip
-          .\.venv\Scripts\python.exe -m pip install --upgrade pip
-          # install your package (with any extras), plus requirements.txt
-          .\.venv\Scripts\python.exe -m pip install -e .[dev]
-          if (Test-Path requirements.txt) {
-            .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-          }
-          # ensure runtime dependencies for config & schema
-          .\.venv\Scripts\python.exe -m pip install pydantic-settings jsonschema
+          python -m pip install --upgrade pip
+          # install runtime + dev/test deps
+          pip install -e .[dev]
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          # ensure these libs exist even if extras missed them
+          pip install fastapi uvicorn httpx python-dotenv pydantic-settings jsonschema
 
-      - name: Start API server in background
-        shell: pwsh
-        run: |
-          # launch Uvicorn via venv python, in repo root
-          Start-Process -NoNewWindow `
-            -FilePath .\.venv\Scripts\python.exe `
-            -ArgumentList @(
-              '-m', 'uvicorn',
-              'api_server:app',
-              '--host', '127.0.0.1',
-              '--port', '8000',
-              '--log-level', 'info'
-            ) `
-            -WorkingDirectory $PWD.Path `
-            -RedirectStandardOutput uvicorn.log `
-            -RedirectStandardError uvicorn.err
-          # give it more time to bind
-          Start-Sleep -Seconds 15
-          # Emit last few lines of log for debugging
-          Get-Content uvicorn.log -Tail 10 | Write-Host
-
-      - name: Test /ping endpoint
-        shell: pwsh
-        run: |
-          Invoke-RestMethod -Uri "http://127.0.0.1:8000/ping" -Method Get | Write-Host
-
-      - name: Test /chat endpoint
-        shell: pwsh
-        run: |
-          $body = @{ prompt="Hello"; history=@() } | ConvertTo-Json
-          Invoke-RestMethod `
-            -Uri "http://127.0.0.1:8000/chat" `
-            -Method Post `
-            -Headers @{ Authorization="Bearer $Env:VELTRAX_API_TOKEN" } `
-            -Body $body -ContentType "application/json" | Write-Host
-
-      - name: Tear down server
-        shell: pwsh
-        run: |
-          $conn = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
-          if ($conn) { Stop-Process -Id $conn.OwningProcess -Force }
+      - name: Run pytest
+        run: pytest -q
