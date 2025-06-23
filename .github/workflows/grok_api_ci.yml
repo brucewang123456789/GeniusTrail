@@ -1,4 +1,39 @@
-name: grok_api_ci.yml
+name: Grok API CI
+
 on:
+  push:
+    paths:
+      - 'test/**'
+      - '.github/workflows/grok_api_ci.yml'
+      - 'requirements.txt'
+  pull_request:
+    paths:
+      - 'test/**'
+      - '.github/workflows/grok_api_ci.yml'
+      - 'requirements.txt'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # ensure mocking & test libs
+          pip install respx pytest httpx
+
+      - name: Run static tests for Grok API exceptions
+        run: pytest -v test/test_grok_api_exceptions.py
