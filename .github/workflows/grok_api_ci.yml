@@ -1,6 +1,6 @@
 name: Grok 3 API Exception & Failure Tests
 
-# Only run on the dedicated feature branch to isolate from main CI
+# Only trigger on the dedicated branch to isolate from main CI
 on:
   push:
     branches: [ feature/grok3-failure-tests ]
@@ -13,11 +13,12 @@ jobs:
     env:
       CI: "true"
       VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Python 3.13
+      - name: Set up Python 3.13
         uses: actions/setup-python@v4
         with:
           python-version: '3.13'
@@ -25,10 +26,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # install runtime deps
           pip install -r requirements.txt
-          # install development/test deps (ensure respx is included)
-          pip install -e .[dev]
+          pip install -e .[dev]  # install dev dependencies including respx
 
       - name: Run Grok API tests
         run: pytest -q test/test_grok_api.py

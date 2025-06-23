@@ -17,7 +17,9 @@ def inject_env(monkeypatch: pytest.MonkeyPatch) -> None:
     """
     Ensure VELTRAX_API_TOKEN is set during tests.
     """
-    monkeypatch.setenv("VELTRAX_API_TOKEN", os.getenv("VELTRAX_API_TOKEN", "dummy_token"))
+    monkeypatch.setenv(
+        "VELTRAX_API_TOKEN", os.getenv("VELTRAX_API_TOKEN", "dummy_token")
+    )
 
 
 def test_ping_healthcheck() -> None:
@@ -43,11 +45,14 @@ def test_chat_success(monkeypatch: pytest.MonkeyPatch) -> None:
     Mock LLMClient.chat to return the structure matching production expectation,
     then verify /chat endpoint returns expected ChatResponse fields.
     """
+
     def fake_chat(self: LLMClient, messages: List[Dict[str, str]]) -> Dict[str, Any]:
         return {"choices": [{"message": {"content": "Hello, world!"}}]}
 
     # Ensure token is in environment and patch the chat method
-    monkeypatch.setenv("VELTRAX_API_TOKEN", os.getenv("VELTRAX_API_TOKEN", "dummy_token"))
+    monkeypatch.setenv(
+        "VELTRAX_API_TOKEN", os.getenv("VELTRAX_API_TOKEN", "dummy_token")
+    )
     monkeypatch.setattr(LLMClient, "chat", fake_chat, raising=True)
 
     headers = {"Authorization": f"Bearer {os.environ['VELTRAX_API_TOKEN']}"}
@@ -63,4 +68,8 @@ def test_chat_success(monkeypatch: pytest.MonkeyPatch) -> None:
     #   - "duration_ms": a non-negative integer
     assert "response" in data and data["response"] == "Hello, world!"
     assert "used_cot" in data and isinstance(data["used_cot"], bool)
-    assert "duration_ms" in data and isinstance(data["duration_ms"], int) and data["duration_ms"] >= 0
+    assert (
+        "duration_ms" in data
+        and isinstance(data["duration_ms"], int)
+        and data["duration_ms"] >= 0
+    )

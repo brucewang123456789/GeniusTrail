@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.13']
+        python-version: [ '3.13' ]
 
     steps:
       - name: Check out code
@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -e .[dev]
+          pip install -e .[dev]  # install dev dependencies for linting
           pip install jsonschema pydantic-settings
 
       - name: Run ruff lint
@@ -38,4 +38,4 @@ jobs:
         run: black --check .
 
       - name: Run mypy type check
-        run: python -m mypy .
+        run: python -m mypy
