@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import time
 from typing import Any, Dict, List
 
 import pytest
@@ -27,7 +26,6 @@ def test_ping_healthcheck() -> None:
     """
     response = client.get("/ping")
     assert response.status_code == 200
-    # Adjust to match implementation that returns {"pong": True}
     assert response.json() == {"pong": True}
 
 
@@ -45,13 +43,11 @@ def test_chat_success(monkeypatch: pytest.MonkeyPatch) -> None:
     Mock LLMClient.chat to return the structure matching production expectation,
     then verify /chat endpoint returns expected ChatResponse fields.
     """
-    # Fake chat method returns the structure that api_server.chat expects:
     def fake_chat(self: LLMClient, messages: List[Dict[str, str]]) -> Dict[str, Any]:
         return {"choices": [{"message": {"content": "Hello, world!"}}]}
 
-    # Ensure token in env
+    # Ensure token is in environment and patch the chat method
     monkeypatch.setenv("VELTRAX_API_TOKEN", os.getenv("VELTRAX_API_TOKEN", "dummy_token"))
-    # Patch the chat method
     monkeypatch.setattr(LLMClient, "chat", fake_chat, raising=True)
 
     headers = {"Authorization": f"Bearer {os.environ['VELTRAX_API_TOKEN']}"}

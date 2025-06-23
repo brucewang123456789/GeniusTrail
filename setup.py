@@ -42,6 +42,7 @@ setup(
             "psycopg2-binary>=2.9.0",
             "wheel>=0.40",
             "build>=1.0",
+            "respx>=0.22.0",               # added for Grok 3 API mocking
         ],
     },
     entry_points={
