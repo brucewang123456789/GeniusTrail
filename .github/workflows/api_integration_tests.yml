@@ -9,7 +9,7 @@ on:
 
 jobs:
   api-test:
-    runs-on: ubuntu-latest          # Linux runner
+    runs-on: ubuntu-latest
     env:
       PYTHONUTF8: "1"
       VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
@@ -26,13 +26,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # install runtime + dev/test deps
-          pip install -e .[dev]
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          fi
-          # ensure these libs exist even if extras missed them
-          pip install fastapi uvicorn httpx python-dotenv pydantic-settings jsonschema
+          pip install -r requirements.txt
+          pip install -e .[dev]  # install dev dependencies including respx
 
       - name: Run pytest
         run: pytest -q
