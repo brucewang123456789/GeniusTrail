@@ -1,8 +1,8 @@
-# veltraxor_cli_chat.py
 import os
 import requests
 from dotenv import load_dotenv
 from typing import List, Dict, Any
+
 
 def cli_chat() -> None:
     # Load .env without overriding existing environment vars
@@ -64,6 +64,7 @@ def cli_chat() -> None:
         except Exception as e:
             print("Request failed:", e)
             continue
+
 
 if __name__ == "__main__":
     cli_chat()

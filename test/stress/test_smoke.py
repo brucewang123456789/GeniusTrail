@@ -1,4 +1,3 @@
-# test/stress/test_smoke.py
 #!/usr/bin/env python3
 """
 Lightweight smoke-test script focused on /ping stability.
@@ -38,9 +37,9 @@ CONCURRENT_USERS: int = int(os.getenv("STRESS_CONCURRENCY", "5"))
 REQUESTS_PER_USER: int = int(os.getenv("STRESS_REQUESTS_PER_USER", "10"))
 TIMEOUT_SECONDS: float = float(os.getenv("STRESS_TIMEOUT", "60.0"))
 
-# Pre-check settings
 PING_WAIT_RETRIES: int = int(os.getenv("PING_WAIT_RETRIES", "5"))
 PING_WAIT_INTERVAL: float = float(os.getenv("PING_WAIT_INTERVAL", "1.0"))
+
 
 # --------------------------------------------------------------------------- #
 # Request helpers
@@ -65,7 +64,9 @@ async def wait_for_ping() -> None:
                 return
             except Exception as exc:
                 last_exc = exc
-                print(f"/ping attempt {attempt} failed: {exc!r}, retrying in {PING_WAIT_INTERVAL}s")
+                print(
+                    f"/ping attempt {attempt} failed: {exc!r}, retrying in {PING_WAIT_INTERVAL}s"
+                )
                 await asyncio.sleep(PING_WAIT_INTERVAL)
     print(f"Error: /ping did not succeed after {PING_WAIT_RETRIES} attempts")
     if last_exc:
@@ -97,15 +98,14 @@ async def user_simulation(user_id: int) -> Tuple[int, int]:
 # Main
 # --------------------------------------------------------------------------- #
 async def main() -> None:
-    # API_TOKEN presence check is kept to align with structure, though not used here
     if not API_TOKEN:
         sys.exit("Error: missing VELTRAX_API_TOKEN environment variable")
 
-    # Pre-check service readiness
     await wait_for_ping()
 
-    # Run concurrent /ping simulations
-    tasks = [asyncio.create_task(user_simulation(uid)) for uid in range(CONCURRENT_USERS)]
+    tasks = [
+        asyncio.create_task(user_simulation(uid)) for uid in range(CONCURRENT_USERS)
+    ]
     results = await asyncio.gather(*tasks)
 
     total_success = sum(s for s, _ in results)

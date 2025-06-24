@@ -1,3 +1,4 @@
+# dynamic_cot_controller.py
 import os
 import re
 import logging
@@ -5,9 +6,16 @@ from typing import Any, Dict, List, Pattern, cast
 
 log: logging.Logger = logging.getLogger("cot-controller")
 
-FAST_PAT: Pattern[str] = re.compile(r"\b(what\s+is|who\s+is|chemical\s+formula|capital\s+of|year\s+did)\b", re.I)
-DEEP_PAT: Pattern[str] = re.compile(r"\b(knight|knave|spy|bulb|switch|prove|logic|integer|determine|min|max)\b", re.I)
-UNCERTAIN: Pattern[str] = re.compile(r"\b(maybe|not\s+sure|uncertain|probably|possibly|guess)\b", re.I)
+FAST_PAT: Pattern[str] = re.compile(
+    r"\b(what\s+is|who\s+is|chemical\s+formula|capital\s+of|year\s+did)\b",
+    re.I,
+)
+DEEP_PAT: Pattern[str] = re.compile(
+    r"\b(knight|knave|spy|bulb|switch|prove|logic|integer|determine|min|max)\b", re.I
+)
+UNCERTAIN: Pattern[str] = re.compile(
+    r"\b(maybe|not\s+sure|uncertain|probably|possibly|guess)\b", re.I
+)
 MIN_TOKENS_GOOD: int = 60
 
 COT_TEMPLATE: str = (
