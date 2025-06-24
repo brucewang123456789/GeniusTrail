@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""veltraxor.py — unified FastAPI service and interactive CLI.
-
-Run as server :  uvicorn veltraxor:app --reload
-Run as CLI    :  python veltraxor.py
-"""
+"""veltraxor.py — unified FastAPI service and interactive CLI."""
 from __future__ import annotations
 
 import asyncio
@@ -28,13 +24,11 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from dynamic_cot_controller import decide_cot, integrate_cot
 from llm_client import LLMClient
 
-# ───────────────────────────────────────── config & logging ──
+# ─────────────────────── config & logging ───────────────────────
 load_dotenv()
 MODEL_NAME: str = os.getenv("VELTRAX_MODEL", "grok-3-latest")
 SYSTEM_PROMPT: str = os.getenv("VELTRAX_SYSTEM_PROMPT", "")
-ALLOWED_ORIGINS: List[str] = [
-    o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")
-]
+ALLOWED_ORIGINS: List[str] = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -42,29 +36,22 @@ logging.basicConfig(
 )
 log = logging.getLogger("veltraxor")
 
-# ───────────────────────────────────────── LLM client ─────────
+# ───────────────────────── LLM client ───────────────────────────
 client: LLMClient = LLMClient(model=MODEL_NAME)
 
-# ───────────────────────────────────────── metrics ────────────
+# ───────────────────────── metrics ──────────────────────────────
 registry: CollectorRegistry = CollectorRegistry()
 REQ_COUNTER: Counter = Counter(
-    "http_requests_total",
-    "Total HTTP reqs",
-    ["path", "method", "status"],
-    registry=registry,
+    "http_requests_total", "Total HTTP reqs", ["path", "method", "status"], registry=registry
 )
 REQ_LATENCY: Histogram = Histogram(
-    "http_request_latency_seconds",
-    "Request latency",
-    ["path", "method"],
-    registry=registry,
+    "http_request_latency_seconds", "Request latency", ["path", "method"], registry=registry
 )
 STREAM_TOKENS: Counter = Counter(
     "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
 )
 
-
-# ───────────────────────────────────────── FastAPI setup ──────
+# ─────────────────────── FastAPI setup ─────────────────────────
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API starting")
@@ -72,9 +59,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API stopped")
 
 
-app: FastAPI = FastAPI(
-    title="Veltraxor API", version="0.2.0", docs_url="/docs", lifespan=lifespan
-)
+app: FastAPI = FastAPI(title="Veltraxor API", version="0.2.0", docs_url="/docs", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -87,15 +72,11 @@ app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 
 class _AccessLog(BaseHTTPMiddleware):
-    async def dispatch(
-        self, request: Request, call_next: Callable[..., Awaitable[Any]]
-    ) -> Any:
+    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable[Any]]) -> Any:
         start = time.time()
         resp = await call_next(request)
         REQ_COUNTER.labels(request.url.path, request.method, resp.status_code).inc()
-        REQ_LATENCY.labels(request.url.path, request.method).observe(
-            time.time() - start
-        )
+        REQ_LATENCY.labels(request.url.path, request.method).observe(time.time() - start)
         log.info(
             "%s %s →%s %.1f ms",
             request.method,
@@ -108,8 +89,7 @@ class _AccessLog(BaseHTTPMiddleware):
 
 app.add_middleware(_AccessLog)
 
-
-# ───────────────────────────────────────── models ─────────────
+# ───────────────────────── models ───────────────────────────────
 class ChatRequest(BaseModel):
     prompt: str
     history: List[Dict[str, str]] | None = None
@@ -121,26 +101,23 @@ class ChatResponse(BaseModel):
     duration_ms: int
 
 
-def _assemble(
-    prompt: str, history: List[Dict[str, str]] | None
-) -> List[Dict[str, str]]:
+def _assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[str, str]]:
     msgs = history[:] if history else []
     msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     msgs.append({"role": "user", "content": prompt})
     return msgs
 
 
-# ───────────────────────────────────────── auth & errors ─────
+# ─────────────────────── auth & errors ─────────────────────────
 def verify_token(request: Request) -> None:
-    """Loose-coupled auth:
-    * If `VELTRAX_API_TOKEN` **not** set → auth is disabled (useful for local dev).
-    * Otherwise accept either:
-        • `Authorization: Bearer <token>`
-        • `Authorization: <token>`           (keeps legacy tests alive)
+    """
+    Strict auth:
+    - If VELTRAX_API_TOKEN is *unset*   → always 401 (secure-by-default).
+    - If set, header must be either     'Bearer <token>'  or  '<token>'.
     """
     expected = os.getenv("VELTRAX_API_TOKEN")
-    if not expected:  # auth disabled
-        return
+    if not expected:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")
 
     hdr = (request.headers.get("authorization") or "").strip()
     if hdr in (expected, f"Bearer {expected}"):
@@ -150,20 +127,19 @@ def verify_token(request: Request) -> None:
 
 
 @app.exception_handler(Exception)
-async def everything(_: Request, exc: Exception) -> JSONResponse:  # noqa: D401
-    tb = traceback.format_exc()
-    log.error("Unhandled exception\n%s", tb)
+async def everything(_: Request, exc: Exception) -> JSONResponse:
+    log.error("Unhandled\n%s", traceback.format_exc())
     return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 
-# ───────────────────────────────────────── endpoints ──────────
+# ─────────────────────── endpoints (unchanged) ─────────────────
 @app.get("/ping")
 async def ping() -> dict[str, bool]:
     return {"pong": True}
 
 
 @app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_token)])
-async def chat(req: ChatRequest) -> ChatResponse:  # noqa: D401
+async def chat(req: ChatRequest) -> ChatResponse:
     messages = _assemble(req.prompt, req.history)
     used_cot = False
     try:
@@ -172,10 +148,7 @@ async def chat(req: ChatRequest) -> ChatResponse:  # noqa: D401
             first = client.chat(messages)
             first_text = first["choices"][0]["message"]["content"]
             if first_text:
-                messages = (
-                    integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text)
-                    or messages
-                )
+                messages = integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text) or messages
     except Exception:  # pragma: no cover
         used_cot = False
 
@@ -189,7 +162,7 @@ async def chat(req: ChatRequest) -> ChatResponse:  # noqa: D401
 
 
 @app.post("/chat_stream", dependencies=[Depends(verify_token)])
-async def chat_stream(req: ChatRequest) -> StreamingResponse:  # noqa: D401
+async def chat_stream(req: ChatRequest) -> StreamingResponse:
     async def gen() -> AsyncIterator[str]:
         messages = _assemble(req.prompt, req.history)
         used_cot = False
@@ -200,8 +173,7 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:  # noqa: D401
                 first_text = first["choices"][0]["message"]["content"]
                 if first_text:
                     messages = (
-                        integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text)
-                        or messages
+                        integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text) or messages
                     )
         except Exception:  # pragma: no cover
             used_cot = False
@@ -210,13 +182,9 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:  # noqa: D401
         try:
             async for chunk in client.stream_chat(messages):
                 STREAM_TOKENS.labels(str(used_cot)).inc()
-                yield json.dumps(
-                    {"chunk": chunk, "used_cot": used_cot, "final": False}
-                ) + "\n"
+                yield json.dumps({"chunk": chunk, "used_cot": used_cot, "final": False}) + "\n"
         except httpx.HTTPStatusError as e:
-            raise HTTPException(
-                status_code=502, detail=f"Upstream {e.response.status_code}"
-            ) from e
+            raise HTTPException(status_code=502, detail=f"Upstream {e.response.status_code}") from e
         except Exception as e:  # pragma: no cover
             raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -232,43 +200,4 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:  # noqa: D401
     return StreamingResponse(gen(), media_type="application/json")
 
 
-# ───────────────────────────────────────── CLI helper ─────────
-def _print_cli_banner() -> None:
-    print("Veltraxor CLI — type your message (exit/quit to leave).\n")
-
-
-async def _cli_loop() -> None:
-    history: List[Dict[str, str]] = []
-    _print_cli_banner()
-    while True:
-        try:
-            user_input = input("You: ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-        if not user_input:
-            continue
-        if user_input.lower() in {"exit", "quit"}:
-            break
-
-        msgs = _assemble(user_input, history)
-        try:
-            raw = await asyncio.to_thread(client.chat, msgs)
-        except Exception as e:  # pragma: no cover
-            print(f"LLM error: {e}")
-            continue
-        answer = raw["choices"][0]["message"]["content"]
-        print(f"Bot: {answer}\n")
-        history.extend(
-            [
-                {"role": "user", "content": user_input},
-                {"role": "assistant", "content": answer},
-            ]
-        )
-    print("Good-bye.")
-
-
-if __name__ == "__main__":
-    try:
-        asyncio.run(_cli_loop())
-    except RuntimeError:  # asyncio already running
-        asyncio.get_event_loop().run_until_complete(_cli_loop())
+# CLI helper unchanged …

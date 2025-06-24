@@ -6,6 +6,10 @@ select = ["E", "F", "W", "C90"]
 ignore = ["E203", "E501"]
 
 [tool.ruff.lint.per-file-ignores]
-"api_server.py"           = ["F401", "F841"]
-"test/integration/*.py"   = ["F401"]
-"tests/conftest.py"       = ["F401"]
+"api_server.py"         = ["F401", "F841"]
+"test/**/*.py"          = ["F401"]
+"tests/conftest.py"     = ["F401"]
+
+# ⇩ NEW ⇩ — prevents CI mypy job from failing over third-party libs
+[tool.mypy]
+ignore_missing_imports = true
