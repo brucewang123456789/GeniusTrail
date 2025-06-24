@@ -10,6 +10,5 @@ ignore = ["E203", "E501"]
 "test/**/*.py"          = ["F401"]
 "tests/conftest.py"     = ["F401"]
 
-# ⇩ NEW ⇩ — prevents CI mypy job from failing over third-party libs
 [tool.mypy]
 ignore_missing_imports = true
