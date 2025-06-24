@@ -24,7 +24,9 @@ from llm_client import LLMClient
 # ─────────────────────────────────── env & logging ───────────────────────────────────
 load_dotenv()
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 log: logging.Logger = logging.getLogger("api-server")
 
 MODEL_NAME: str = os.getenv("VELTRAX_MODEL", "grok-3-latest")
@@ -36,13 +38,28 @@ client: LLMClient = LLMClient(model=MODEL_NAME)
 
 # ─────────────────────────────────── metrics ─────────────────────────────────────────
 registry: CollectorRegistry = CollectorRegistry()
-REQ_COUNTER = Counter("http_requests_total", "Total HTTP requests", ["path", "method", "status"], registry=registry)
-REQ_LATENCY = Histogram("http_request_latency_seconds", "Request latency", ["path", "method"], registry=registry)
-STREAM_TOKENS = Counter("chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry)
+REQ_COUNTER = Counter(
+    "http_requests_total",
+    "Total HTTP requests",
+    ["path", "method", "status"],
+    registry=registry,
+)
+REQ_LATENCY = Histogram(
+    "http_request_latency_seconds",
+    "Request latency",
+    ["path", "method"],
+    registry=registry,
+)
+STREAM_TOKENS = Counter(
+    "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
+)
+
 
 # ─────────────────────────────────── middleware ──────────────────────────────────────
 class RequestIDMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable[Any]]) -> Any:
+    async def dispatch(
+        self, request: Request, call_next: Callable[..., Awaitable[Any]]
+    ) -> Any:
         rid = request.headers.get("x-request-id", str(uuid.uuid4()))
         request.state.rid = rid
         resp = await call_next(request)
@@ -51,13 +68,21 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
 
 
 class AccessLogMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable[Any]]) -> Any:
+    async def dispatch(
+        self, request: Request, call_next: Callable[..., Awaitable[Any]]
+    ) -> Any:
         start = time.time()
         resp = await call_next(request)
         latency = time.time() - start
         REQ_COUNTER.labels(request.url.path, request.method, resp.status_code).inc()
         REQ_LATENCY.labels(request.url.path, request.method).observe(latency)
-        log.info("%s %s → %s %.1fms", request.method, request.url.path, resp.status_code, latency * 1000.0)
+        log.info(
+            "%s %s → %s %.1fms",
+            request.method,
+            request.url.path,
+            resp.status_code,
+            latency * 1000.0,
+        )
         return resp
 
 
@@ -82,6 +107,7 @@ app.add_middleware(
 
 __all__ = ["app"]
 
+
 # ──────────────────────────────── pydantic models ────────────────────────────────
 class ChatRequest(BaseModel):
     prompt: str
@@ -105,7 +131,9 @@ def assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[str
 def verify_token(request: Request) -> None:
     hdr = request.headers.get("authorization")
     if not hdr:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing token"
+        )
 
     if not API_TOKEN:
         raise HTTPException(
@@ -114,14 +142,20 @@ def verify_token(request: Request) -> None:
         )
 
     if hdr != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token"
+        )
 
 
 def validate_prompt(prompt: str) -> None:
     if not prompt:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt must not be empty")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt must not be empty"
+        )
     if len(prompt) > 10_000:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt too long")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt too long"
+        )
 
 
 # ───────────────────────────────────── endpoints ──────────────────────────────────
@@ -169,7 +203,10 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
                 cot_resp = client.chat(messages)
                 cot = cot_resp["choices"][0]["message"]["content"]
                 if cot:
-                    messages = integrate_cot(client, SYSTEM_PROMPT, req.prompt, cot) or messages
+                    messages = (
+                        integrate_cot(client, SYSTEM_PROMPT, req.prompt, cot)
+                        or messages
+                    )
         except Exception:
             used_cot = False
 
@@ -177,18 +214,25 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
         try:
             async for chunk in client.stream_chat(messages):
                 STREAM_TOKENS.labels(str(used_cot)).inc()
-                yield json.dumps({"chunk": chunk, "used_cot": used_cot, "final": False}) + "\n"
+                yield json.dumps(
+                    {"chunk": chunk, "used_cot": used_cot, "final": False}
+                ) + "\n"
         except httpx.HTTPStatusError as exc:
             raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Upstream {exc.response.status_code}"
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"Upstream {exc.response.status_code}",
             ) from exc
         except Exception as exc:
             raise HTTPException(status_code=500, detail="Streaming failure") from exc
 
         duration_ms = int((time.time() - start) * 1000)
         yield json.dumps(
-            {"chunk": "[DONE]", "used_cot": used_cot, "final": True, "duration_ms": duration_ms}
+            {
+                "chunk": "[DONE]",
+                "used_cot": used_cot,
+                "final": True,
+                "duration_ms": duration_ms,
+            }
         ) + "\n"
 
     return StreamingResponse(gen(), media_type="application/json")
-

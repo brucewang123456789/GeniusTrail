@@ -15,4 +15,3 @@ def disable_auth_for_unit_tests():
     app.dependency_overrides[verify_token] = lambda: None
     yield
     app.dependency_overrides.pop(verify_token, None)
-

@@ -1,14 +1,16 @@
 import os
 import pytest
 from httpx import ASGITransport, AsyncClient
+
 from api_server import app
 
-API_TOKEN = os.getenv("VELTRAX_API_TOKEN")
-HEADERS = {"Authorization": f"Bearer {API_TOKEN}"} if API_TOKEN else {}
+API_TOKEN = "test-token"
+os.environ["VELTRAX_API_TOKEN"] = API_TOKEN
+HEADERS = {"Authorization": f"Bearer {API_TOKEN}"}
 
 
 @pytest.mark.asyncio
-async def test_ping():
+async def test_ping() -> None:
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         resp = await client.get("/ping")
@@ -17,13 +19,14 @@ async def test_ping():
 
 
 @pytest.mark.asyncio
-async def test_chat_basic():
+async def test_chat_basic() -> None:
     payload = {"prompt": "Hello", "history": [{"role": "user", "content": "Hi"}]}
     transport = ASGITransport(app=app)
     async with AsyncClient(
         transport=transport, base_url="http://test", headers=HEADERS
     ) as client:
         resp = await client.post("/chat", json=payload)
+
     assert resp.status_code == 200
     data = resp.json()
     assert isinstance(data.get("response"), str)

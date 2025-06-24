@@ -34,7 +34,9 @@ class LLMClient:
             or not self.base_url
         )
         if self._stub_mode:
-            log.warning("LLMClient running in STUB mode – no real HTTP calls will be made")
+            log.warning(
+                "LLMClient running in STUB mode – no real HTTP calls will be made"
+            )
 
         self.headers: Dict[str, str] = {
             "Authorization": f"Bearer {settings.XAI_API_KEY or 'dummy'}",
@@ -48,13 +50,19 @@ class LLMClient:
         a deterministic stub response for test stability.
         """
         last_msg = messages[-1].get("content", "") if messages else ""
-        payload: Dict[str, Any] = {"model": self.model, "messages": messages, "stream": False} | kwargs
+        payload: Dict[str, Any] = {
+            "model": self.model,
+            "messages": messages,
+            "stream": False,
+        } | kwargs
 
         if self._stub_mode:
             return self._stub(last_msg)
 
         try:
-            resp = httpx.post(self.base_url, headers=self.headers, json=payload, timeout=30)
+            resp = httpx.post(
+                self.base_url, headers=self.headers, json=payload, timeout=30
+            )
             resp.raise_for_status()
             return cast(Dict[str, Any], resp.json())
         except Exception as exc:  # pragma: no cover
@@ -78,7 +86,9 @@ class LLMClient:
 
         try:
             async with httpx.AsyncClient(timeout=None) as client:
-                async with client.stream("POST", self.base_url, headers=self.headers, json=payload) as resp:
+                async with client.stream(
+                    "POST", self.base_url, headers=self.headers, json=payload
+                ) as resp:
                     resp.raise_for_status()
                     async for line in resp.aiter_lines():
                         if not line.startswith("data:"):
@@ -88,7 +98,11 @@ class LLMClient:
                             break
                         try:
                             obj = json.loads(raw)
-                            delta = obj.get("choices", [{}])[0].get("delta", {}).get("content")
+                            delta = (
+                                obj.get("choices", [{}])[0]
+                                .get("delta", {})
+                                .get("content")
+                            )
                             if isinstance(delta, str):
                                 yield delta
                         except Exception as exc:  # pragma: no cover
@@ -111,4 +125,3 @@ class LLMClient:
                 }
             ],
         }
-

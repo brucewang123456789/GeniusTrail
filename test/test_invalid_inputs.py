@@ -1,11 +1,16 @@
 import os
+from typing import Dict
+
 import pytest
 from fastapi.testclient import TestClient
+
 from api_server import app
 import llm_client
 
+API_TOKEN = "test-token"
+os.environ["VELTRAX_API_TOKEN"] = API_TOKEN
+
 client = TestClient(app)
-TOKEN = os.getenv("VELTRAX_API_TOKEN", "")
 
 
 @pytest.mark.parametrize(
@@ -16,34 +21,37 @@ TOKEN = os.getenv("VELTRAX_API_TOKEN", "")
         ({"prompt": "normal prompt", "history": []}, 200),
     ],
 )
-def test_empty_or_too_long_prompt(payload, expected_status):
-    headers = {"Authorization": f"Bearer {TOKEN}"} if TOKEN else {}
+def test_empty_or_too_long_prompt(
+    payload: Dict[str, str], expected_status: int
+) -> None:
+    headers = {"Authorization": f"Bearer {API_TOKEN}"}
     response = client.post("/chat", json=payload, headers=headers)
     assert response.status_code == expected_status
 
 
-def test_missing_token():
+def test_missing_token() -> None:
     response = client.post("/chat", json={"prompt": "test", "history": []})
     assert response.status_code == 401
 
 
-def test_invalid_token():
+def test_invalid_token() -> None:
     response = client.post(
         "/chat",
         json={"prompt": "test", "history": []},
         headers={"Authorization": "Bearer invalid_token"},
     )
-    assert response.status_code in (401, 403)
+    assert response.status_code == 403
 
 
-def test_upstream_timeout(monkeypatch):
-    # Patch LLMClient.chat to simulate upstream timeout/error
-    def fake_chat(self, messages):
+def test_upstream_timeout(monkeypatch) -> None:
+    """Simulate upstream timeout/error and expect 500."""
+
+    def fake_chat(self, messages):  # type: ignore[no-self-use]
         raise TimeoutError("Simulated upstream timeout")
 
     monkeypatch.setattr(llm_client.LLMClient, "chat", fake_chat)
 
-    headers = {"Authorization": f"Bearer {TOKEN}"} if TOKEN else {}
+    headers = {"Authorization": f"Bearer {API_TOKEN}"}
     response = client.post(
         "/chat", json={"prompt": "test", "history": []}, headers=headers
     )

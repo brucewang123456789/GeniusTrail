@@ -46,7 +46,9 @@ SYSTEM_PROMPT: str = os.getenv(
     ),
 )
 
-ALLOWED_ORIGINS: List[str] = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")]
+ALLOWED_ORIGINS: List[str] = [
+    o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")
+]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -60,12 +62,21 @@ client: LLMClient = LLMClient(model=MODEL_NAME)
 # ───────────────────────────────────────── metrics (prometheus) ─────────────────────────────────────────
 registry: CollectorRegistry = CollectorRegistry()
 REQ_COUNTER: Counter = Counter(
-    "http_requests_total", "Total HTTP reqs", ["path", "method", "status"], registry=registry
+    "http_requests_total",
+    "Total HTTP reqs",
+    ["path", "method", "status"],
+    registry=registry,
 )
 REQ_LATENCY: Histogram = Histogram(
-    "http_request_latency_seconds", "Request latency", ["path", "method"], registry=registry
+    "http_request_latency_seconds",
+    "Request latency",
+    ["path", "method"],
+    registry=registry,
 )
-STREAM_TOKENS: Counter = Counter("chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry)
+STREAM_TOKENS: Counter = Counter(
+    "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
+)
+
 
 # ───────────────────────────────────────── FastAPI setup ─────────────────────────────────────────
 @asynccontextmanager
@@ -75,7 +86,9 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API stopped")
 
 
-app: FastAPI = FastAPI(title="Veltraxor API", version="0.2.1", docs_url="/docs", lifespan=lifespan)
+app: FastAPI = FastAPI(
+    title="Veltraxor API", version="0.2.1", docs_url="/docs", lifespan=lifespan
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -88,11 +101,15 @@ app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 
 class _AccessLog(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: Callable[..., Awaitable[Any]]) -> Any:
+    async def dispatch(
+        self, request: Request, call_next: Callable[..., Awaitable[Any]]
+    ) -> Any:
         start = time.time()
         resp = await call_next(request)
         REQ_COUNTER.labels(request.url.path, request.method, resp.status_code).inc()
-        REQ_LATENCY.labels(request.url.path, request.method).observe(time.time() - start)
+        REQ_LATENCY.labels(request.url.path, request.method).observe(
+            time.time() - start
+        )
         log.info(
             "%s %s →%s %.1fms",
             request.method,
@@ -104,6 +121,7 @@ class _AccessLog(BaseHTTPMiddleware):
 
 
 app.add_middleware(_AccessLog)
+
 
 # ───────────────────────────────────────── models & helpers ─────────────────────────────────────────
 class ChatRequest(BaseModel):
@@ -117,7 +135,9 @@ class ChatResponse(BaseModel):
     duration_ms: int
 
 
-def _assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[str, str]]:
+def _assemble(
+    prompt: str, history: List[Dict[str, str]] | None
+) -> List[Dict[str, str]]:
     msgs: List[Dict[str, str]] = history[:] if history else []
     msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     msgs.append({"role": "user", "content": prompt})
@@ -133,13 +153,18 @@ def verify_token(request: Request) -> None:
     """
     hdr = request.headers.get("authorization")
     if not hdr:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="authorization header missing")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="authorization header missing",
+        )
 
     expected = os.getenv(API_TOKEN_ENV)
     if expected:  # strict match when configured
         token_only = hdr.removeprefix("Bearer ").removeprefix("bearer ").strip()
         if token_only != expected:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized token")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized token"
+            )
 
 
 @app.exception_handler(Exception)
@@ -164,7 +189,10 @@ async def chat(req: ChatRequest) -> ChatResponse:
             first = client.chat(messages)
             first_text = first["choices"][0]["message"]["content"]
             if first_text:
-                messages = integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text) or messages
+                messages = (
+                    integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text)
+                    or messages
+                )
     except Exception:
         used_cot = False
 
@@ -186,7 +214,10 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
                 first = client.chat(messages)
                 first_text = first["choices"][0]["message"]["content"]
                 if first_text:
-                    messages = integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text) or messages
+                    messages = (
+                        integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text)
+                        or messages
+                    )
         except Exception:
             used_cot = False
 
@@ -194,9 +225,13 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
         try:
             async for chunk in client.stream_chat(messages):
                 STREAM_TOKENS.labels(str(used_cot)).inc()
-                yield json.dumps({"chunk": chunk, "used_cot": used_cot, "final": False}) + "\n"
+                yield json.dumps(
+                    {"chunk": chunk, "used_cot": used_cot, "final": False}
+                ) + "\n"
         except httpx.HTTPStatusError as e:
-            raise HTTPException(status_code=502, detail=f"Upstream {e.response.status_code}") from e
+            raise HTTPException(
+                status_code=502, detail=f"Upstream {e.response.status_code}"
+            ) from e
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -237,7 +272,12 @@ async def _cli_loop() -> None:
             continue
         answer = raw["choices"][0]["message"]["content"]
         print(f"Bot: {answer}\n")
-        history.extend([{"role": "user", "content": user_input}, {"role": "assistant", "content": answer}])
+        history.extend(
+            [
+                {"role": "user", "content": user_input},
+                {"role": "assistant", "content": answer},
+            ]
+        )
     print("Goodbye.")
 
 
@@ -246,4 +286,3 @@ if __name__ == "__main__":
         asyncio.run(_cli_loop())
     except RuntimeError:
         asyncio.get_event_loop().run_until_complete(_cli_loop())
-
