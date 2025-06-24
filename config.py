@@ -1,3 +1,5 @@
+# config.py
+
 from functools import lru_cache
 from typing import Optional
 
@@ -12,6 +14,7 @@ class Settings(BaseSettings):
     # Veltraxor runtime options
     VELTRAX_MODEL: str = "grok-3-latest"
     VELTRAX_API_TOKEN: Optional[str] = None
+    VELTRAX_SYSTEM_PROMPT: str = ""           # ← added to satisfy integration tests
     CORS_ORIGINS: str = "*"
     PORT: int = 8000
 
@@ -34,5 +37,5 @@ def get_settings() -> Settings:
     return Settings()
 
 
-# Ready-to-use global instance
+# ready-to-use singleton
 settings = get_settings()

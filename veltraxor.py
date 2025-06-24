@@ -1,11 +1,17 @@
+# veltraxor.py
+# -*- coding: utf-8 -*-
+"""veltraxor.py — unified FastAPI service and interactive CLI."""
+
 from __future__ import annotations
 
 import json
 import logging
 import time
+import traceback                   # ← added for exception handler
 from contextlib import asynccontextmanager
 from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List
 
+import httpx                       # ← added to catch HTTPStatusError
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -39,16 +45,10 @@ client: LLMClient = LLMClient(model=MODEL_NAME)
 # ───────────────────────── metrics ──────────────────────────────
 registry: CollectorRegistry = CollectorRegistry()
 REQ_COUNTER: Counter = Counter(
-    "http_requests_total",
-    "Total HTTP reqs",
-    ["path", "method", "status"],
-    registry=registry,
+    "http_requests_total", "Total HTTP reqs", ["path", "method", "status"], registry=registry
 )
 REQ_LATENCY: Histogram = Histogram(
-    "http_request_latency_seconds",
-    "Request latency",
-    ["path", "method"],
-    registry=registry,
+    "http_request_latency_seconds", "Request latency", ["path", "method"], registry=registry
 )
 STREAM_TOKENS: Counter = Counter(
     "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
@@ -60,6 +60,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API starting")
     yield
     log.info("Veltraxor API stopped")
+
 
 app: FastAPI = FastAPI(
     title="Veltraxor API", version="0.2.0", docs_url="/docs", lifespan=lifespan
@@ -93,6 +94,7 @@ class _AccessLog(BaseHTTPMiddleware):
             (time.time() - start) * 1000,
         )
         return resp
+
 
 app.add_middleware(_AccessLog)
 
@@ -144,6 +146,7 @@ def validate_prompt(prompt: str) -> None:
 async def ping() -> dict[str, bool]:
     return {"pong": True}
 
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest, request: Request) -> ChatResponse:
     # 1) Input validation → 400
@@ -178,6 +181,7 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         used_cot=used_cot,
         duration_ms=int((time.time() - start) * 1000),
     )
+
 
 @app.post("/chat_stream")
 async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
@@ -223,6 +227,7 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
         ) + "\n"
 
     return StreamingResponse(gen(), media_type="application/json")
+
 
 # ───────────────────────── CLI helper ─────────────────────────────
 # Your existing CLI code remains unchanged below this line.

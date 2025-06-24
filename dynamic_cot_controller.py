@@ -74,7 +74,7 @@ def integrate_cot(
     system_prompt: str,
     user_question: str,
     first_reply: str,
-    max_rounds: int = 1,
+    max_rounds: int = 3,
 ) -> List[Dict[str, str]]:
     """
     Iteratively add reasoning rounds until quality gate passes.

@@ -1,3 +1,4 @@
+# test/stress/test_smoke.py
 #!/usr/bin/env python3
 """
 Lightweight smoke-test script focused on /ping stability.
@@ -10,7 +11,7 @@ Environment variables
 STRESS_BASE_URL       Base URL of the FastAPI instance (default: http://127.0.0.1:8000)
 VELTRAX_API_TOKEN     (Not used for /ping, but required by script structure)
 STRESS_CONCURRENCY    Parallel simulated users (default: 5)
-STRESS_REQUESTS_PER_USER Requests each user will issue (default: 10)
+STRESS_REQUESTS_PER_USER  Requests each user will issue (default: 10)
 STRESS_TIMEOUT        Per-request timeout in seconds (default: 60.0)
 PING_WAIT_RETRIES     How many times to retry /ping before giving up (default: 5)
 PING_WAIT_INTERVAL    Seconds between retries (default: 1.0)
@@ -41,8 +42,6 @@ TIMEOUT_SECONDS: float = float(os.getenv("STRESS_TIMEOUT", "60.0"))
 PING_WAIT_RETRIES: int = int(os.getenv("PING_WAIT_RETRIES", "5"))
 PING_WAIT_INTERVAL: float = float(os.getenv("PING_WAIT_INTERVAL", "1.0"))
 
-HEADERS = {}  # not needed for /ping
-
 # --------------------------------------------------------------------------- #
 # Request helpers
 # --------------------------------------------------------------------------- #
@@ -68,7 +67,6 @@ async def wait_for_ping() -> None:
                 last_exc = exc
                 print(f"/ping attempt {attempt} failed: {exc!r}, retrying in {PING_WAIT_INTERVAL}s")
                 await asyncio.sleep(PING_WAIT_INTERVAL)
-    # all retries failed
     print(f"Error: /ping did not succeed after {PING_WAIT_RETRIES} attempts")
     if last_exc:
         print(f"Last error: {last_exc!r}")
@@ -113,7 +111,7 @@ async def main() -> None:
     total_success = sum(s for s, _ in results)
     total_fail = sum(f for _, f in results)
 
-    print(f"\n=== Stress-smoke summary ===")
+    print("\n=== Stress-smoke summary ===")
     print(f"Base URL          : {BASE_URL}")
     print(f"Virtual users     : {CONCURRENT_USERS}")
     print(f"Requests per user : {REQUESTS_PER_USER}")
