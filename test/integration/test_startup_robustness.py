@@ -1,11 +1,10 @@
-import os
-import pytest
 from fastapi.testclient import TestClient
 
 # The FastAPI app is defined at top level in veltraxor.py
 from veltraxor import app
 
 client = TestClient(app)
+
 
 def test_ping_endpoint():
     """
@@ -15,6 +14,7 @@ def test_ping_endpoint():
     assert resp.status_code == 200
     assert resp.json() == {"pong": True}
 
+
 def test_chat_unauthorized(monkeypatch):
     """
     /chat requires token; without it should return 401.
@@ -22,6 +22,7 @@ def test_chat_unauthorized(monkeypatch):
     monkeypatch.delenv("VELTRAX_API_TOKEN", raising=False)
     resp = client.post("/chat", json={"prompt": "hi"})
     assert resp.status_code == 401
+
 
 def test_chat_authorized(monkeypatch):
     """
@@ -35,3 +36,4 @@ def test_chat_authorized(monkeypatch):
     assert "response" in body
     assert isinstance(body["duration_ms"], (int, float))
     assert body["duration_ms"] >= 0
+

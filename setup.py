@@ -6,7 +6,7 @@ setup(
     description="CLI / API chatbot with Dynamic CoT controller",
     author="YOUR_NAME",
     python_requires=">=3.9",
-    packages=find_packages(where="."),  # 仅注册 veltraxor 包
+    packages=find_packages(where="."),
     install_requires=[
         "python-dotenv>=1.0.0",
         "requests>=2.25.1",

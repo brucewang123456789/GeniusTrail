@@ -75,3 +75,9 @@ ignore = ["E203", "E501"]
 
 [tool.ruff.per-file-ignores]
 "api_server.py" = ["F401", "F841"]
+
+[tool.ruff]
+line-length = 119
+
+[tool.ruff.lint]
+extend-ignore = ["E402", "W292"]
