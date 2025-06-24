@@ -7,12 +7,27 @@ import pytest
 # Ensure project root on sys.path so veltraxor package can be found
 sys.path.insert(0, str(Path(__file__).parents[2]))
 
+# ────────────────────────────── NEW: disable auth for all integration tests ──
+from veltraxor import app, verify_token
 
+
+@pytest.fixture(autouse=True, scope="session")
+def disable_auth():
+    """
+    Globally bypass token verification during integration tests.
+    """
+    app.dependency_overrides[verify_token] = lambda: None
+    yield
+    app.dependency_overrides.pop(verify_token, None)
+
+
+# ───────────────────────────────────────── start optional services ───────────
 @pytest.fixture(scope="session", autouse=True)
 def start_services():
     """
-    In CI (or when SKIP_SERVICE_START / IN_DOCKER set), assume services provided by GitHub Actions.
-    Locally, if no skip/CI/docker flag, bring up via docker-compose.test.yml.
+    In CI (or when SKIP_SERVICE_START / IN_DOCKER set), assume services
+    are provided by GitHub Actions. Locally, if no skip/CI/docker flag,
+    bring up via docker-compose.test.yml.
     """
     skip = os.getenv("SKIP_SERVICE_START", "").lower() in {"1", "true", "yes"}
     is_ci = os.getenv("CI", "").lower() == "true" or os.getenv("GITHUB_ACTIONS", "").lower() == "true"
