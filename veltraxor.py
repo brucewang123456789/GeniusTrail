@@ -34,8 +34,7 @@ from dynamic_cot_controller import decide_cot, integrate_cot
 # ───────────────────────────────────────── config & logging ─────────────────────────────────────────
 load_dotenv()
 MODEL_NAME: str = os.getenv("VELTRAX_MODEL", "grok-3-latest")
-# NOTE: token value can be monkey-patched in tests
-API_TOKEN_ENV = "VELTRAX_API_TOKEN"  # env-var name
+API_TOKEN_ENV = "VELTRAX_API_TOKEN"
 SYSTEM_PROMPT: str = os.getenv(
     "VELTRAX_SYSTEM_PROMPT",
     (
@@ -51,7 +50,7 @@ ALLOWED_ORIGINS: List[str] = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").
 
 logging.basicConfig(
     level=logging.INFO,
-    format='{"ts":"%(asctime)s","lvl":"%(levelname)s","msg":"%(message)s"}',
+    format='{"ts":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}',
 )
 log = logging.getLogger("veltraxor")
 
@@ -76,7 +75,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API stopped")
 
 
-app: FastAPI = FastAPI(title="Veltraxor API", version="0.2.0", docs_url="/docs", lifespan=lifespan)
+app: FastAPI = FastAPI(title="Veltraxor API", version="0.2.1", docs_url="/docs", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -128,26 +127,24 @@ def _assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[st
 # ───────────────────────────────────────── auth & errors ─────────────────────────────────────────
 def verify_token(request: Request) -> None:
     """
-    • Always require *some* Authorization header.
-    • If env VELTRAX_API_TOKEN is set – header must match exactly ``Bearer <TOKEN>``
-    • If env not set        – any non-empty Authorization header is accepted.
+    • Require Authorization header.
+    • If env VELTRAX_API_TOKEN is set → header token must match (case-insensitive 'Bearer ' 可选)。
+    • If env not set → 任何非空 Authorization 头均接受。
     """
     hdr = request.headers.get("authorization")
-    expected = os.getenv(API_TOKEN_ENV)
-
-    # Require header present
     if not hdr:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="authorization header missing")
 
-    # If a specific token configured, enforce exact match
-    if expected and hdr != f"Bearer {expected}":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized token")
+    expected = os.getenv(API_TOKEN_ENV)
+    if expected:  # strict match when configured
+        token_only = hdr.removeprefix("Bearer ").removeprefix("bearer ").strip()
+        if token_only != expected:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized token")
 
 
 @app.exception_handler(Exception)
-async def everything(request: Request, exc: Exception) -> JSONResponse:
-    tb = traceback.format_exc()
-    log.error("Unhandled: %s", tb)
+async def everything(_: Request, exc: Exception) -> JSONResponse:
+    log.error("Unhandled: %s", traceback.format_exc())
     return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 
@@ -199,9 +196,9 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
                 STREAM_TOKENS.labels(str(used_cot)).inc()
                 yield json.dumps({"chunk": chunk, "used_cot": used_cot, "final": False}) + "\n"
         except httpx.HTTPStatusError as e:
-            raise HTTPException(status_code=502, detail=f"Upstream {e.response.status_code}")
+            raise HTTPException(status_code=502, detail=f"Upstream {e.response.status_code}") from e
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            raise HTTPException(status_code=500, detail=str(e)) from e
 
         yield json.dumps(
             {
@@ -217,9 +214,7 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
 
 # ───────────────────────────────────────── interactive CLI ─────────────────────────────────────────
 def _print_cli_banner() -> None:
-    print(
-        "Veltraxor interactive mode — roast begins now. Type your message (exit/quit to leave).\n"
-    )
+    print("Veltraxor interactive mode — type 'exit' to quit.\n")
 
 
 async def _cli_loop() -> None:
@@ -242,12 +237,7 @@ async def _cli_loop() -> None:
             continue
         answer = raw["choices"][0]["message"]["content"]
         print(f"Bot: {answer}\n")
-        history.extend(
-            [
-                {"role": "user", "content": user_input},
-                {"role": "assistant", "content": answer},
-            ]
-        )
+        history.extend([{"role": "user", "content": user_input}, {"role": "assistant", "content": answer}])
     print("Goodbye.")
 
 
