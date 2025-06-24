@@ -1,6 +1,6 @@
 name: Grok 3 API Exception & Failure Tests
 
-# Only trigger on the dedicated branch to isolate from main CI
+# Triggered from the main CI
 on:
   push:
     branches: [ main ]
