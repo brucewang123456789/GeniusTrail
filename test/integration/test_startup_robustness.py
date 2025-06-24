@@ -1,8 +1,4 @@
-import os
-import pytest
 from fastapi.testclient import TestClient
-
-# The FastAPI app is defined at top level in veltraxor.py
 from veltraxor import app
 
 client = TestClient(app)
