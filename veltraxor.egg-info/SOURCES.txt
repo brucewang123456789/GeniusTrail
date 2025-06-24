@@ -7,11 +7,6 @@ llm_client.py
 pyproject.toml
 setup.py
 veltraxor.py
-./api_server.py
-./config.py
-./dynamic_cot_controller.py
-./llm_client.py
-./veltraxor.py
 test/test_api.py
 test/test_api_client.py
 test/test_chat_request.py
