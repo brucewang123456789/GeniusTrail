@@ -12,3 +12,5 @@ ignore = ["E203", "E501"]
 
 [tool.mypy]
 ignore_missing_imports = true
+# Exclude test directories from type checking:
+exclude = '(^test/)|(^test\\/)'
