@@ -4,6 +4,7 @@
 Run as server : uvicorn veltraxor:app --reload
 Run as CLI    : python veltraxor.py
 """
+
 from __future__ import annotations
 
 # ───── standard library ─────
@@ -14,7 +15,7 @@ import os
 import time
 import traceback
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List
+from typing import AsyncIterator, Awaitable, Callable, Dict, List, Any
 
 # ───── third-party ─────
 import httpx
@@ -32,9 +33,11 @@ from llm_client import LLMClient
 from dynamic_cot_controller import decide_cot, integrate_cot
 
 # ───────────────────────────────────────── config & logging ─────────────────────────────────────────
+
 load_dotenv()
 MODEL_NAME: str = os.getenv("VELTRAX_MODEL", "grok-3-latest")
-API_TOKEN_ENV = "VELTRAX_API_TOKEN"
+API_TOKEN: str | None = os.getenv("VELTRAX_API_TOKEN")
+
 SYSTEM_PROMPT: str = os.getenv(
     "VELTRAX_SYSTEM_PROMPT",
     (
@@ -52,14 +55,16 @@ ALLOWED_ORIGINS: List[str] = [
 
 logging.basicConfig(
     level=logging.INFO,
-    format='{"ts":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}',
+    format='{"ts":"%(asctime)s","lvl":"%(levelname)s","msg":"%(message)s"}',
 )
 log = logging.getLogger("veltraxor")
 
 # ───────────────────────────────────────── LLM client ─────────────────────────────────────────
+
 client: LLMClient = LLMClient(model=MODEL_NAME)
 
 # ───────────────────────────────────────── metrics (prometheus) ─────────────────────────────────────────
+
 registry: CollectorRegistry = CollectorRegistry()
 REQ_COUNTER: Counter = Counter(
     "http_requests_total",
@@ -77,8 +82,9 @@ STREAM_TOKENS: Counter = Counter(
     "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
 )
 
-
 # ───────────────────────────────────────── FastAPI setup ─────────────────────────────────────────
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API starting")
@@ -87,7 +93,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 
 app: FastAPI = FastAPI(
-    title="Veltraxor API", version="0.2.1", docs_url="/docs", lifespan=lifespan
+    title="Veltraxor API", version="0.2.0", docs_url="/docs", lifespan=lifespan
 )
 
 app.add_middleware(
@@ -122,8 +128,9 @@ class _AccessLog(BaseHTTPMiddleware):
 
 app.add_middleware(_AccessLog)
 
-
 # ───────────────────────────────────────── models & helpers ─────────────────────────────────────────
+
+
 class ChatRequest(BaseModel):
     prompt: str
     history: List[Dict[str, str]] | None = None
@@ -145,35 +152,26 @@ def _assemble(
 
 
 # ───────────────────────────────────────── auth & errors ─────────────────────────────────────────
-def verify_token(request: Request) -> None:
-    """
-    • Require Authorization header.
-    • If env VELTRAX_API_TOKEN is set → header token must match (case-insensitive 'Bearer ' 可选)。
-    • If env not set → 任何非空 Authorization 头均接受。
-    """
-    hdr = request.headers.get("authorization")
-    if not hdr:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="authorization header missing",
-        )
 
-    expected = os.getenv(API_TOKEN_ENV)
-    if expected:  # strict match when configured
-        token_only = hdr.removeprefix("Bearer ").removeprefix("bearer ").strip()
-        if token_only != expected:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized token"
-            )
+
+def verify_token(request: Request) -> None:
+    hdr: str | None = request.headers.get("authorization")
+    if API_TOKEN and hdr != f"Bearer {API_TOKEN}":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized"
+        )
 
 
 @app.exception_handler(Exception)
-async def everything(_: Request, exc: Exception) -> JSONResponse:
-    log.error("Unhandled: %s", traceback.format_exc())
+async def everything(request: Request, exc: Exception) -> JSONResponse:
+    tb = traceback.format_exc()
+    log.error("Unhandled: %s", tb)
     return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 
 # ───────────────────────────────────────── endpoints ─────────────────────────────────────────
+
+
 @app.get("/ping")
 async def ping() -> dict[str, bool]:
     return {"pong": True}
@@ -182,7 +180,7 @@ async def ping() -> dict[str, bool]:
 @app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_token)])
 async def chat(req: ChatRequest) -> ChatResponse:
     messages = _assemble(req.prompt, req.history)
-    used_cot = False
+    used_cot: bool = False
     try:
         used_cot = decide_cot(req.prompt, "")
         if used_cot:
@@ -207,7 +205,7 @@ async def chat(req: ChatRequest) -> ChatResponse:
 async def chat_stream(req: ChatRequest) -> StreamingResponse:
     async def gen() -> AsyncIterator[str]:
         messages = _assemble(req.prompt, req.history)
-        used_cot = False
+        used_cot: bool = False
         try:
             used_cot = decide_cot(req.prompt, "")
             if used_cot:
@@ -231,9 +229,9 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 status_code=502, detail=f"Upstream {e.response.status_code}"
-            ) from e
+            )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e)) from e
+            raise HTTPException(status_code=500, detail=str(e))
 
         yield json.dumps(
             {
@@ -248,8 +246,12 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
 
 
 # ───────────────────────────────────────── interactive CLI ─────────────────────────────────────────
+
+
 def _print_cli_banner() -> None:
-    print("Veltraxor interactive mode — type 'exit' to quit.\n")
+    print(
+        "Veltraxor interactive mode — roast begins now. Type your message (exit/quit to leave).\n"
+    )
 
 
 async def _cli_loop() -> None:

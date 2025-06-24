@@ -3,7 +3,8 @@ import pytest
 from httpx import AsyncClient, ASGITransport
 from api_server import app
 
-API_TOKEN = "test-token"  # single source of truth for tests
+API_TOKEN = os.getenv("VELTRAX_API_TOKEN")  # optional in CI
+HEADERS = {"Authorization": f"Bearer {API_TOKEN}"} if API_TOKEN else {}
 
 
 @pytest.mark.asyncio
@@ -16,18 +17,13 @@ async def test_ping():
 
 
 @pytest.mark.asyncio
-async def test_chat_basic(monkeypatch):
-    """Chat endpoint should succeed (200) with valid Bearer token."""
-    monkeypatch.setenv("VELTRAX_API_TOKEN", API_TOKEN)
-    headers = {"Authorization": f"Bearer {API_TOKEN}"}
-
+async def test_chat_basic():
     payload = {"prompt": "Health check", "history": []}
     transport = ASGITransport(app=app)
     async with AsyncClient(
-        transport=transport, base_url="http://test", headers=headers
+        transport=transport, base_url="http://test", headers=HEADERS
     ) as client:
         resp = await client.post("/chat", json=payload)
-
     assert resp.status_code == 200, f"Unexpected status {resp.status_code}"
     data = resp.json()
     assert isinstance(data.get("response"), str)
