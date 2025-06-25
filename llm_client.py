@@ -107,7 +107,7 @@ class LLMClient:
                                     yield delta
                             except Exception as exc:
                                 log.error("Chunk parse error: %s", exc, exc_info=True)
-                return  # successful stream completed
+                return  # successful stream
             except Exception as exc:
                 log.error("stream_chat() attempt %d failed: %s", attempt + 1, exc, exc_info=True)
                 if attempt < settings.MAX_RETRIES - 1:
@@ -116,7 +116,6 @@ class LLMClient:
                     await asyncio.sleep(backoff)
                 else:
                     log.error("Max retries reached for stream_chat(); falling back to stub-stream")
-
         yield f"[stub-stream] {last_msg}"
 
     @staticmethod
