@@ -14,10 +14,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Python & install dependencies
+      # ---------- Key changes: explicitly install Python 3.11 or later ----------
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          architecture: 'x64'
+
+      - name: Create venv & install dependencies
         shell: pwsh
         run: |
-          python -m venv .venv --upgrade-deps
+          python -m venv .venv --upgrade-deps          
           .\.venv\Scripts\Activate.ps1
           pip install -r requirements.txt
 
@@ -25,13 +32,16 @@ jobs:
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
-          $Env:BASE_URL            = "http://127.0.0.1:8000"
-          $Env:VELTRAX_API_TOKEN   = "${{ secrets.VELTRAX_API_TOKEN }}"
-          $Env:MOCK_LLM            = "1"
-          # launch uvicorn using venv python so it runs in this environment
+          $Env:BASE_URL          = "http://127.0.0.1:8000"
+          $Env:VELTRAX_API_TOKEN = "${{ secrets.VELTRAX_API_TOKEN }}"
+          $Env:MOCK_LLM          = "1"
+
+          # 启动 uvicorn，显式使用 venv 中的 python.exe
           $venvPy = Join-Path $PWD '.venv\Scripts\python.exe'
-          Start-Process -FilePath $venvPy -ArgumentList "-m","uvicorn","api_server:app","--host","127.0.0.1","--port","8000","--log-level","info" -NoNewWindow
-          Start-Sleep -Seconds 10
+          Start-Process -FilePath $venvPy `
+                        -ArgumentList "-m","uvicorn","api_server:app","--host","127.0.0.1","--port","8000","--log-level","info" `
+                        -NoNewWindow
+          Start-Sleep -Seconds 10   # Wait for the service to fully start
 
       - name: Run quick cost-saving test
         shell: pwsh
