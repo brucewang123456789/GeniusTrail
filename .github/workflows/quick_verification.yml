@@ -1,45 +1,38 @@
-# .github/workflows/quick_verification.yml
 name: Quick Verification
-
-# Trigger only on push to deep-stress-test branch or manual dispatch
 on:
   push:
-    branches:
-      - 'deep-stress-test'
+    branches: [ deep-stress-test ]
   workflow_dispatch:
 
 jobs:
   quick-verification:
     runs-on: windows-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Python 3.13
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.13'
-
-      - name: Install dependencies
+      - name: Setup Python & install deps
+        shell: pwsh
         run: |
           python -m venv .venv
-          source .venv/bin/activate
+          .\.venv\Scripts\Activate.ps1
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Start API server in mock mode
+      - name: Start mock server
+        shell: pwsh
         run: |
-          source .venv/bin/activate
-          export BASE_URL="http://127.0.0.1:8000"
-          export VELTRAX_API_TOKEN="${{ secrets.VELTRAX_API_TOKEN }}"
-          export MOCK_LLM="1"
-          # Launch uvicorn in background
-          uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info &
-          sleep 5
+          .\.venv\Scripts\Activate.ps1
+          $Env:BASE_URL = "http://127.0.0.1:8000"
+          $Env:VELTRAX_API_TOKEN = "${{ secrets.VELTRAX_API_TOKEN }}"
+          $Env:MOCK_LLM = "1"
+          Start-Process python -ArgumentList "-m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info" -NoNewWindow
+          Start-Sleep -Seconds 5
 
       - name: Run quick cost-saving test
+        shell: pwsh
         run: |
-          source .venv/bin/activate
-          export COST_SAVING_TEST="1"
-          export API_TOKEN="${{ secrets.VELTRAX_API_TOKEN }}"
-          python test/deep_stress/deep_stress_test.py
+          .\.venv\Scripts\Activate.ps1
+          $Env:COST_SAVING_TEST = "1"
+          $Env:API_TOKEN = "${{ secrets.VELTRAX_API_TOKEN }}"
+          python .\test\deep_stress\deep_stress_test.py
