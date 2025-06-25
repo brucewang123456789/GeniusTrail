@@ -1,7 +1,10 @@
+# .github/workflows/quick_verification.yml
 name: Quick Verification
+
 on:
   push:
-    branches: [ deep-stress-test ]
+    branches:
+      - deep-stress-test
   workflow_dispatch:
 
 jobs:
@@ -9,7 +12,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Python & install deps
         shell: pwsh
@@ -18,15 +22,18 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pip install -r requirements.txt
 
-      - name: Start mock server
+      - name: Start mock server in background
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
           $Env:BASE_URL = "http://127.0.0.1:8000"
           $Env:VELTRAX_API_TOKEN = "${{ secrets.VELTRAX_API_TOKEN }}"
           $Env:MOCK_LLM = "1"
-          Start-Process python -ArgumentList "-m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info" -NoNewWindow
-          Start-Sleep -Seconds 5
+          # launch uvicorn as a background job
+          Start-Job -ScriptBlock {
+            python -m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info
+          }
+          Start-Sleep -Seconds 10
 
       - name: Run quick cost-saving test
         shell: pwsh
