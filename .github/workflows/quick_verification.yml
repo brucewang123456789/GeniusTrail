@@ -11,32 +11,32 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Python & install deps
+      - name: Setup Python & install dependencies
         shell: pwsh
         run: |
           python -m venv .venv --upgrade-deps
           .\.venv\Scripts\Activate.ps1
           pip install -r requirements.txt
 
-      - name: Start mock server (background)
+      - name: Start mock server in background
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
-          $Env:BASE_URL = "http://127.0.0.1:8000"
-          $Env:VELTRAX_API_TOKEN = "${{ secrets.VELTRAX_API_TOKEN }}"
-          $Env:MOCK_LLM = "1"
-          # use venv python explicitly
-          Start-Job -ScriptBlock {
-            & ".\.venv\Scripts\python.exe" -m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info
-          }
-          Start-Sleep -Seconds 10   # wait for server to be up
+          $Env:BASE_URL            = "http://127.0.0.1:8000"
+          $Env:VELTRAX_API_TOKEN   = "${{ secrets.VELTRAX_API_TOKEN }}"
+          $Env:MOCK_LLM            = "1"
+          # launch uvicorn using venv python so it runs in this environment
+          $venvPy = Join-Path $PWD '.venv\Scripts\python.exe'
+          Start-Process -FilePath $venvPy -ArgumentList "-m","uvicorn","api_server:app","--host","127.0.0.1","--port","8000","--log-level","info" -NoNewWindow
+          Start-Sleep -Seconds 10
 
       - name: Run quick cost-saving test
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
           $Env:COST_SAVING_TEST = "1"
-          $Env:API_TOKEN = "${{ secrets.VELTRAX_API_TOKEN }}"
+          $Env:API_TOKEN        = "${{ secrets.VELTRAX_API_TOKEN }}"
           python .\test\deep_stress\deep_stress_test.py
