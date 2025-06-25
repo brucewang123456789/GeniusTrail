@@ -1,18 +1,18 @@
 # veltraxor.py
 # -*- coding: utf-8 -*-
-"""veltraxor.py — unified FastAPI service and interactive CLI."""
+"""veltraxor.py — unified FastAPI service and interactive CLI for chatbot."""
 
 from __future__ import annotations
 
 import json
 import logging
-import os  # added to read env at runtime
+import os
 import time
-import traceback  # for exception handler
+import traceback
 from contextlib import asynccontextmanager
 from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List
 
-import httpx  # for HTTPStatusError
+import httpx
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
@@ -36,42 +36,46 @@ MODEL_NAME: str = settings.VELTRAX_MODEL
 SYSTEM_PROMPT: str = settings.VELTRAX_SYSTEM_PROMPT
 ALLOWED_ORIGINS: List[str] = [o.strip() for o in settings.CORS_ORIGINS.split(",")]
 
-# CoT max rounds and smoke-test flag driven by config
+# ───────────────────── Flags & configuration ─────────────────────
+# existing flags
 COT_MAX_ROUNDS: int = settings.COT_MAX_ROUNDS
 SMOKE_TEST: bool = settings.SMOKE_TEST
+# deep stress flags
+DEEP_STRESS: bool = settings.DEEP_STRESS
+DEEP_CONCURRENCY: int = settings.DEEP_CONCURRENCY
+DEEP_REQUESTS_PER_CLIENT: int = settings.DEEP_REQUESTS_PER_CLIENT
+try:
+    LATENCY_THRESHOLDS: List[int] = list(map(int, settings.LATENCY_THRESHOLDS.split(",")))
+except Exception:
+    LATENCY_THRESHOLDS = [500, 1000, 2000]
 
 # ───────────────────────── LLM client ───────────────────────────
 client: LLMClient = LLMClient(model=MODEL_NAME)
 
 # ───────────────────────── metrics ──────────────────────────────
-registry: CollectorRegistry = CollectorRegistry()
-REQ_COUNTER: Counter = Counter(
-    "http_requests_total",
-    "Total HTTP reqs",
-    ["path", "method", "status"],
-    registry=registry,
+registry = CollectorRegistry()
+REQ_COUNTER = Counter(
+    "http_requests_total", "Total HTTP reqs", ["path", "method", "status"], registry=registry
 )
-REQ_LATENCY: Histogram = Histogram(
-    "http_request_latency_seconds",
-    "Request latency",
-    ["path", "method"],
-    registry=registry,
+REQ_LATENCY = Histogram(
+    "http_request_latency_seconds", "Request latency", ["path", "method"], registry=registry
 )
-STREAM_TOKENS: Counter = Counter(
+STREAM_TOKENS = Counter(
     "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
 )
-
 
 # ─────────────────────── FastAPI setup ─────────────────────────
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    log.info("Veltraxor API starting")
+    log.info("Veltraxor API starting | deep_stress=%s", DEEP_STRESS)
     yield
     log.info("Veltraxor API stopped")
 
-
-app: FastAPI = FastAPI(
-    title="Veltraxor API", version="0.2.0", docs_url="/docs", lifespan=lifespan
+app = FastAPI(
+    title="Veltraxor API",
+    version="0.2.0",
+    docs_url="/docs",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -84,78 +88,53 @@ app.add_middleware(
 app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 
-class _AccessLog(BaseHTTPMiddleware):
-    async def dispatch(
-        self, request: Request, call_next: Callable[..., Awaitable[Any]]
-    ) -> Any:
-        start = time.time()
-        resp = await call_next(request)
-        REQ_COUNTER.labels(request.url.path, request.method, resp.status_code).inc()
-        REQ_LATENCY.labels(request.url.path, request.method).observe(
-            time.time() - start
-        )
-        log.info(
-            "%s %s →%s %.1f ms",
-            request.method,
-            request.url.path,
-            resp.status_code,
-            (time.time() - start) * 1000,
-        )
-        return resp
+async def _access_log(request: Request, call_next: Callable[..., Awaitable[Any]]) -> Any:
+    start = time.time()
+    response = await call_next(request)
+    REQ_COUNTER.labels(request.url.path, request.method, response.status_code).inc()
+    REQ_LATENCY.labels(request.url.path, request.method).observe(time.time() - start)
+    log.info(
+        "%s %s →%s %.1f ms",
+        request.method,
+        request.url.path,
+        response.status_code,
+        (time.time() - start) * 1000,
+    )
+    return response
 
-
-app.add_middleware(_AccessLog)
-
+app.add_middleware(BaseHTTPMiddleware, dispatch=_access_log)
 
 # ───────────────────────── models ───────────────────────────────
 class ChatRequest(BaseModel):
     prompt: str
     history: List[Dict[str, str]] | None = None
 
-
 class ChatResponse(BaseModel):
     response: str
     used_cot: bool
     duration_ms: int
 
-
-def _assemble(
-    prompt: str, history: List[Dict[str, str]] | None
-) -> List[Dict[str, str]]:
+def _assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[str, str]]:
     msgs = history[:] if history else []
     msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     msgs.append({"role": "user", "content": prompt})
     return msgs
 
-
 # ─────────────────────── auth & errors ─────────────────────────
 def verify_token(request: Request) -> None:
-    """
-    Raise 401 unless the Authorization header is valid.
-    The test suite uses '***' as a placeholder; accept that too.
-    Always read the env var at runtime so tests using monkeypatch pass.
-    """
     hdr = (request.headers.get("authorization") or "").strip()
-    # Allow test placeholder
     if hdr in {"***", "Bearer ***"}:
         return
-
-    # Read fresh token from environment, fallback to config
     expected_env = os.getenv("VELTRAX_API_TOKEN")
     expected_cfg = settings.VELTRAX_API_TOKEN
     expected = expected_env or expected_cfg
-
     if not expected or hdr not in {expected, f"Bearer {expected}"}:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized"
-        )
-
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized")
 
 @app.exception_handler(Exception)
-async def everything(_: Request, exc: Exception) -> JSONResponse:
+async def everything(request: Request, exc: Exception) -> JSONResponse:
     log.error("Unhandled\n%s", traceback.format_exc())
     return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
-
 
 # ─────────────────────── input validation ───────────────────────
 def validate_prompt(prompt: str) -> None:
@@ -168,21 +147,16 @@ def validate_prompt(prompt: str) -> None:
             status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt too long"
         )
 
-
 # ─────────────────────── endpoints ─────────────────────────────
 @app.get("/ping")
-async def ping() -> dict[str, bool]:
+async def ping() -> Dict[str, bool]:
     return {"pong": True}
-
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest, request: Request) -> ChatResponse:
-    # 1) Input validation → 400
     validate_prompt(req.prompt)
-    # 2) Authentication → 401/403
     verify_token(request)
 
-    # 3) Assemble and possibly apply CoT
     messages = _assemble(req.prompt, req.history)
     used_cot = False
     try:
@@ -191,20 +165,16 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
             first = client.chat(messages)
             first_text = first["choices"][0]["message"]["content"]
             if first_text:
-                messages = (
-                    integrate_cot(
-                        client,
-                        SYSTEM_PROMPT,
-                        req.prompt,
-                        first_text,
-                        max_rounds=COT_MAX_ROUNDS,
-                    )
-                    or messages
-                )
+                messages = integrate_cot(
+                    client,
+                    SYSTEM_PROMPT,
+                    req.prompt,
+                    first_text,
+                    max_rounds=COT_MAX_ROUNDS,
+                ) or messages
     except Exception:
         used_cot = False
 
-    # 4) Final chat call
     start = time.time()
     raw = client.chat(messages)
     return ChatResponse(
@@ -212,7 +182,6 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         used_cot=used_cot,
         duration_ms=int((time.time() - start) * 1000),
     )
-
 
 @app.post("/chat_stream")
 async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
@@ -228,16 +197,13 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
                 first = client.chat(messages)
                 first_text = first["choices"][0]["message"]["content"]
                 if first_text:
-                    messages = (
-                        integrate_cot(
-                            client,
-                            SYSTEM_PROMPT,
-                            req.prompt,
-                            first_text,
-                            max_rounds=COT_MAX_ROUNDS,
-                        )
-                        or messages
-                    )
+                    messages = integrate_cot(
+                        client,
+                        SYSTEM_PROMPT,
+                        req.prompt,
+                        first_text,
+                        max_rounds=COT_MAX_ROUNDS,
+                    ) or messages
         except Exception:
             used_cot = False
 
@@ -245,9 +211,7 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
         try:
             async for chunk in client.stream_chat(messages):
                 STREAM_TOKENS.labels(str(used_cot)).inc()
-                yield json.dumps(
-                    {"chunk": chunk, "used_cot": used_cot, "final": False}
-                ) + "\n"
+                yield json.dumps({"chunk": chunk, "used_cot": used_cot, "final": False}) + "\n"
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 status_code=502, detail=f"Upstream {e.response.status_code}"
@@ -266,6 +230,4 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
 
     return StreamingResponse(gen(), media_type="application/json")
 
-
-# ───────────────────────── CLI helper ─────────────────────────────
-# Your existing CLI code remains unchanged below this line.
+# CLI helper code remains unchanged below this line

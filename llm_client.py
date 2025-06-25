@@ -1,5 +1,3 @@
-# llm_client.py — wrapper around an external Chat-Completion endpoint
-
 from __future__ import annotations
 
 import json
@@ -11,13 +9,12 @@ from typing import Any, AsyncIterator, Dict, List, cast
 import httpx
 from config import settings
 
-LOG_FORMAT: str = '{"ts":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}'
+LOG_FORMAT = '{"ts":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}'
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
-log: logging.Logger = logging.getLogger("llm-client")
-
+log = logging.getLogger("llm-client")
 
 class LLMClient:
-    """Robust chat-completion helper with CI stub."""
+    """Robust chat-completion helper with CI/mock stub."""
 
     model: str
     base_url: str
@@ -28,15 +25,15 @@ class LLMClient:
         self.model = model or settings.VELTRAX_MODEL
         self.base_url = base_url or settings.XAI_API_URL
 
+        # stub when in CI, missing key/URL, or MOCK_LLM enabled
         self._stub_mode = (
             os.getenv("CI", "false").lower() == "true"
             or not settings.XAI_API_KEY
             or not self.base_url
+            or settings.MOCK_LLM
         )
         if self._stub_mode:
-            log.warning(
-                "LLMClient running in STUB mode – no real HTTP calls will be made"
-            )
+            log.warning("LLMClient running in STUB mode – no real HTTP calls will be made")
 
         self.headers = {
             "Authorization": f"Bearer {settings.XAI_API_KEY or 'dummy'}",
@@ -44,39 +41,26 @@ class LLMClient:
         }
 
     def chat(self, messages: List[Dict[str, str]], **kwargs: Any) -> Dict[str, Any]:
-        """Send a chat request; fallback to stub on failure or in CI."""
-        last_msg: str = messages[-1].get("content", "") if messages else ""
-        payload: Dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "stream": False,
-        } | kwargs
+        """Send a chat request; fallback to stub on failure or in stub mode."""
+        last_msg = messages[-1].get("content", "") if messages else ""
+        payload = {"model": self.model, "messages": messages, "stream": False} | kwargs
         log.debug("chat payload: %s", payload)
 
         if self._stub_mode:
             return self._stub(last_msg)
 
         try:
-            response: httpx.Response = httpx.post(
-                self.base_url, headers=self.headers, json=payload, timeout=30
-            )
+            response = httpx.post(self.base_url, headers=self.headers, json=payload, timeout=30)
             response.raise_for_status()
-            # Cast the untyped JSON to our declared return type
             return cast(Dict[str, Any], response.json())
         except Exception as exc:
             log.error("chat() failed: %s – falling back to stub", exc, exc_info=True)
             return self._stub(last_msg)
 
-    async def stream_chat(
-        self, messages: List[Dict[str, str]], **kwargs: Any
-    ) -> AsyncIterator[str]:
-        """Stream chat tokens; fallback to stub on failure or in CI."""
-        last_msg: str = messages[-1].get("content", "") if messages else ""
-        payload: Dict[str, Any] = {
-            "model": self.model,
-            "messages": messages,
-            "stream": True,
-        } | kwargs
+    async def stream_chat(self, messages: List[Dict[str, str]], **kwargs: Any) -> AsyncIterator[str]:
+        """Stream chat tokens; fallback to stub if configured or on error."""
+        last_msg = messages[-1].get("content", "") if messages else ""
+        payload = {"model": self.model, "messages": messages, "stream": True} | kwargs
         log.debug("stream_chat payload: %s", payload)
 
         if self._stub_mode:
@@ -85,9 +69,7 @@ class LLMClient:
 
         try:
             async with httpx.AsyncClient(timeout=None) as client:
-                async with client.stream(
-                    "POST", self.base_url, headers=self.headers, json=payload
-                ) as resp:
+                async with client.stream("POST", self.base_url, headers=self.headers, json=payload) as resp:
                     resp.raise_for_status()
                     async for line in resp.aiter_lines():
                         if not line.startswith("data:"):
@@ -96,12 +78,8 @@ class LLMClient:
                         if raw == "[DONE]":
                             break
                         try:
-                            chunk_obj: Dict[str, Any] = json.loads(raw)
-                            delta = (
-                                chunk_obj.get("choices", [{}])[0]
-                                .get("delta", {})
-                                .get("content")
-                            )
+                            chunk_obj = json.loads(raw)
+                            delta = chunk_obj.get("choices", [{}])[0].get("delta", {}).get("content")
                             if isinstance(delta, str):
                                 yield delta
                         except Exception as exc:
