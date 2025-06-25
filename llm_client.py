@@ -1,8 +1,12 @@
+# llm_client.py
+
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
+import time
 import uuid
 from typing import Any, AsyncIterator, Dict, List, cast
 
@@ -14,7 +18,7 @@ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 log = logging.getLogger("llm-client")
 
 class LLMClient:
-    """Robust chat-completion helper with CI/mock stub."""
+    """Robust chat-completion helper with CI/mock stub and retry logic."""
 
     model: str
     base_url: str
@@ -41,7 +45,9 @@ class LLMClient:
         }
 
     def chat(self, messages: List[Dict[str, str]], **kwargs: Any) -> Dict[str, Any]:
-        """Send a chat request; fallback to stub on failure or in stub mode."""
+        """
+        Send a chat request; retry on failure up to MAX_RETRIES, then fallback to stub.
+        """
         last_msg = messages[-1].get("content", "") if messages else ""
         payload = {"model": self.model, "messages": messages, "stream": False} | kwargs
         log.debug("chat payload: %s", payload)
@@ -49,16 +55,30 @@ class LLMClient:
         if self._stub_mode:
             return self._stub(last_msg)
 
-        try:
-            response = httpx.post(self.base_url, headers=self.headers, json=payload, timeout=30)
-            response.raise_for_status()
-            return cast(Dict[str, Any], response.json())
-        except Exception as exc:
-            log.error("chat() failed: %s – falling back to stub", exc, exc_info=True)
-            return self._stub(last_msg)
+        for attempt in range(settings.MAX_RETRIES):
+            try:
+                response = httpx.post(
+                    self.base_url,
+                    headers=self.headers,
+                    json=payload,
+                    timeout=settings.CHAT_TIMEOUT,
+                )
+                response.raise_for_status()
+                return cast(Dict[str, Any], response.json())
+            except Exception as exc:
+                log.error("chat() attempt %d failed: %s", attempt + 1, exc, exc_info=True)
+                if attempt < settings.MAX_RETRIES - 1:
+                    backoff = settings.BACKOFF_FACTOR * (2 ** attempt)
+                    log.info("Retrying chat() after %.2f seconds...", backoff)
+                    time.sleep(backoff)
+                else:
+                    log.error("Max retries reached for chat(); falling back to stub")
+        return self._stub(last_msg)
 
     async def stream_chat(self, messages: List[Dict[str, str]], **kwargs: Any) -> AsyncIterator[str]:
-        """Stream chat tokens; fallback to stub if configured or on error."""
+        """
+        Stream chat tokens; retry on error up to MAX_RETRIES, then fallback to stub-stream.
+        """
         last_msg = messages[-1].get("content", "") if messages else ""
         payload = {"model": self.model, "messages": messages, "stream": True} | kwargs
         log.debug("stream_chat payload: %s", payload)
@@ -67,26 +87,37 @@ class LLMClient:
             yield f"[stub-stream] {last_msg}"
             return
 
-        try:
-            async with httpx.AsyncClient(timeout=None) as client:
-                async with client.stream("POST", self.base_url, headers=self.headers, json=payload) as resp:
-                    resp.raise_for_status()
-                    async for line in resp.aiter_lines():
-                        if not line.startswith("data:"):
-                            continue
-                        raw = line[5:].strip()
-                        if raw == "[DONE]":
-                            break
-                        try:
-                            chunk_obj = json.loads(raw)
-                            delta = chunk_obj.get("choices", [{}])[0].get("delta", {}).get("content")
-                            if isinstance(delta, str):
-                                yield delta
-                        except Exception as exc:
-                            log.error("Chunk parse error: %s", exc, exc_info=True)
-        except Exception as exc:
-            log.error("stream_chat() failed: %s – fallback stub", exc, exc_info=True)
-            yield f"[stub-stream] {last_msg}"
+        for attempt in range(settings.MAX_RETRIES):
+            try:
+                async with httpx.AsyncClient(timeout=None) as client:
+                    async with client.stream(
+                        "POST", self.base_url, headers=self.headers, json=payload
+                    ) as resp:
+                        resp.raise_for_status()
+                        async for line in resp.aiter_lines():
+                            if not line.startswith("data:"):
+                                continue
+                            raw = line[5:].strip()
+                            if raw == "[DONE]":
+                                return
+                            try:
+                                chunk_obj = json.loads(raw)
+                                delta = chunk_obj.get("choices", [{}])[0].get("delta", {}).get("content")
+                                if isinstance(delta, str):
+                                    yield delta
+                            except Exception as exc:
+                                log.error("Chunk parse error: %s", exc, exc_info=True)
+                return  # successful stream completed
+            except Exception as exc:
+                log.error("stream_chat() attempt %d failed: %s", attempt + 1, exc, exc_info=True)
+                if attempt < settings.MAX_RETRIES - 1:
+                    backoff = settings.BACKOFF_FACTOR * (2 ** attempt)
+                    log.info("Retrying stream_chat() after %.2f seconds...", backoff)
+                    await asyncio.sleep(backoff)
+                else:
+                    log.error("Max retries reached for stream_chat(); falling back to stub-stream")
+
+        yield f"[stub-stream] {last_msg}"
 
     @staticmethod
     def _stub(text: str) -> Dict[str, Any]:

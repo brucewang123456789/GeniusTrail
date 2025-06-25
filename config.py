@@ -1,3 +1,5 @@
+# config.py
+
 from functools import lru_cache
 from typing import Optional
 
@@ -30,6 +32,10 @@ class Settings(BaseSettings):
     # Cost-saving and mock flags
     COST_SAVING_TEST: bool = False    # Quick 3×ping/chat mode
     MOCK_LLM: bool = False            # Local stub mode for LLMClient
+
+    # Retry configuration
+    MAX_RETRIES: int = 2
+    BACKOFF_FACTOR: float = 0.5
 
     model_config = SettingsConfigDict(
         env_file=".env",
