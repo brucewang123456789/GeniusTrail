@@ -5,6 +5,7 @@ from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
     # External X-AI service
     XAI_API_KEY: Optional[str] = None
@@ -30,8 +31,8 @@ class Settings(BaseSettings):
     LATENCY_THRESHOLDS: str = "500,1000,2000"
 
     # Cost-saving and mock flags
-    COST_SAVING_TEST: bool = False    # Quick 3×ping/chat mode
-    MOCK_LLM: bool = False            # Local stub mode for LLMClient
+    COST_SAVING_TEST: bool = False  # Quick 3×ping/chat mode
+    MOCK_LLM: bool = False  # Local stub mode for LLMClient
 
     # Retry configuration
     MAX_RETRIES: int = 2
@@ -43,8 +44,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
 
 settings = get_settings()

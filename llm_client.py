@@ -17,6 +17,7 @@ LOG_FORMAT = '{"ts":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}'
 logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
 log = logging.getLogger("llm-client")
 
+
 class LLMClient:
     """Robust chat-completion helper with CI/mock stub and retry logic."""
 
@@ -37,7 +38,9 @@ class LLMClient:
             or settings.MOCK_LLM
         )
         if self._stub_mode:
-            log.warning("LLMClient running in STUB mode – no real HTTP calls will be made")
+            log.warning(
+                "LLMClient running in STUB mode – no real HTTP calls will be made"
+            )
 
         self.headers = {
             "Authorization": f"Bearer {settings.XAI_API_KEY or 'dummy'}",
@@ -66,16 +69,20 @@ class LLMClient:
                 response.raise_for_status()
                 return cast(Dict[str, Any], response.json())
             except Exception as exc:
-                log.error("chat() attempt %d failed: %s", attempt + 1, exc, exc_info=True)
+                log.error(
+                    "chat() attempt %d failed: %s", attempt + 1, exc, exc_info=True
+                )
                 if attempt < settings.MAX_RETRIES - 1:
-                    backoff = settings.BACKOFF_FACTOR * (2 ** attempt)
+                    backoff = settings.BACKOFF_FACTOR * (2**attempt)
                     log.info("Retrying chat() after %.2f seconds...", backoff)
                     time.sleep(backoff)
                 else:
                     log.error("Max retries reached for chat(); falling back to stub")
         return self._stub(last_msg)
 
-    async def stream_chat(self, messages: List[Dict[str, str]], **kwargs: Any) -> AsyncIterator[str]:
+    async def stream_chat(
+        self, messages: List[Dict[str, str]], **kwargs: Any
+    ) -> AsyncIterator[str]:
         """
         Stream chat tokens; retry on error up to MAX_RETRIES, then fallback to stub-stream.
         """
@@ -102,20 +109,31 @@ class LLMClient:
                                 return
                             try:
                                 chunk_obj = json.loads(raw)
-                                delta = chunk_obj.get("choices", [{}])[0].get("delta", {}).get("content")
+                                delta = (
+                                    chunk_obj.get("choices", [{}])[0]
+                                    .get("delta", {})
+                                    .get("content")
+                                )
                                 if isinstance(delta, str):
                                     yield delta
                             except Exception as exc:
                                 log.error("Chunk parse error: %s", exc, exc_info=True)
                 return  # successful stream
             except Exception as exc:
-                log.error("stream_chat() attempt %d failed: %s", attempt + 1, exc, exc_info=True)
+                log.error(
+                    "stream_chat() attempt %d failed: %s",
+                    attempt + 1,
+                    exc,
+                    exc_info=True,
+                )
                 if attempt < settings.MAX_RETRIES - 1:
-                    backoff = settings.BACKOFF_FACTOR * (2 ** attempt)
+                    backoff = settings.BACKOFF_FACTOR * (2**attempt)
                     log.info("Retrying stream_chat() after %.2f seconds...", backoff)
                     await asyncio.sleep(backoff)
                 else:
-                    log.error("Max retries reached for stream_chat(); falling back to stub-stream")
+                    log.error(
+                        "Max retries reached for stream_chat(); falling back to stub-stream"
+                    )
         yield f"[stub-stream] {last_msg}"
 
     @staticmethod
