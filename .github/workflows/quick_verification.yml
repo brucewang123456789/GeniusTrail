@@ -9,12 +9,17 @@ on:
 jobs:
   quick-verification:
     runs-on: windows-latest
+    defaults:
+      run:
+        # Set working directory to the inner project folder where api_server.py lives
+        working-directory: GeniusTrail
+
     env:
-      PYTHONUTF8: "1"
-      BASE_URL: "http://127.0.0.1:8000"
+      PYTHONUTF8: '1'
+      BASE_URL: 'http://127.0.0.1:8000'
       VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
-      MOCK_LLM: "1"
-      COST_SAVING_TEST: "1"
+      MOCK_LLM: '1'
+      COST_SAVING_TEST: '1'
       API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
 
     steps:
@@ -27,29 +32,31 @@ jobs:
           python-version: '3.13'
           architecture: 'x64'
 
-      - name: Create virtual environment & install packages
+      - name: Initialize virtual environment and install dependencies
         shell: pwsh
         run: |
-          python -m venv .venv --upgrade-deps
+          python -m venv .venv
           .\.venv\Scripts\Activate.ps1
           pip install --upgrade pip
-          pip install prometheus_client
-          pip install httpx
-          pip install fastapi
-          pip install uvicorn
+          pip install httpx uvicorn fastapi prometheus_client
           pip install -r requirements.txt
 
-      - name: Start API server in background
+      - name: Launch Uvicorn server in background
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
+          # Start the server using the venv python and redirect logs for debugging
           Start-Process -FilePath .\.venv\Scripts\python.exe `
                         -ArgumentList "-m","uvicorn","api_server:app","--host","127.0.0.1","--port","8000","--log-level","info" `
-                        -NoNewWindow
-          Start-Sleep -Seconds 10
+                        -RedirectStandardOutput uvicorn.log -RedirectStandardError uvicorn.log `
+                        -WindowStyle Hidden -PassThru | Out-Null
+          # Wait for the server to fully start
+          Start-Sleep -Seconds 8
+          # Output server logs to verify startup
+          Get-Content uvicorn.log
 
       - name: Run quick cost-saving test
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
-          python .\test\deep_stress\deep_stress_test.py
+          python .\test\deep_stress\deep_stress_test.py --quick
