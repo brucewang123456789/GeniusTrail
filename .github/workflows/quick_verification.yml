@@ -12,11 +12,11 @@ jobs:
 
     # 全局环境变量，跨 step 保持一致
     env:
-      BASE_URL: "http://127.0.0.1:8000"
+      BASE_URL:       "http://127.0.0.1:8000"
       VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
-      MOCK_LLM: "1"
+      MOCK_LLM:       "1"
       COST_SAVING_TEST: "1"
-      API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
+      API_TOKEN:      ${{ secrets.VELTRAX_API_TOKEN }}
 
     steps:
       - name: Checkout repository
@@ -31,22 +31,27 @@ jobs:
       - name: Create venv & install dependencies
         shell: pwsh
         run: |
+          cd ${{ github.workspace }}
           python -m venv .venv --upgrade-deps
           .\.venv\Scripts\Activate.ps1
           pip install -r requirements.txt
 
-      - name: Start mock server (background)
+      - name: Start mock server in background
         shell: pwsh
         run: |
+          cd ${{ github.workspace }}
           .\.venv\Scripts\Activate.ps1
-          # 用 venv 中的 python 启动 uvicorn
-          Start-Process -FilePath ".\.venv\Scripts\python.exe" `
-                        -ArgumentList "-m","uvicorn","api_server:app","--host","127.0.0.1","--port","8000","--log-level","info" `
-                        -NoNewWindow
+          # Start Uvicorn in the background
+          Start-Job -ScriptBlock {
+            & .\.venv\Scripts\python.exe -m uvicorn api_server:app `
+              --host 127.0.0.1 --port 8000 --log-level info
+          }
+          # Waiting for the service to be fully ready
           Start-Sleep -Seconds 10
 
       - name: Run quick cost-saving test
         shell: pwsh
         run: |
+          cd ${{ github.workspace }}
           .\.venv\Scripts\Activate.ps1
           python .\test\deep_stress\deep_stress_test.py
