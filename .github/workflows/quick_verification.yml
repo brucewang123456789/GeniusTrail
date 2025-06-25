@@ -14,9 +14,8 @@ jobs:
       - name: Setup Python & install deps
         shell: pwsh
         run: |
-          python -m venv .venv
+          python -m venv .venv --upgrade-deps
           .\.venv\Scripts\Activate.ps1
-          pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Start mock server
