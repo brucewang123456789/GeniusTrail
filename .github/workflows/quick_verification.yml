@@ -1,3 +1,4 @@
+# .github/workflows/quick_verification.yml
 name: Quick Verification
 
 on:
@@ -8,53 +9,47 @@ on:
 jobs:
   quick-verification:
     runs-on: windows-latest
-
     env:
-      BASE_URL:          "http://127.0.0.1:8000"
+      PYTHONUTF8: "1"
+      BASE_URL: "http://127.0.0.1:8000"
       VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
-      MOCK_LLM:          "1"
-      COST_SAVING_TEST:  "1"
-      API_TOKEN:         ${{ secrets.VELTRAX_API_TOKEN }}
+      MOCK_LLM: "1"
+      COST_SAVING_TEST: "1"
+      API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: Setup Python 3.13
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
-          architecture: "x64"
+          python-version: '3.13'
+          architecture: 'x64'
 
-      - name: Create venv & install deps
+      - name: Create virtual environment & install packages
         shell: pwsh
         run: |
-          cd ${{ github.workspace }}
           python -m venv .venv --upgrade-deps
           .\.venv\Scripts\Activate.ps1
+          pip install --upgrade pip
+          pip install prometheus_client
+          pip install httpx
+          pip install fastapi
+          pip install uvicorn
           pip install -r requirements.txt
 
-      - name: Launch Uvicorn server
+      - name: Start API server in background
         shell: pwsh
         run: |
-          cd ${{ github.workspace }}
           .\.venv\Scripts\Activate.ps1
-          # Started with Start-Process, will not exit with the current step
-          $uv = Start-Process -FilePath .\.venv\Scripts\python.exe `
-               -ArgumentList "-m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info" `
-               -NoNewWindow -PassThru
-          # Wait for the service to start
+          Start-Process -FilePath .\.venv\Scripts\python.exe `
+                        -ArgumentList "-m","uvicorn","api_server:app","--host","127.0.0.1","--port","8000","--log-level","info" `
+                        -NoNewWindow
           Start-Sleep -Seconds 10
 
       - name: Run quick cost-saving test
         shell: pwsh
         run: |
-          cd ${{ github.workspace }}
           .\.venv\Scripts\Activate.ps1
           python .\test\deep_stress\deep_stress_test.py
-
-      - name: Tear down server
-        shell: pwsh
-        run: |
-          # Stop the background Uvicorn process
-          Stop-Process -Id $uv.Id -Force
