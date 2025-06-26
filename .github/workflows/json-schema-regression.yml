@@ -1,0 +1,75 @@
+# File: .github/workflows/json-schema-regression.yml
+name: JSON Schema Regression Test
+
+on:
+  push:
+    paths:
+      - 'test/test_json_schema_regression.py'
+      - 'openapi_schema.json'
+      - 'requirements.txt'
+  pull_request:
+    paths:
+      - 'test/test_json_schema_regression.py'
+      - 'openapi_schema.json'
+      - 'requirements.txt'
+
+jobs:
+  contract-test:
+    runs-on: windows-latest
+
+    steps:
+      # 1. Checkout the repository
+      - uses: actions/checkout@v3
+
+      # 2. Setup Python 3.13.5
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13.5'
+
+      # 3. Create and activate virtual environment, install core deps
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+          pip install --upgrade pip setuptools
+          pip install -r requirements.txt
+
+      # 4. Set required environment variables
+      - name: Configure environment
+        shell: pwsh
+        run: |
+          $Env:OPENAPI_SCHEMA_PATH = "${{ github.workspace }}\openapi_schema.json"
+          $Env:API_BASE_URL        = "http://127.0.0.1:8000"
+          $Env:CHATBOT_TOKEN       = "${{ secrets.CHATBOT_TOKEN }}"
+
+      # 5. Install any extra packages needed by the service
+      - name: Install service dependencies
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pip install prometheus_client httpx fastapi
+
+      # 6. Start the API server in background
+      - name: Launch API server
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          Start-Process -NoNewWindow -FilePath .\.venv\Scripts\uvicorn.exe `
+            -ArgumentList 'api_server:app','--host','127.0.0.1','--port','8000','--reload'
+          Start-Sleep -Seconds 2
+
+      # 7. Enable cost-saving/mock mode for fast stub responses
+      - name: Enable stub mode
+        shell: pwsh
+        run: |
+          $Env:COST_SAVING_TEST = "true"
+          $Env:MOCK_LLM         = "true"
+
+      # 8. Run the JSON Schema regression test
+      - name: Run contract test
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pytest test\test_json_schema_regression.py -q
