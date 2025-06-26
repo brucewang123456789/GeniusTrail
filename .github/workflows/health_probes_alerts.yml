@@ -1,0 +1,54 @@
+# File: .github/workflows/health-probes-alerts.yml
+name: health_probes_alerts
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
+      VELTRAX_MODEL: grok-3-latest
+      VELTRAX_SYSTEM_PROMPT: ''
+      CORS_ORIGINS: '*'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13.5
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13.5
+
+      - name: Cache pip packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install fastapi uvicorn httpx python-dotenv prometheus-client starlette
+          pip install black ruff mypy pytest pytest-asyncio
+
+      - name: Check formatting with Black
+        run: black . --check
+
+      - name: Lint with Ruff
+        run: ruff check .
+
+      - name: Static type check with MyPy
+        run: mypy .
+
+      - name: Run tests
+        run: pytest --maxfail=1 --disable-warnings -q
