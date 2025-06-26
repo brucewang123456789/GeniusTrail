@@ -67,9 +67,16 @@ jobs:
           $Env:COST_SAVING_TEST = "true"
           $Env:MOCK_LLM         = "true"
 
-      # 8. Run the JSON Schema regression test
+      # 8. Check formatting with Black
+      - name: Check formatting with Black
+        shell: pwsh
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          black --check .
+
+      # 9. Run the JSON Schema regression test
       - name: Run contract test
         shell: pwsh
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest test\test_json_schema_regression.py -q
+          pytest test/test_json_schema_regression.py -q
