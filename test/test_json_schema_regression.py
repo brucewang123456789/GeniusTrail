@@ -30,10 +30,12 @@ resolver = RefResolver.from_schema(spec)
 BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 TOKEN = os.getenv("CHATBOT_TOKEN")  # as before
 
+
 @pytest.fixture(scope="session")
 def client():
     headers = {"Authorization": f"Bearer {TOKEN}"} if TOKEN else {}
     return httpx.Client(base_url=BASE_URL, headers=headers, timeout=10.0)
+
 
 def test_chat_contract(client):
     if not TOKEN:
