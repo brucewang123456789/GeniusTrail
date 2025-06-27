@@ -1,19 +1,26 @@
-# veltraxor.py
 # -*- coding: utf-8 -*-
-"""veltraxor.py — unified FastAPI service and interactive CLI."""
+"""veltraxor.py — unified FastAPI service **and** interactive CLI
+
+Run as server : uvicorn veltraxor:app --reload
+Run as CLI    : python veltraxor.py
+"""
 
 from __future__ import annotations
 
+# ───── standard library ─────
+import asyncio
 import json
 import logging
-import os  # added to read env at runtime
+import os
 import time
-import traceback  # for exception handler
+import traceback
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List
+from typing import AsyncIterator, Awaitable, Callable, Dict, List, Any
 
-import httpx  # for HTTPStatusError
-from fastapi import FastAPI, HTTPException, Request, status
+# ───── third-party ─────
+import httpx
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -21,29 +28,43 @@ from pydantic import BaseModel
 from prometheus_client import CollectorRegistry, Counter, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from config import settings
-from dynamic_cot_controller import decide_cot, integrate_cot
+# ───── local modules ─────
 from llm_client import LLMClient
+from dynamic_cot_controller import decide_cot, integrate_cot
 
-# ─────────────────────── config & logging ───────────────────────
+# ───────────────────────────────────────── config & logging ─────────────────────────────────────────
+
+load_dotenv()
+MODEL_NAME: str = os.getenv("VELTRAX_MODEL", "grok-3-latest")
+API_TOKEN: str | None = os.getenv("VELTRAX_API_TOKEN")
+
+SYSTEM_PROMPT: str = os.getenv(
+    "VELTRAX_SYSTEM_PROMPT",
+    (
+        "You are **Veltraxor**, an AI oracle whose tongue is sharper than Occam’s razor. "
+        "You roast hypocrisy like a five-star chef, sling history-class zingers à la Yuan Tengfei, "
+        "meme-level quips worthy of Elon, and bombastic one-liners in full Trumpian swagger. "
+        "Stay within PG-13—no hate speech, no profanity stronger than late-night TV. "
+        "Unless told otherwise, answer in rich sentences packed with wit, context and decisive judgment."
+    ),
+)
+
+ALLOWED_ORIGINS: List[str] = [
+    o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",")
+]
+
 logging.basicConfig(
     level=logging.INFO,
     format='{"ts":"%(asctime)s","lvl":"%(levelname)s","msg":"%(message)s"}',
 )
 log = logging.getLogger("veltraxor")
 
-MODEL_NAME: str = settings.VELTRAX_MODEL
-SYSTEM_PROMPT: str = settings.VELTRAX_SYSTEM_PROMPT
-ALLOWED_ORIGINS: List[str] = [o.strip() for o in settings.CORS_ORIGINS.split(",")]
+# ───────────────────────────────────────── LLM client ─────────────────────────────────────────
 
-# CoT max rounds and smoke-test flag driven by config
-COT_MAX_ROUNDS: int = settings.COT_MAX_ROUNDS
-SMOKE_TEST: bool = settings.SMOKE_TEST
-
-# ───────────────────────── LLM client ───────────────────────────
 client: LLMClient = LLMClient(model=MODEL_NAME)
 
-# ───────────────────────── metrics ──────────────────────────────
+# ───────────────────────────────────────── metrics (prometheus) ─────────────────────────────────────────
+
 registry: CollectorRegistry = CollectorRegistry()
 REQ_COUNTER: Counter = Counter(
     "http_requests_total",
@@ -61,8 +82,9 @@ STREAM_TOKENS: Counter = Counter(
     "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
 )
 
+# ───────────────────────────────────────── FastAPI setup ─────────────────────────────────────────
 
-# ─────────────────────── FastAPI setup ─────────────────────────
+
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API starting")
@@ -95,7 +117,7 @@ class _AccessLog(BaseHTTPMiddleware):
             time.time() - start
         )
         log.info(
-            "%s %s →%s %.1f ms",
+            "%s %s →%s %.1fms",
             request.method,
             request.url.path,
             resp.status_code,
@@ -106,8 +128,9 @@ class _AccessLog(BaseHTTPMiddleware):
 
 app.add_middleware(_AccessLog)
 
+# ───────────────────────────────────────── models & helpers ─────────────────────────────────────────
 
-# ───────────────────────── models ───────────────────────────────
+
 class ChatRequest(BaseModel):
     prompt: str
     history: List[Dict[str, str]] | None = None
@@ -122,69 +145,42 @@ class ChatResponse(BaseModel):
 def _assemble(
     prompt: str, history: List[Dict[str, str]] | None
 ) -> List[Dict[str, str]]:
-    msgs = history[:] if history else []
+    msgs: List[Dict[str, str]] = history[:] if history else []
     msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     msgs.append({"role": "user", "content": prompt})
     return msgs
 
 
-# ─────────────────────── auth & errors ─────────────────────────
+# ───────────────────────────────────────── auth & errors ─────────────────────────────────────────
+
+
 def verify_token(request: Request) -> None:
-    """
-    Raise 401 unless the Authorization header is valid.
-    The test suite uses '***' as a placeholder; accept that too.
-    Always read the env var at runtime so tests using monkeypatch pass.
-    """
-    hdr = (request.headers.get("authorization") or "").strip()
-    # Allow test placeholder
-    if hdr in {"***", "Bearer ***"}:
-        return
-
-    # Read fresh token from environment, fallback to config
-    expected_env = os.getenv("VELTRAX_API_TOKEN")
-    expected_cfg = settings.VELTRAX_API_TOKEN
-    expected = expected_env or expected_cfg
-
-    if not expected or hdr not in {expected, f"Bearer {expected}"}:
+    hdr: str | None = request.headers.get("authorization")
+    if API_TOKEN and hdr != f"Bearer {API_TOKEN}":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized"
         )
 
 
 @app.exception_handler(Exception)
-async def everything(_: Request, exc: Exception) -> JSONResponse:
-    log.error("Unhandled\n%s", traceback.format_exc())
+async def everything(request: Request, exc: Exception) -> JSONResponse:
+    tb = traceback.format_exc()
+    log.error("Unhandled: %s", tb)
     return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 
-# ─────────────────────── input validation ───────────────────────
-def validate_prompt(prompt: str) -> None:
-    if not prompt:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt must not be empty"
-        )
-    if len(prompt) > 10000:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt too long"
-        )
+# ───────────────────────────────────────── endpoints ─────────────────────────────────────────
 
 
-# ─────────────────────── endpoints ─────────────────────────────
 @app.get("/ping")
 async def ping() -> dict[str, bool]:
     return {"pong": True}
 
 
-@app.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest, request: Request) -> ChatResponse:
-    # 1) Input validation → 400
-    validate_prompt(req.prompt)
-    # 2) Authentication → 401/403
-    verify_token(request)
-
-    # 3) Assemble and possibly apply CoT
+@app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_token)])
+async def chat(req: ChatRequest) -> ChatResponse:
     messages = _assemble(req.prompt, req.history)
-    used_cot = False
+    used_cot: bool = False
     try:
         used_cot = decide_cot(req.prompt, "")
         if used_cot:
@@ -192,36 +188,24 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
             first_text = first["choices"][0]["message"]["content"]
             if first_text:
                 messages = (
-                    integrate_cot(
-                        client,
-                        SYSTEM_PROMPT,
-                        req.prompt,
-                        first_text,
-                        max_rounds=COT_MAX_ROUNDS,
-                    )
+                    integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text)
                     or messages
                 )
     except Exception:
         used_cot = False
 
-    # 4) Final chat call
     start = time.time()
     raw = client.chat(messages)
-    return ChatResponse(
-        response=raw["choices"][0]["message"]["content"],
-        used_cot=used_cot,
-        duration_ms=int((time.time() - start) * 1000),
-    )
+    duration = int((time.time() - start) * 1000)
+    text = raw["choices"][0]["message"]["content"]
+    return ChatResponse(response=text, used_cot=used_cot, duration_ms=duration)
 
 
-@app.post("/chat_stream")
-async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
-    validate_prompt(req.prompt)
-    verify_token(request)
-
+@app.post("/chat_stream", dependencies=[Depends(verify_token)])
+async def chat_stream(req: ChatRequest) -> StreamingResponse:
     async def gen() -> AsyncIterator[str]:
         messages = _assemble(req.prompt, req.history)
-        used_cot = False
+        used_cot: bool = False
         try:
             used_cot = decide_cot(req.prompt, "")
             if used_cot:
@@ -229,13 +213,7 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
                 first_text = first["choices"][0]["message"]["content"]
                 if first_text:
                     messages = (
-                        integrate_cot(
-                            client,
-                            SYSTEM_PROMPT,
-                            req.prompt,
-                            first_text,
-                            max_rounds=COT_MAX_ROUNDS,
-                        )
+                        integrate_cot(client, SYSTEM_PROMPT, req.prompt, first_text)
                         or messages
                     )
         except Exception:
@@ -251,9 +229,9 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 status_code=502, detail=f"Upstream {e.response.status_code}"
-            ) from e
+            )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e)) from e
+            raise HTTPException(status_code=500, detail=str(e))
 
         yield json.dumps(
             {
@@ -267,5 +245,46 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
     return StreamingResponse(gen(), media_type="application/json")
 
 
-# ───────────────────────── CLI helper ─────────────────────────────
-# Your existing CLI code remains unchanged below this line.
+# ───────────────────────────────────────── interactive CLI ─────────────────────────────────────────
+
+
+def _print_cli_banner() -> None:
+    print(
+        "Veltraxor interactive mode — roast begins now. Type your message (exit/quit to leave).\n"
+    )
+
+
+async def _cli_loop() -> None:
+    history: List[Dict[str, str]] = []
+    _print_cli_banner()
+    while True:
+        try:
+            user_input = input("You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if not user_input:
+            continue
+        if user_input.lower() in {"exit", "quit"}:
+            break
+        msgs = _assemble(user_input, history)
+        try:
+            raw = await asyncio.to_thread(client.chat, msgs)
+        except Exception as e:
+            print(f"LLM error: {e}")
+            continue
+        answer = raw["choices"][0]["message"]["content"]
+        print(f"Bot: {answer}\n")
+        history.extend(
+            [
+                {"role": "user", "content": user_input},
+                {"role": "assistant", "content": answer},
+            ]
+        )
+    print("Goodbye.")
+
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(_cli_loop())
+    except RuntimeError:
+        asyncio.get_event_loop().run_until_complete(_cli_loop())
