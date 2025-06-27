@@ -32,7 +32,8 @@ try:
     from locust import HttpUser, events as locust_events, task, between  # type: ignore
 except ModuleNotFoundError:
     import types
-    class HttpUser: pass
+    class HttpUser:
+        pass
     def task(_=1):
         def decorator(fn): return fn
         return decorator
