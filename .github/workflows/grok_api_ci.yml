@@ -1,0 +1,31 @@
+name: Grok API CI
+
+on:
+  push:
+    paths:
+      - 'test/**'
+      - '.github/workflows/grok_api_ci.yml'
+  pull_request:
+    paths:
+      - 'test/**'
+      - '.github/workflows/grok_api_ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install test dependencies
+        run: |
+          pip install pytest httpx respx
+
+      - name: Run static tests
+        run: pytest -v test/test_grok_api_exceptions.py

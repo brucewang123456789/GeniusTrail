@@ -1,0 +1,65 @@
+# .github/workflows/retry_throttle.yml
+name: Retry and Throttle
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13.5'  # use Python 3.13.5
+
+      - name: Create virtual environment
+        shell: pwsh
+        run: python -m venv .venv  # create .venv folder
+
+      - name: Activate virtual environment
+        shell: pwsh
+        run: .\.venv\Scripts\Activate.ps1  # enable venv
+
+      - name: Enable UTF-8 mode
+        shell: pwsh
+        run: $Env:PYTHONUTF8 = '1'  # enforce UTF-8
+
+      - name: Set VELTRAX token
+        shell: pwsh
+        run: $Env:VELTRAX_API_TOKEN = '${{ secrets.VELTRAX_API_TOKEN }}'  # set secret
+
+      - name: Upgrade pip
+        shell: pwsh
+        run: pip install --upgrade pip  # update pip
+
+      - name: Install dependencies
+        shell: pwsh
+        run: pip install -r requirements.txt  # project packages
+
+      - name: Install test libraries
+        shell: pwsh
+        run: pip install pytest respx pytest-asyncio httpx  # test tools
+
+      - name: Set XAI API key
+        shell: pwsh
+        run: $Env:XAI_API_KEY = '${{ secrets.XAI_API_KEY }}'  # set secret
+
+      - name: Disable CI stub mode
+        shell: pwsh
+        run: $Env:CI = 'false'  # ensure real mode
+
+      - name: Disable mock LLM
+        shell: pwsh
+        run: $Env:MOCK_LLM = 'false'  # disable local stub
+
+      - name: Run tests
+        shell: pwsh
+        run: pytest --maxfail=1 -q  # execute all tests

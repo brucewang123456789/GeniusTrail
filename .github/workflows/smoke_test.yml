@@ -1,0 +1,53 @@
+name: Smoke Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start FastAPI service
+        run: |
+          nohup python -m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info &
+
+      - name: Wait for /ping readiness
+        run: |
+          for i in {1..5}; do
+            if curl --fail http://127.0.0.1:8000/ping; then
+              echo "/ping is up"
+              break
+            else
+              echo "Waiting for service... ($i)"
+              sleep 1
+            fi
+          done
+
+      - name: Run smoke-test script
+        env:
+          STRESS_BASE_URL: http://127.0.0.1:8000
+          VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
+          STRESS_TIMEOUT: 60
+          PING_WAIT_RETRIES: 5
+          PING_WAIT_INTERVAL: 1
+        run: |
+          cd test/stress
+          python test_smoke.py

@@ -1,0 +1,52 @@
+# .github/workflows/deep_stress_test.yml
+name: Deep Stress Test
+
+# Trigger only on push to deep-stress-test branch or manual dispatch
+on:
+  push:
+    branches:
+      - 'deep-stress-test'
+  workflow_dispatch:
+
+jobs:
+  deep-stress-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start API server in mock mode
+        run: |
+          source .venv/bin/activate
+          export BASE_URL="http://127.0.0.1:8000"
+          export VELTRAX_API_TOKEN="${{ secrets.VELTRAX_API_TOKEN }}"
+          export MOCK_LLM="1"
+          export DEEP_STRESS="1"
+          # Launch uvicorn in background
+          uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info &
+          sleep 5
+
+      - name: Run deep stress test
+        run: |
+          source .venv/bin/activate
+          export BASE_URL="http://127.0.0.1:8000"
+          export MOCK_LLM="1"
+          export DEEP_STRESS="1"
+          export DEEP_CONCURRENCY="30"
+          export DEEP_REQUESTS_PER_CLIENT="30"
+          export LATENCY_THRESHOLDS="500,1000,15000"
+          export API_TOKEN="${{ secrets.VELTRAX_API_TOKEN }}"
+          export STRESS_TIMEOUT="60"
+          python test/deep_stress/deep_stress_test.py
