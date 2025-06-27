@@ -1,129 +1,101 @@
 """test_soak_locust.py — lightweight soak-test harness for the Chatbot service.
 
-This script is designed to be executed by Locust CLI. When imported into pytest,
-it will define dummy placeholders so that pytest collects zero actionable tests and exits 0.
+This script is launched by the Locust CLI.  When imported by pytest it falls back
+to harmless stubs so that the file is collected but skipped (exit-code 0).
 
-Requirements:
-    pip install locust>=2.25,<3
+Usage (headless):
+    python -m locust -f test/test_soak_locust.py \
+        --host=http://localhost:8000 \
+        --headless -u 10 -r 2 --run-time 15m
 
-Invocation (headless):
-    locust -f test/stress/test_soak_locust.py \
-           --host=http://localhost:8000 \
-           --headless \
-           -u 10 -r 2 --run-time 15m
+Dependencies:
+    pip install "locust>=2.25,<3" python-dotenv
 
-Environment variables:
-    REAL_CALL_FRACTION   float   fraction of real back-end calls (default=0.02)
-    TOGGLE_INTERVAL_SEC  int     mock-toggle interval in seconds (default=90)
-    MOCK_QUERY_PARAM     str     mock flag param, e.g. "mock=true" (default)
-    AUTH_HEADER          str     optional "Bearer ..." header
+Environment variables (loaded from .env):
+    REAL_CALL_FRACTION   float   fraction of non-mock calls (default 0.02)
+    TOGGLE_INTERVAL_SEC  int     toggle interval in seconds (default 90)
+    MOCK_QUERY_PARAM     str     mock trigger param (default "mock=true")
+    AUTH_HEADER          str     e.g. "Bearer real_valid_token"
 """
 
+from __future__ import annotations
 import os
 import random
 import time
 from typing import Dict, Optional
 
-# Try to import Locust; if unavailable, define dummies so pytest import passes
+from dotenv import load_dotenv
+load_dotenv()
+
+# Graceful fallback: if Locust is missing, create no-op stubs
 try:
-    from locust import HttpUser, events, task, between
+    from locust import HttpUser, events as locust_events, task, between  # type: ignore
 except ModuleNotFoundError:
-    # Dummy placeholders when running under pytest without locust installed
-    class HttpUser:
-        pass
-
-    class _DummyListener:
-        @staticmethod
-        def add_listener(fn):
-            return None
-
-    class _DummyEvents:
-        test_start = _DummyListener()
-
-    events = _DummyEvents()
-
-    def task(weight=1):  # decorator stub
-        def decorator(fn):
-            return fn
+    import types
+    class HttpUser: pass
+    def task(_=1):
+        def decorator(fn): return fn
         return decorator
+    def between(a, b): return lambda: 0
+    locust_events = types.SimpleNamespace(test_start=types.SimpleNamespace(add_listener=lambda f: None))
 
-    def between(a, b):  # stub wait_time
-        return lambda: 0
+# Config driven by environment
+REAL_FRACTION = float(os.getenv("REAL_CALL_FRACTION", "0.02"))
+TOGGLE_INTERVAL = int(os.getenv("TOGGLE_INTERVAL_SEC", "90"))
+MOCK_KV = os.getenv("MOCK_QUERY_PARAM", "mock=true")
+RAW_AUTH_HEADER = os.getenv("AUTH_HEADER")
+AUTH_HEADER = RAW_AUTH_HEADER.strip('"').strip("'") if RAW_AUTH_HEADER else ""
 
-# —— Configurable via environment variables ——
-REAL_FRACTION: float = float(os.getenv("REAL_CALL_FRACTION", "0.02"))
-TOGGLE_INTERVAL: int = int(os.getenv("TOGGLE_INTERVAL_SEC", "90"))
-MOCK_KV: str = os.getenv("MOCK_QUERY_PARAM", "mock=true")
-AUTH_HEADER: Optional[str] = os.getenv("AUTH_HEADER")
-
-# Safely parse mock key/value; fallback to default if malformed
 if "=" in MOCK_KV:
-    MOCK_KEY, MOCK_VAL = MOCK_KV.split("=", maxsplit=1)
+    MOCK_KEY, MOCK_VAL = MOCK_KV.split("=", 1)
 else:
-    MOCK_KEY, MOCK_VAL = ("mock", "true")
-
+    MOCK_KEY, MOCK_VAL = "mock", "true"
 
 def _headers() -> Dict[str, str]:
-    """Construct base HTTP headers, injecting Authorization if provided."""
     headers: Dict[str, str] = {"Content-Type": "application/json"}
     if AUTH_HEADER:
         headers["Authorization"] = AUTH_HEADER
     return headers
 
-
 class ChatUser(HttpUser):
-    """Locust User: toggles mock/live cycles and exercises /chat + /ping endpoints."""
-
     wait_time = between(0.3, 1.2)
 
     @task(3)
     def chat(self) -> None:
         now = int(time.time())
-        in_mock_window = ((now // TOGGLE_INTERVAL) % 2) == 0
-        do_real = random.random() < REAL_FRACTION
+        in_mock = ((now // TOGGLE_INTERVAL) % 2) == 0
+        real_call = random.random() < REAL_FRACTION
 
         params: Dict[str, str] = {}
-        if in_mock_window and not do_real:
+        if in_mock and not real_call:
             params[MOCK_KEY] = MOCK_VAL
 
-        payload = {"messages": [{"role": "user", "content": "Hello, world!"}]}
+        payload = {"prompt": "Hello, world!"}
 
         with self.client.post(
             "/chat", json=payload, params=params, headers=_headers(), catch_response=True
         ) as resp:
             if resp.status_code != 200:
-                resp.failure(
-                    f"unexpected status {resp.status_code} — {resp.text[:120]}"
-                )
+                resp.failure(f"unexpected status {resp.status_code} — {resp.text[:120]}")
 
     @task(1)
     def ping(self) -> None:
         self.client.get("/ping")
 
-
-@events.test_start.add_listener
-def on_test_start(environment, **_kwargs):
-    """Emit a synthetic INFO event at test start for tagging."""
-    # Only relevant under Locust; dummy events ignore this under pytest
-    environment.process_exit_code = 0
-    try:
-        users = environment.parsed_options.users
-        spawn_rate = environment.parsed_options.spawn_rate
-    except Exception:
-        users = getattr(environment.runner, "user_count", 0)
-        spawn_rate = getattr(environment.runner, "spawn_rate", 0)
-
-    info = (
-        f"Soak test started — users={users}, "
-        f"spawn_rate={spawn_rate}, real_fraction={REAL_FRACTION}, "
-        f"toggle={TOGGLE_INTERVAL}s"
+@locust_events.test_start.add_listener
+def on_test_start(environment, **_):
+    if hasattr(environment, "process_exit_code"):
+        environment.process_exit_code = 0
+    users = getattr(environment, "user_count", 0)
+    spawn = getattr(environment, "spawn_rate", 0)
+    msg = (
+        f"Soak test started — users={users}, spawn_rate={spawn}, "
+        f"real_fraction={REAL_FRACTION}, toggle_interval={TOGGLE_INTERVAL}s"
     )
-    environment.events.request_success.fire(
-        request_type="INFO", name="startup", response_time=0, response_length=len(info)
-    )
-
+    hook = getattr(environment.events, "request_success", None)
+    if hook:
+        hook.fire(request_type="INFO", name="startup", response_time=0, response_length=len(msg))
 
 def test_placeholder_skip():
-    """Dummy test to prevent pytest exit code 5; always skipped."""
     import pytest
     pytest.skip("Skipping soak load test in pytest environment", allow_module_level=False)
