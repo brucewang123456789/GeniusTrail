@@ -1,0 +1,2 @@
+# .gitattributes — enforce LF endings for source code
+*.py text eol=lf

@@ -1,0 +1,35 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trivy-scan:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy FS scan
+        uses: aquasecurity/trivy-action@0.14.0
+        with:
+          scan-type: fs
+          trivy-version: 0.31.0
+          severity: CRITICAL,HIGH
+
+  grype-scan:
+    name: Grype Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Grype scan
+        uses: anchore/scan-action@v6.1.0
+        with:
+          path: .
+          fail-build: true
