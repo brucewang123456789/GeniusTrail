@@ -1,54 +1,69 @@
-# File: .github/workflows/health-probes-alerts.yml
-name: health_probes_alerts
+# File: .github/workflows/ci-production-health-probes-alerts.yml
+name: health_probes_alerts tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
-    env:
-      VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
-      VELTRAX_MODEL: grok-3-latest
-      VELTRAX_SYSTEM_PROMPT: ''
-      CORS_ORIGINS: '*'
+    strategy:
+      matrix:
+        python-version: [3.13]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.13.5
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: 3.13.5
-
-      - name: Cache pip packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
+          python -m venv .venv
+          source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi uvicorn httpx python-dotenv prometheus-client starlette
-          pip install black ruff mypy pytest pytest-asyncio
 
-      - name: Check formatting with Black
-        run: black . --check
+      - name: Configure environment variables
+        run: |
+          echo "VELTRAX_API_TOKEN=${{ secrets.VELTRAX_API_TOKEN }}" >> $GITHUB_ENV
+          echo "VELTRAX_MODEL=${{ secrets.VELTRAX_MODEL }}" >> $GITHUB_ENV
+          echo "VELTRAX_SYSTEM_PROMPT=${{ secrets.VELTRAX_SYSTEM_PROMPT }}" >> $GITHUB_ENV
+          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> $GITHUB_ENV
 
-      - name: Lint with Ruff
-        run: ruff check .
+      - name: Run health probes tests
+        run: |
+          source .venv/bin/activate
+          pytest tests/test_health_probes.py::test_liveness_endpoint_up -q
+          pytest tests/test_health_probes.py::test_readiness_endpoint_all_dependencies_ok -q
+          pytest tests/test_health_probes.py::test_readiness_endpoint_redis_down -q
 
-      - name: Static type check with MyPy
-        run: mypy .
+      - name: Run metrics endpoint test
+        run: |
+          source .venv/bin/activate
+          pytest tests/test_metrics_endpoint.py::test_metrics_contains_core_counters -q
 
-      - name: Run tests
-        run: pytest --maxfail=1 --disable-warnings -q
+      - name: Run synthetic monitoring test
+        run: |
+          source .venv/bin/activate
+          pytest tests/test_synthetic_monitoring.py::test_synthetic_readiness_then_chat -q
+
+      - name: Run API tests
+        run: |
+          source .venv/bin/activate
+          pytest tests/test_api.py::test_chat_basic -q
+          pytest tests/test_api_client.py::test_chat_requires_auth -q
+          pytest tests/test_api_client.py::test_chat_success -q
+          pytest tests/test_chat_request.py::test_chat_basic -q
+
+      - name: Final pytest
+        run: |
+          source .venv/bin/activate
+          pytest --maxfail=1 --disable-warnings -q
