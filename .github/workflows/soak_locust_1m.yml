@@ -33,6 +33,7 @@ jobs:
       - name: Run soak test for 1 minute
         env:
           VELTRAX_API_TOKEN: real_valid_token
+          AUTH_HEADER: "Bearer real_valid_token"
         run: |
           pytest test/test_soak_locust.py -q
           python -m locust \
