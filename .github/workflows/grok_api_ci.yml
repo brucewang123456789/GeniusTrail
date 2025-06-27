@@ -1,31 +1,33 @@
-name: Grok API CI
+name: Grok 3 API Exception & Failure Tests
 
+# Triggered from the main CI
 on:
   push:
-    paths:
-      - 'test/**'
-      - '.github/workflows/grok_api_ci.yml'
+    branches: [ main ]
   pull_request:
-    paths:
-      - 'test/**'
-      - '.github/workflows/grok_api_ci.yml'
+    branches: [ main ]
 
 jobs:
-  test:
+  grok-exceptions:
     runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Python 3.13
+      - name: Set up Python 3.13
         uses: actions/setup-python@v4
         with:
           python-version: '3.13'
 
-      - name: Install test dependencies
+      - name: Install dependencies
         run: |
-          pip install pytest httpx respx
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .[dev]  # install dev dependencies including respx
 
-      - name: Run static tests
-        run: pytest -v test/test_grok_api_exceptions.py
+      - name: Run Grok API tests
+        run: pytest -q test/test_grok_api.py

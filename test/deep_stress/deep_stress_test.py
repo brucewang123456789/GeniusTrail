@@ -1,3 +1,4 @@
+# test/deep_stress/deep_stress_test.py
 """
 Deep stress test script for comprehensive load and resilience verification.
 
@@ -21,12 +22,7 @@ import httpx
 if os.getenv("COST_SAVING_TEST", "0") == "1":
     BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
     API_TOKEN = os.getenv("API_TOKEN")
-    HEADERS = (
-        {"Authorization": f"Bearer {API_TOKEN}", "Content-Type": "application/json"}
-        if API_TOKEN
-        else {}
-    )
-
+    HEADERS = {"Authorization": f"Bearer {API_TOKEN}", "Content-Type": "application/json"} if API_TOKEN else {}
     async def quick_check():
         async with httpx.AsyncClient(timeout=httpx.Timeout(60)) as client:
             for i in range(3):
@@ -60,12 +56,7 @@ DEEP_REQUESTS_PER_CLIENT = int(os.getenv("DEEP_REQUESTS_PER_CLIENT", "100"))
 STRESS_TIMEOUT = int(os.getenv("STRESS_TIMEOUT", "120"))
 
 THRESHOLDS = list(map(int, os.getenv("LATENCY_THRESHOLDS", "500,1000,2000").split(",")))
-HEADERS = (
-    {"Authorization": f"Bearer {API_TOKEN}", "Content-Type": "application/json"}
-    if API_TOKEN
-    else {}
-)
-
+HEADERS = {"Authorization": f"Bearer {API_TOKEN}", "Content-Type": "application/json"} if API_TOKEN else {}
 
 # --------------------------------------------------------------------------- #
 # Helpers
@@ -76,13 +67,11 @@ async def ping(client: httpx.AsyncClient) -> float:
     r.raise_for_status()
     return (time.perf_counter() - start) * 1000
 
-
 async def chat(client: httpx.AsyncClient, payload: dict) -> float:
     start = time.perf_counter()
     r = await client.post(f"{BASE_URL}/chat", json=payload, headers=HEADERS)
     r.raise_for_status()
     return (time.perf_counter() - start) * 1000
-
 
 async def client_task(client_id: int, errors: list[Exception]) -> list[float]:
     latencies: list[float] = []
@@ -102,7 +91,6 @@ async def client_task(client_id: int, errors: list[Exception]) -> list[float]:
                 errors.append(e)
     return latencies
 
-
 # --------------------------------------------------------------------------- #
 # Main deep stress
 # --------------------------------------------------------------------------- #
@@ -112,15 +100,11 @@ async def main() -> None:
         sys.exit(1)
 
     errors: list[Exception] = []
-    tasks = [
-        asyncio.create_task(client_task(i, errors)) for i in range(DEEP_CONCURRENCY)
-    ]
+    tasks = [asyncio.create_task(client_task(i, errors)) for i in range(DEEP_CONCURRENCY)]
     all_latencies: list[float] = []
     results = await asyncio.gather(*tasks)
-
-    # Rename ambiguous loop variable for clarity
-    for client_latencies in results:
-        all_latencies.extend(client_latencies)
+    for l in results:
+        all_latencies.extend(l)
 
     if errors:
         print("Deep stress test encountered errors.")
@@ -141,7 +125,6 @@ async def main() -> None:
 
     print("Deep stress test passed within latency thresholds.")
     sys.exit(0)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

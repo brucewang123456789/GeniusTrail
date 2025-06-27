@@ -1,5 +1,5 @@
-from __future__ import annotations
-
+# dynamic_cot_controller.py
+import os
 import re
 import logging
 from typing import Any, Dict, List, Pattern, cast
@@ -7,7 +7,8 @@ from typing import Any, Dict, List, Pattern, cast
 log: logging.Logger = logging.getLogger("cot-controller")
 
 FAST_PAT: Pattern[str] = re.compile(
-    r"\b(what\s+is|who\s+is|chemical\s+formula|capital\s+of|year\s+did)\b", re.I
+    r"\b(what\s+is|who\s+is|chemical\s+formula|capital\s+of|year\s+did)\b",
+    re.I,
 )
 DEEP_PAT: Pattern[str] = re.compile(
     r"\b(knight|knave|spy|bulb|switch|prove|logic|integer|determine|min|max)\b", re.I
@@ -24,6 +25,8 @@ COT_TEMPLATE: str = (
     "Finish with exactly one line:\n"
     '"Final answer: <concise yet savage answer>"'
 )
+
+SMOKE_TEST: bool = os.getenv("SMOKE_TEST", "0") == "1"
 
 
 def classify_question(question: str) -> str:
@@ -85,6 +88,14 @@ def integrate_cot(
     Iteratively add reasoning rounds until quality gate passes.
     Returns the full messages list.
     """
+    # If smoke test mode, skip CoT entirely
+    if SMOKE_TEST:
+        return [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_question},
+            {"role": "assistant", "content": first_reply},
+        ]
+
     messages: List[Dict[str, str]] = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_question},

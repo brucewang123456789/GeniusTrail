@@ -5,7 +5,10 @@ from typing import List, Dict, Any
 
 
 def cli_chat() -> None:
-    load_dotenv()
+    # Load .env without overriding existing environment vars
+    load_dotenv(override=False)
+
+    # Retrieve token from environment or prompt user
     token: str | None = os.getenv("VELTRAX_API_TOKEN") or os.getenv("XAI_API_KEY")
     if not token:
         token = input("Enter API token: ").strip()
@@ -14,12 +17,16 @@ def cli_chat() -> None:
             return
         os.environ["VELTRAX_API_TOKEN"] = token
 
+    # Endpoint and headers
     url: str = os.getenv("CHAT_API_URL", "http://127.0.0.1:8000/chat")
     headers: Dict[str, str] = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
     }
+
+    # Chat history and timeout configuration
     history: List[Dict[str, str]] = []
+    timeout_sec: int = int(os.getenv("CHAT_TIMEOUT", "60"))  # seconds
     print("Type message or 'exit' to quit.")
 
     while True:
@@ -37,7 +44,10 @@ def cli_chat() -> None:
         payload: Dict[str, Any] = {"prompt": user_input, "history": history}
         try:
             resp: requests.Response = requests.post(
-                url, headers=headers, json=payload, timeout=10
+                url,
+                headers=headers,
+                json=payload,
+                timeout=timeout_sec,
             )
             if resp.status_code != 200:
                 print(f"Error {resp.status_code}: {resp.text}")
@@ -46,6 +56,8 @@ def cli_chat() -> None:
             data: Dict[str, Any] = resp.json()
             answer: str = data.get("response", "")
             print("Bot:", answer)
+
+            # Update history
             history.append({"role": "user", "content": user_input})
             history.append({"role": "assistant", "content": answer})
 
