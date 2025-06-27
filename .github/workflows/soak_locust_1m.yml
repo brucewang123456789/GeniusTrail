@@ -10,6 +10,17 @@ on:
 jobs:
   soak-test:
     runs-on: ubuntu-latest
+
+    # Inject necessary token/URL/model configuration for API server and tests
+    env:
+      XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+      XAI_API_URL: ${{ secrets.XAI_API_URL }}
+      VELTRAX_MODEL: grok-3-latest
+      VELTRAX_API_TOKEN: ${{ secrets.VELTRAX_API_TOKEN }}
+      CORS_ORIGINS: '*'
+      PORT: '8000'
+      AUTH_HEADER: "Bearer ${{ secrets.VELTRAX_API_TOKEN }}"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,13 +38,12 @@ jobs:
 
       - name: Start API server
         run: |
-          nohup uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info > uvicorn.log 2>&1 &
+          nohup uvicorn api_server:app \
+            --host 127.0.0.1 --port 8000 --log-level info \
+            > uvicorn.log 2>&1 &
           sleep 5
 
       - name: Run soak test for 20 seconds
-        env:
-          VELTRAX_API_TOKEN: real_valid_token
-          AUTH_HEADER: "Bearer real_valid_token"
         run: |
           pytest test/test_soak_locust.py -q
           python -m locust \
