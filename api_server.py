@@ -8,9 +8,7 @@ import time
 import uuid
 import asyncio
 from contextlib import asynccontextmanager
-from typing import Any
-from typing import AsyncIterator, Awaitable, Callable, Dict, List, Any
-
+from typing import Any, AsyncIterator, Awaitable, Callable, Dict, List, cast
 import httpx
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
@@ -323,7 +321,8 @@ async def chat_monitor(body: dict) -> JSONResponse:
         result = llm_client.chat(msgs)
         if asyncio.iscoroutine(result):
             result = await result
-        text = result["choices"][0]["message"]["content"].strip()
+        result_dict = cast(Dict[str, Any], result)
+        text = result_dict["choices"][0]["message"]["content"].strip()
     except Exception:
         return JSONResponse(
             status_code=200,

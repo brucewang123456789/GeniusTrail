@@ -41,27 +41,27 @@ jobs:
       - name: Run health probes tests
         run: |
           source .venv/bin/activate
-          pytest tests/test_health_probes.py::test_liveness_endpoint_up -q
-          pytest tests/test_health_probes.py::test_readiness_endpoint_all_dependencies_ok -q
-          pytest tests/test_health_probes.py::test_readiness_endpoint_redis_down -q
+          pytest test/test_health_probes.py::test_liveness_endpoint_up -q
+          pytest test/test_health_probes.py::test_readiness_endpoint_all_dependencies_ok -q
+          pytest test/test_health_probes.py::test_readiness_endpoint_redis_down -q
 
       - name: Run metrics endpoint test
         run: |
           source .venv/bin/activate
-          pytest tests/test_metrics_endpoint.py::test_metrics_contains_core_counters -q
+          pytest test/test_metrics_endpoint.py::test_metrics_contains_core_counters -q
 
       - name: Run synthetic monitoring test
         run: |
           source .venv/bin/activate
-          pytest tests/test_synthetic_monitoring.py::test_synthetic_readiness_then_chat -q
+          pytest test/test_synthetic_monitoring.py::test_synthetic_readiness_then_chat -q
 
       - name: Run API tests
         run: |
           source .venv/bin/activate
-          pytest tests/test_api.py::test_chat_basic -q
-          pytest tests/test_api_client.py::test_chat_requires_auth -q
-          pytest tests/test_api_client.py::test_chat_success -q
-          pytest tests/test_chat_request.py::test_chat_basic -q
+          pytest test/test_api.py::test_chat_basic -q
+          pytest test/test_api_client.py::test_chat_requires_auth -q
+          pytest test/test_api_client.py::test_chat_success -q
+          pytest test/test_chat_request.py::test_chat_basic -q
 
       - name: Final pytest
         run: |
