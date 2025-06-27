@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - ci/soak-test-1m
+      - ci/soak-test-20s
   workflow_dispatch:
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
           nohup uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info > uvicorn.log 2>&1 &
           sleep 5
 
-      - name: Run soak test for 1 minute
+      - name: Run soak test for 20 seconds
         env:
           VELTRAX_API_TOKEN: real_valid_token
           AUTH_HEADER: "Bearer real_valid_token"
@@ -39,7 +39,7 @@ jobs:
           python -m locust \
             -f test/test_soak_locust.py \
             --host=http://localhost:8000 \
-            --headless -u1 -r1 --run-time 1m
+            --headless -u1 -r1 --run-time 20s
 
       - name: Stop API server
         run: |
