@@ -66,6 +66,7 @@ HEADERS = (
     else {}
 )
 
+
 # --------------------------------------------------------------------------- #
 # Helpers
 # --------------------------------------------------------------------------- #
@@ -112,8 +113,7 @@ async def main() -> None:
 
     errors: list[Exception] = []
     tasks = [
-        asyncio.create_task(client_task(i, errors))
-        for i in range(DEEP_CONCURRENCY)
+        asyncio.create_task(client_task(i, errors)) for i in range(DEEP_CONCURRENCY)
     ]
     all_latencies: list[float] = []
     results = await asyncio.gather(*tasks)
