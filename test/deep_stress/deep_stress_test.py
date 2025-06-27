@@ -1,4 +1,5 @@
 # test/deep_stress/deep_stress_test.py
+
 """
 Deep stress test script for comprehensive load and resilience verification.
 
@@ -23,6 +24,7 @@ if os.getenv("COST_SAVING_TEST", "0") == "1":
     BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
     API_TOKEN = os.getenv("API_TOKEN")
     HEADERS = {"Authorization": f"Bearer {API_TOKEN}", "Content-Type": "application/json"} if API_TOKEN else {}
+
     async def quick_check():
         async with httpx.AsyncClient(timeout=httpx.Timeout(60)) as client:
             for i in range(3):
@@ -103,8 +105,10 @@ async def main() -> None:
     tasks = [asyncio.create_task(client_task(i, errors)) for i in range(DEEP_CONCURRENCY)]
     all_latencies: list[float] = []
     results = await asyncio.gather(*tasks)
-    for l in results:
-        all_latencies.extend(l)
+
+    # 将每个任务返回的延迟列表依次合并
+    for latency_list in results:
+        all_latencies.extend(latency_list)
 
     if errors:
         print("Deep stress test encountered errors.")
