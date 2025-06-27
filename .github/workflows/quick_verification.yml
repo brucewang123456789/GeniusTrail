@@ -1,9 +1,8 @@
-# .github/workflows/quick_verification.yml
 name: Quick Verification
 
 on:
   push:
-    branches: [ deep-stress-test ]
+    branches: [ main, deep-stress-test ]
   workflow_dispatch:
 
 jobs:

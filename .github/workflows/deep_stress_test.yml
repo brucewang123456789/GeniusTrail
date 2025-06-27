@@ -1,10 +1,10 @@
-# .github/workflows/deep_stress_test.yml
 name: Deep Stress Test
 
-# Trigger only on push to deep-stress-test branch or manual dispatch
+# Trigger on push to main or deep-stress-test branch, or manual dispatch
 on:
   push:
     branches:
+      - 'main'
       - 'deep-stress-test'
   workflow_dispatch:
 

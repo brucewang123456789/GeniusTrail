@@ -1,13 +1,16 @@
-# File: .github/workflows/json-schema-regression.yml
 name: JSON Schema Regression Test
 
 on:
   push:
+    branches:
+      - 'main'
     paths:
       - 'test/test_json_schema_regression.py'
       - 'openapi_schema.json'
       - 'requirements.txt'
   pull_request:
+    branches:
+      - 'main'
     paths:
       - 'test/test_json_schema_regression.py'
       - 'openapi_schema.json'
