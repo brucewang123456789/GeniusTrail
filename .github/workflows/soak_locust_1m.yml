@@ -1,0 +1,45 @@
+name: Soak Test (1m)
+
+on:
+  push:
+    branches:
+      - main
+      - ci/soak-test-1m
+  workflow_dispatch:
+
+jobs:
+  soak-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install prometheus_client httpx fastapi uvicorn python-dotenv
+
+      - name: Start API server
+        run: |
+          nohup uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info > uvicorn.log 2>&1 &
+          sleep 5
+
+      - name: Run soak test for 1 minute
+        env:
+          VELTRAX_API_TOKEN: real_valid_token
+        run: |
+          pytest test/test_soak_locust.py -q
+          python -m locust \
+            -f test/test_soak_locust.py \
+            --host=http://localhost:8000 \
+            --headless -u1 -r1 --run-time 1m
+
+      - name: Stop API server
+        run: |
+          pkill -f "uvicorn api_server:app"
