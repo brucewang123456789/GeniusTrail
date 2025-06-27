@@ -1,2 +1,5 @@
-# .gitattributes — enforce LF endings for source code
+# Automatically identify text files and normalize line endings
+* text=auto
+
+# Force Python source code to use LF
 *.py text eol=lf
