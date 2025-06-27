@@ -38,9 +38,7 @@ if os.getenv("COST_SAVING_TEST", "0") == "1":
 
             payload = {"prompt": "Quick cost-saving test"}
             for i in range(3):
-                r = await client.post(
-                    f"{BASE_URL}/chat", json=payload, headers=HEADERS
-                )
+                r = await client.post(f"{BASE_URL}/chat", json=payload, headers=HEADERS)
                 print(f"[quick] chat {i}: {r.status_code}")
                 r.raise_for_status()
 
@@ -123,8 +121,7 @@ async def main() -> None:
 
     errors: list[Exception] = []
     tasks = [
-        asyncio.create_task(client_task(i, errors))
-        for i in range(DEEP_CONCURRENCY)
+        asyncio.create_task(client_task(i, errors)) for i in range(DEEP_CONCURRENCY)
     ]
     all_latencies: list[float] = []
     results = await asyncio.gather(*tasks)
