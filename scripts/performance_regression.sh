@@ -25,12 +25,10 @@ if [ -e /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device ]; then
   echo "8:0 ${WRITE_BPS:-1048576}" | sudo tee /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device >/dev/null
 fi
 
-# Run load test with hey and output JSON
+# Run load test with hey, skip the first line ("json") and output clean JSON
 echo "Running hey for ${DURATION} at ${QPS} QPS..."
-hey -z "${DURATION}" -q "${QPS}" -o json "${CHATBOT_URL}" > current_stats.json
-
-# Debugging: output hey's raw result to see what went wrong
-cat current_stats.json
+hey -z "${DURATION}" -q "${QPS}" -o json "${CHATBOT_URL}" \
+  | sed '1d' > current_stats.json
 
 # Clean up network and I/O shaping
 sudo tc qdisc del dev lo root || true
