@@ -7,8 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  setup:
-    name: Setup Environment
+  setup_and_install:
+    name: Setup & Install Dependencies
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,34 +24,35 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv .venv
-          .venv/bin/pip install --upgrade pip
-          .venv/bin/pip install -r requirements.txt
-          .venv/bin/pip install fakeredis
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install fakeredis
+    outputs:
+      python-version: ${{ matrix.python-version }}
 
   fault_injection:
     name: Fault Injection Tests
-    needs: setup
+    needs: setup_and_install
     runs-on: ubuntu-latest
     steps:
       - name: Run Fault Injection suite
-        run: .venv/bin/python -m pytest test/integration/test_fault_injection.py
+        run: python -m pytest test/integration/test_fault_injection.py
 
   dast_scan:
     name: DAST Scan Tests
-    needs: setup
+    needs: setup_and_install
     runs-on: ubuntu-latest
     steps:
       - name: Run DAST Scan suite
-        run: .venv/bin/python -m pytest test/integration/test_dast_scan.py
+        run: python -m pytest test/integration/test_dast_scan.py
 
   synthetic_monitoring:
     name: Synthetic Monitoring Tests
-    needs: setup
+    needs: setup_and_install
     runs-on: ubuntu-latest
     steps:
       - name: Run Synthetic Monitoring suite
-        run: .venv/bin/python -m pytest test/integration/test_synthetic_alerting.py
+        run: python -m pytest test/integration/test_synthetic_alerting.py
 
   upload-artifacts:
     name: Upload Integration Test Results
