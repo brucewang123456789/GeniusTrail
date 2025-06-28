@@ -1,16 +1,13 @@
 # File: .github/workflows/performance_security_gate.yml
-name: CI: Performance & Dependency Security Gate
+name: CI – Performance & Dependency Security Gate
 
 on:
+  # Manual scheduling
   workflow_dispatch:
+
+  # Triggered when a code push or pull request is made to any branch
   push:
-    branches:
-      - main
-      - master
   pull_request:
-    branches:
-      - main
-      - master
 
 jobs:
   performance_security_gate:
@@ -21,17 +18,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Go environment
+      - name: Set up Go (for hey)
         uses: actions/setup-go@v4
         with:
           go-version: '1.21'
 
-      - name: Install hey load test tool
+      - name: Install hey
         run: |
           go install github.com/rakyll/hey@latest
           echo "$HOME/go/bin" >> $GITHUB_PATH
 
-      - name: Install Semgrep scanner
+      - name: Install Semgrep
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip
