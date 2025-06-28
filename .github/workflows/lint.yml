@@ -35,7 +35,10 @@ jobs:
         run: ruff check .
 
       - name: Check Black formatting
-        run: black --check .
+        run: black --check .  # Check if code is formatted according to Black
+
+      - name: Run Black formatting (auto-fix)
+        run: black .  # Automatically fix any formatting issues
 
       - name: Run mypy type check
         run: python -m mypy .
