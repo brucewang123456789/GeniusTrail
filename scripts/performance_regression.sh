@@ -19,8 +19,11 @@ sudo docker run -d --rm --name perf-redis -p "${REDIS_PORT}":6379 "${REDIS_IMAGE
 # Introduce network latency and jitter on loopback
 sudo tc qdisc add dev lo root netem delay 180ms 40ms distribution normal
 
-# Throttle disk write throughput (cgroup v1)
-echo "8:0 ${WRITE_BPS:-1048576}" | sudo tee /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device >/dev/null
+# Skip I/O throttle test if blkio directory not found
+if [ -e /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device ]; then
+  # Throttle disk write throughput (cgroup v1)
+  echo "8:0 ${WRITE_BPS:-1048576}" | sudo tee /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device >/dev/null
+fi
 
 # Run load test with hey and output JSON
 echo "Running hey for ${DURATION} at ${QPS} QPS..."
@@ -28,8 +31,6 @@ hey -z "${DURATION}" -q "${QPS}" -o json "${CHATBOT_URL}" > current_stats.json
 
 # Clean up network and I/O shaping
 sudo tc qdisc del dev lo root || true
-[ -f /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device ] \
-  && sudo tee /sys/fs/cgroup/blkio/blkio.throttle.write_bps_device <<<"" >/dev/null || true
 
 # Stop Redis
 sudo docker stop perf-redis >/dev/null
