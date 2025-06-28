@@ -7,7 +7,7 @@ set -eo pipefail
 # Configuration (override via environment variables)
 REDIS_IMAGE="${REDIS_IMAGE:-redis:7-alpine}"
 REDIS_PORT="${REDIS_PORT:-6379}"
-CHATBOT_URL="${CHATBOT_URL:-http://127.0.0.1:8000/v1/chat/completions}"
+CHATBOT_URL="http://127.0.0.1:8000/chat"  # 更新为正确的 URL
 DURATION="${DURATION:-30s}"
 QPS="${QPS:-40}"
 BASELINE_FILE="tests/performance/baseline.json"
@@ -29,15 +29,23 @@ fi
 echo "Running hey for ${DURATION} at ${QPS} QPS..."
 hey -z "${DURATION}" -q "${QPS}" -o json "${CHATBOT_URL}" > current_stats.json
 
+# Debugging: output hey's raw result to see what went wrong
+cat current_stats.json
+
 # Clean up network and I/O shaping
 sudo tc qdisc del dev lo root || true
 
 # Stop Redis
 sudo docker stop perf-redis >/dev/null
 
-# Extract P99 latency
-CURRENT_P99=$(jq '.Latencies["99"]' current_stats.json)
-echo "Current P99: ${CURRENT_P99} ms"
+# Extract P99 latency and ensure it's valid JSON
+if jq . current_stats.json > /dev/null 2>&1; then
+  CURRENT_P99=$(jq '.Latencies["99"]' current_stats.json)
+  echo "Current P99: ${CURRENT_P99} ms"
+else
+  echo "Error: hey output is not valid JSON or is empty."
+  exit 1
+fi
 
 # If no baseline exists, save and exit success
 if [ ! -f "${BASELINE_FILE}" ]; then
