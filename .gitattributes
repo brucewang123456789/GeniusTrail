@@ -3,3 +3,6 @@
 
 # Force Python source code to use LF
 *.py text eol=lf
+
+# Force shell scripts to use LF
+*.sh text eol=lf
