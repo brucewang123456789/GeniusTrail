@@ -8,7 +8,7 @@ on:
 
 jobs:
   integration:
-    name: Backend Integration Tests
+    name: Fault Injection, DAST Scan & Synthetic Monitoring Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
