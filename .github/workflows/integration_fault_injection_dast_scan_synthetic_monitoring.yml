@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Python ${{ matrix.python-version }}
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -25,43 +25,33 @@ jobs:
       - name: Install dependencies
         run: |
           python -m venv .venv
-          source .venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install fakeredis
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r requirements.txt
+          .venv/bin/pip install fakeredis
 
   fault_injection:
     name: Fault Injection Tests
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Activate virtual environment
-        run: source .venv/bin/activate
-
       - name: Run Fault Injection suite
-        run: pytest test/integration/test_fault_injection.py
+        run: .venv/bin/python -m pytest test/integration/test_fault_injection.py
 
   dast_scan:
     name: DAST Scan Tests
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Activate virtual environment
-        run: source .venv/bin/activate
-
       - name: Run DAST Scan suite
-        run: pytest test/integration/test_dast_scan.py
+        run: .venv/bin/python -m pytest test/integration/test_dast_scan.py
 
   synthetic_monitoring:
     name: Synthetic Monitoring Tests
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Activate virtual environment
-        run: source .venv/bin/activate
-
       - name: Run Synthetic Monitoring suite
-        run: pytest test/integration/test_synthetic_alerting.py
+        run: .venv/bin/python -m pytest test/integration/test_synthetic_alerting.py
 
   upload-artifacts:
     name: Upload Integration Test Results
@@ -73,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload pytest logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-logs
           path: |
