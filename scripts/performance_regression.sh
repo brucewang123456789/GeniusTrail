@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # File: scripts/performance_regression.sh
 # Purpose: Latency Spike Simulation against local Chatbot HTTP endpoint
 
