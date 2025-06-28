@@ -1,4 +1,5 @@
 """Root-level pytest configuration with targeted Redis fallback."""
+
 from __future__ import annotations
 
 import importlib

@@ -12,8 +12,10 @@ def test_error_counter_increments_on_readiness_failure(monkeypatch):
     After a forced readiness failure, some errors counter for /readiness
     must be ≥1 in /metrics output.
     """
+
     async def fail_ping():
         raise ConnectionError("simulated Redis down")
+
     monkeypatch.setattr(redis_client, "ping", fail_ping)
 
     client.get("/readiness")
@@ -22,7 +24,7 @@ def test_error_counter_increments_on_readiness_failure(monkeypatch):
     text = resp.text
 
     # Any line with /readiness and a number ≥1
-    m = re.search(r'.*/readiness[^}\n]*\}\s*([1-9]\d*)', text)
+    m = re.search(r".*/readiness[^}\n]*\}\s*([1-9]\d*)", text)
     assert m, "No readiness error metric with count ≥1 was found"
     assert int(m.group(1)) >= 1
 
@@ -37,6 +39,6 @@ def test_request_counter_for_metrics_endpoint():
     text = resp2.text
 
     # Any line with /metrics and a number ≥2
-    m = re.search(r'.*/metrics[^}\n]*\}\s*([2-9]\d*)', text)
+    m = re.search(r".*/metrics[^}\n]*\}\s*([2-9]\d*)", text)
     assert m, "No metrics request count ≥2 was found"
     assert int(m.group(1)) >= 2

@@ -3,6 +3,7 @@ import subprocess
 import pytest
 from pathlib import Path
 
+
 @pytest.fixture(scope="session", autouse=True)
 def _default_api_token() -> None:
     """
@@ -56,6 +57,7 @@ def _inject_redis_client(monkeypatch, request):
     try:
         import redis
         from redis.exceptions import ConnectionError
+
         url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
         candidate = redis.Redis.from_url(url)
         candidate.ping()
@@ -64,15 +66,19 @@ def _inject_redis_client(monkeypatch, request):
         # Fallback to fakeredis
         try:
             import fakeredis
+
             client = fakeredis.FakeRedis()
         except ImportError:
             # Minimal in-memory fallback
             from collections import defaultdict
+
             class SimpleFakeRedis(defaultdict):
                 def ping(self):
                     return True
+
             client = SimpleFakeRedis(int)
 
     # Patch into app dependencies
     import app.dependencies as deps
+
     monkeypatch.setattr(deps, "redis_client", client, raising=False)

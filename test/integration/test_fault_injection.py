@@ -10,8 +10,10 @@ client = TestClient(app)
 
 def test_readiness_redis_failure(monkeypatch):
     """If Redis ping raises, /readiness should return 503."""
+
     async def fail_ping():
         raise ConnectionError("simulated Redis failure")
+
     monkeypatch.setattr(redis_client, "ping", fail_ping)
     resp = client.get("/readiness")
     assert resp.status_code == 503
@@ -19,8 +21,10 @@ def test_readiness_redis_failure(monkeypatch):
 
 def test_readiness_llm_failure(monkeypatch):
     """If LLM client chat raises, /readiness should return 503."""
+
     def fail_chat(*args, **kwargs):
         raise RuntimeError("simulated LLM failure")
+
     monkeypatch.setattr(llm_client, "chat", fail_chat)
     resp = client.get("/readiness")
     assert resp.status_code == 503
@@ -36,6 +40,7 @@ def test_llm_client_http_failure_stub(monkeypatch):
 
     def always_fail_post(*args, **kwargs):
         raise httpx.ConnectError("simulated connect error")
+
     monkeypatch.setattr(httpx, "post", always_fail_post)
 
     result = client_real.chat([{"role": "user", "content": "hello"}])
