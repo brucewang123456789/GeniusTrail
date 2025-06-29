@@ -197,7 +197,7 @@ async def ping() -> dict[str, bool]:
     return {"pong": True}
 
 
-@app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_token)])
+@app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest) -> ChatResponse:
     validate_prompt(req.prompt)
     used_cot: bool = False
