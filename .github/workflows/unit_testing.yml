@@ -21,20 +21,13 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
       - name: Install Python dependencies
         run: |
           python -m venv .venv
-          & .\.venv\Scripts\Activate.ps1
+          source .venv/bin/activate
 
       - name: Install Node.js dependencies
-        run: |
-          npm install
+        run: npm install
 
       - name: Run tests
-        run: |
-          npm run test
+        run: npm run test
