@@ -1,0 +1,40 @@
+name: Frontend Unit Testing
+
+on:
+  push:
+    branches:
+      - 'Front-end Testing'
+  pull_request:
+    branches:
+      - 'Front-end Testing'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          & .\.venv\Scripts\Activate.ps1
+
+      - name: Install Node.js dependencies
+        run: |
+          npm install
+
+      - name: Run tests
+        run: |
+          npm run test
