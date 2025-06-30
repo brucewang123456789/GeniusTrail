@@ -3,14 +3,14 @@ name: Component Integration Testing
 on:
   push:
     branches:
-      - frontend-testing
+      - 'frontend-testing'
   pull_request:
     branches:
-      - frontend-testing
+      - 'frontend-testing'
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
