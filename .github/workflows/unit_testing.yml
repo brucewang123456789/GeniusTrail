@@ -3,10 +3,10 @@ name: Frontend Unit Testing
 on:
   push:
     branches:
-      - 'frontend-testing'
+      - 'Frontend Testing'
   pull_request:
     branches:
-      - 'frontend-testing'
+      - 'Frontend Testing'
 
 jobs:
   test:
@@ -16,18 +16,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v2
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v2
         with:
-          python-version: '3.x'
+          node-version: '14.x'
 
-      - name: Install Python dependencies
+      - name: Install dependencies
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-
-      - name: Install Node.js dependencies
-        run: npm install
+          npm install
+          npm install vitest --save-dev
 
       - name: Run tests
-        run: npm run test
+        run: |
+          npm run test
