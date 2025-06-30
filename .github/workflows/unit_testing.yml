@@ -3,10 +3,10 @@ name: Frontend Unit Testing
 on:
   push:
     branches:
-      - 'Frontend Testing'
+      - 'frontend-testing'
   pull_request:
     branches:
-      - 'Frontend Testing'
+      - 'frontend-testing'
 
 jobs:
   test:
