@@ -1,0 +1,38 @@
+name: Button Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Create virtual environment
+        run: python -m venv .venv
+
+      - name: Activate virtual environment and install dependencies
+        run: |
+          & .\.venv\Scripts\Activate.ps1
+          npm install
+          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest msw
+        shell: pwsh
+
+      - name: Run tests
+        run: |
+          & .\.venv\Scripts\Activate.ps1
+          npx vitest run
+        shell: pwsh
