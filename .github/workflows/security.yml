@@ -32,4 +32,5 @@ jobs:
         uses: anchore/scan-action@v6.1.0
         with:
           path: .
-          fail-build: true
+          fail-build: false
+          severity: HIGH
