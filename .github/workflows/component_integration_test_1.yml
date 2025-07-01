@@ -47,6 +47,7 @@ jobs:
           npm install react react-dom
         shell: pwsh
 
-      - name: Run tests
-        run: npm test
+      - name: Run tests with detailed logs
+        run: |
+          npx vitest run --verbose
         shell: pwsh
