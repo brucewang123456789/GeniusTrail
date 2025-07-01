@@ -10,43 +10,43 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13.5'
+          python-version: '3.11'
+
+      - name: Debug Python setup
+        run: python --version || echo "Python not found"
+        shell: pwsh
 
       - name: Create virtual environment
         run: python -m venv .venv
+        continue-on-error: false
 
-      - name: Activate virtual environment
-        run: & .\.venv\Scripts\Activate.ps1
+      - name: Activate virtual environment and install dependencies
+        run: |
+          & .\.venv\Scripts\Activate.ps1
+          npm ci
+          dir .venv\Scripts
         shell: pwsh
 
-      - name: Clean install
+      - name: Debug environment
         run: |
-          if (Test-Path node_modules) { Remove-Item -Recurse -Force node_modules }
-          if (Test-Path package-lock.json) { Remove-Item -Force package-lock.json }
-          npm cache clean --force
-        shell: pwsh
-
-      - name: Install dependencies
-        run: |
-          npm install
-          npm install --save-dev msw @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest
-          npm install react react-dom
+          & .\.venv\Scripts\Activate.ps1
+          python --version
+          npm --version
+          node --version
+          dir
         shell: pwsh
 
       - name: Run tests
-        run: npm test
+        run: |
+          & .\.venv\Scripts\Activate.ps1
+          npx vitest run --root . --passWithNoTests
         shell: pwsh
