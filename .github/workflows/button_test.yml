@@ -28,11 +28,12 @@ jobs:
         run: |
           & .\.venv\Scripts\Activate.ps1
           npm ci
-          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest msw
+          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest@latest msw
+          npm install vitest@latest cac@latest
         shell: pwsh
 
-      - name: Run tests with detailed logs
+      - name: Run tests
         run: |
           & .\.venv\Scripts\Activate.ps1
-          npx vitest run --verbose
+          npx vitest run
         shell: pwsh
