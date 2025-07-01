@@ -16,24 +16,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.13.5
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.13.5'
 
       - name: Create virtual environment
         run: python -m venv .venv
+        continue-on-error: false
 
       - name: Activate virtual environment and install dependencies
         run: |
           & .\.venv\Scripts\Activate.ps1
           npm ci
-          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest@latest msw
-          npm install vitest@latest cac@latest
+          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom msw
+        shell: pwsh
+
+      - name: Debug environment
+        run: |
+          & .\.venv\Scripts\Activate.ps1
+          python --version
+          npm --version
+          node --version
         shell: pwsh
 
       - name: Run tests
         run: |
           & .\.venv\Scripts\Activate.ps1
-          npx vitest run
+          $env:PATH = "C:\Chatbot 8000\Frontend\.venv\Scripts;" + $env:PATH
+          npx vitest run --root .
         shell: pwsh

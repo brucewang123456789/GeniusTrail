@@ -10,30 +10,43 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.13.5'
 
       - name: Create virtual environment
         run: python -m venv .venv
 
-      - name: Activate virtual environment and install dependencies
+      - name: Activate virtual environment
+        run: & .\.venv\Scripts\Activate.ps1
+        shell: pwsh
+
+      - name: Clean install
         run: |
-          & .\.venv\Scripts\Activate.ps1
-          npm ci
-          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest@latest msw
-          npm install vitest@latest cac@latest
+          if (Test-Path node_modules) { Remove-Item -Recurse -Force node_modules }
+          if (Test-Path package-lock.json) { Remove-Item -Force package-lock.json }
+          npm cache clean --force
+        shell: pwsh
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install --save-dev msw @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest
+          npm install react react-dom
         shell: pwsh
 
       - name: Run tests
-        run: |
-          & .\.venv\Scripts\Activate.ps1
-          npx vitest run
+        run: npm test
         shell: pwsh
