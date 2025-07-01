@@ -27,12 +27,12 @@ jobs:
       - name: Activate virtual environment and install dependencies
         run: |
           & .\.venv\Scripts\Activate.ps1
-          npm install
+          npm ci
           npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest msw
         shell: pwsh
 
-      - name: Run tests
+      - name: Run tests with detailed logs
         run: |
           & .\.venv\Scripts\Activate.ps1
-          npx vitest run
+          npx vitest run --verbose
         shell: pwsh
