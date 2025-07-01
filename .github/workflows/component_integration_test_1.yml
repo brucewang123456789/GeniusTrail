@@ -1,4 +1,4 @@
-name: Component Integration Testing
+name: Component Testing
 
 on:
   push:
@@ -10,16 +10,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '14.x'
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,25 +24,16 @@ jobs:
       - name: Create virtual environment
         run: python -m venv .venv
 
-      - name: Activate virtual environment
-        run: & .\.venv\Scripts\Activate.ps1
+      - name: Activate virtual environment and install dependencies
+        run: |
+          & .\.venv\Scripts\Activate.ps1
+          npm ci
+          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest@latest msw
+          npm install vitest@latest cac@latest
         shell: pwsh
 
-      - name: Clean install
+      - name: Run tests
         run: |
-          if (Test-Path node_modules) { Remove-Item -Recurse -Force node_modules }
-          if (Test-Path package-lock.json) { Remove-Item -Force package-lock.json }
-          npm cache clean --force
-        shell: pwsh
-
-      - name: Install dependencies
-        run: |
-          npm install
-          npm install --save-dev msw @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest
-          npm install react react-dom
-        shell: pwsh
-
-      - name: Run tests with detailed logs
-        run: |
-          npx vitest run --verbose
+          & .\.venv\Scripts\Activate.ps1
+          npx vitest run
         shell: pwsh
