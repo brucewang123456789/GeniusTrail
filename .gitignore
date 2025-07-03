@@ -1,23 +1,33 @@
 # Environment variable files
 .env
-.env.prod
+.env.*
+Frontend/src/.env
+Frontend/src/.env.development
 
 # Virtual environments
 .venv/
 venv/
 
-# Build / packaging
+# Build artifacts
+build/
+dist/
 *.egg-info/
 
 # Python cache and bytecode
 __pycache__/
 *.pyc
 
-# Project‐specific directories (if you still need to ignore them)
-Veltraxor/
-GeniusTrail/
-
-# (Optional) IDE / Editor
+# IDE / Editor
 .vscode/
 .idea/
 *.swp
+
+# Protected backend modules (local only)
+#/api_server.py     # only ignore project-root api_server.py
+#/dynamic_cot_controller.py
+#/llm_client.py
+#/veltraxor.py
+#/veltraxor_cli_chat.py
+
+# Protected frontend component (local only)
+**/Chatbox.jsx
