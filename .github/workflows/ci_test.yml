@@ -40,6 +40,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Restore private core
+        run: |
+          echo "${{ secrets.PRIVATE_CORE_ZIP_B64 }}" > core.b64
+          base64 --decode core.b64 > PrivateCore.zip
+          unzip -o PrivateCore.zip -d core
+
       - name: Install OS packages
         run: |
           sudo apt-get update
@@ -60,9 +66,9 @@ jobs:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
+          pip install -e core[dev]
           pip install -e .[dev]
--          pip install jsonschema pydantic-settings
-+          pip install jsonschema pydantic-settings respx>=0.20.0
+          pip install jsonschema pydantic-settings respx>=0.20.0
 
       - name: Export environment variables
         run: |

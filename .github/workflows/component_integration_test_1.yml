@@ -22,31 +22,36 @@ jobs:
           python-version: '3.11'
 
       - name: Debug Python setup
-        run: python --version || echo "Python not found"
         shell: pwsh
+        run: python --version || echo "Python not found"
 
       - name: Create virtual environment
+        shell: pwsh
         run: python -m venv .venv
-        continue-on-error: false
 
-      - name: Activate virtual environment and install dependencies
-        run: |
-          & .\.venv\Scripts\Activate.ps1
-          npm ci
-          dir .venv\Scripts
+      - name: Activate venv & install front-end deps
+        working-directory: Frontend
         shell: pwsh
-
-      - name: Debug environment
         run: |
-          & .\.venv\Scripts\Activate.ps1
-          python --version
-          npm --version
+          & ${{ runner.workspace }}\.venv\Scripts\Activate.ps1
+          npm install
+
+      - name: Debug front-end env
+        working-directory: Frontend
+        shell: pwsh
+        run: |
+          & ${{ runner.workspace }}\.venv\Scripts\Activate.ps1
           node --version
+          npm --version
           dir
-        shell: pwsh
 
       - name: Run tests
-        run: |
-          & .\.venv\Scripts\Activate.ps1
-          npx vitest run --root . --passWithNoTests
+        working-directory: Frontend
         shell: pwsh
+        run: |
+          & ${{ runner.workspace }}\.venv\Scripts\Activate.ps1
+          npm install
+          npx vitest run \
+            --root . \
+            --include "**/*.{test,spec}.{js,ts,jsx,tsx}" \
+            --passWithNoTests

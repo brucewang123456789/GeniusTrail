@@ -4,13 +4,21 @@ import re
 from dotenv import load_dotenv
 from typing import List, Dict, Any
 
+
 def summary_replacement(response: str) -> str:
     """Replace 'Final Answer:' with a random summary phrase followed by a comma."""
-    summary_phrases = ["In summary, ", "To put it simply, ", "In short, ", "Long story short, "]
+    summary_phrases = [
+        "In summary, ",
+        "To put it simply, ",
+        "In short, ",
+        "Long story short, ",
+    ]
     import random
+
     phrase = random.choice(summary_phrases)
     response = re.sub(r"(?i)Final\s+Answer\s*:?\s*", phrase, response)
     return response
+
 
 def cli_chat() -> None:
     # Load .env without overriding existing environment vars
@@ -86,8 +94,12 @@ def cli_chat() -> None:
         if method_success:
             try:
                 data: Dict[str, Any] = resp.json()
-                raw_answer: str = data.get("response", "Backend gave me zilch—pathetic!")
-                answer: str = summary_replacement(raw_answer)  # Replace 'Final Answer:' with summary phrase
+                raw_answer: str = data.get(
+                    "response", "Backend gave me zilch—pathetic!"
+                )
+                answer: str = summary_replacement(
+                    raw_answer
+                )  # Replace 'Final Answer:' with summary phrase
                 print("Bot:", answer)
 
                 # Update history
@@ -97,6 +109,7 @@ def cli_chat() -> None:
                 print(f"Response parsing failed: {e}")
         else:
             print("Both POST and GET tanked—disgraceful!")
+
 
 if __name__ == "__main__":
     cli_chat()

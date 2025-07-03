@@ -16,10 +16,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Restore private core
+        run: |
+          echo "${{ secrets.PRIVATE_CORE_ZIP_B64 }}" > core.b64
+          base64 --decode core.b64 > PrivateCore.zip
+          unzip -o PrivateCore.zip -d core
+
       - name: Set up Node.js environment
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: '16.x'
 
       - name: Install dependencies
         run: |

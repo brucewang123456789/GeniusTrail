@@ -75,6 +75,7 @@ STREAM_TOKENS: Counter = Counter(
     "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
 )
 
+
 # Middleware classes
 class RequestIDMiddleware(BaseHTTPMiddleware):
     async def dispatch(
@@ -85,6 +86,7 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
         resp = await call_next(request)
         resp.headers["x-request-id"] = rid
         return resp
+
 
 class AccessLogMiddleware(BaseHTTPMiddleware):
     async def dispatch(
@@ -102,16 +104,20 @@ class AccessLogMiddleware(BaseHTTPMiddleware):
         )
         return resp
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     log.info("API server starting")
     yield
     log.info("API server stopped")
 
+
 app: FastAPI = FastAPI(title="Veltraxor Chat API", version="0.3.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("VELTRAX_CORS_ORIGINS", "http://localhost:4173").split(",")],
+    allow_origins=[
+        os.getenv("VELTRAX_CORS_ORIGINS", "http://localhost:4173").split(",")
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
@@ -122,15 +128,18 @@ app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 __all__ = ["app"]
 
+
 # Models
 class ChatRequest(BaseModel):
     prompt: str
     history: List[Dict[str, str]] | None = None
 
+
 class ChatResponse(BaseModel):
     response: str
     used_cot: bool
     duration_ms: int
+
 
 # Helpers
 def assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[str, str]]:
@@ -138,6 +147,7 @@ def assemble(prompt: str, history: List[Dict[str, str]] | None) -> List[Dict[str
     msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     msgs.append({"role": "user", "content": prompt})
     return msgs
+
 
 def verify_token(request: Request) -> None:
     """
@@ -171,6 +181,7 @@ def verify_token(request: Request) -> None:
             status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token"
         )
 
+
 def validate_prompt(prompt: str) -> None:
     if not prompt:
         raise HTTPException(
@@ -181,10 +192,12 @@ def validate_prompt(prompt: str) -> None:
             status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt too long"
         )
 
+
 # Endpoints
 @app.get("/ping")
 async def ping() -> dict[str, bool]:
     return {"pong": True}
+
 
 @app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_token)])
 async def chat(req: ChatRequest) -> ChatResponse:
@@ -215,18 +228,37 @@ async def chat(req: ChatRequest) -> ChatResponse:
     text = raw["choices"][0]["message"]["content"].strip()
     return ChatResponse(response=text, used_cot=used_cot, duration_ms=duration_ms)
 
+
 @app.get("/chat")
 async def chat_get(prompt: str = ""):
     if not prompt:
-        return JSONResponse(status_code=200, content={"response": "No prompt provided", "used_cot": False, "duration_ms": 0})
+        return JSONResponse(
+            status_code=200,
+            content={
+                "response": "No prompt provided",
+                "used_cot": False,
+                "duration_ms": 0,
+            },
+        )
     msgs = assemble(prompt, None)
     try:
         raw = client.chat(msgs)
         text = raw["choices"][0]["message"]["content"].strip()
-        return JSONResponse(status_code=200, content={"response": text, "used_cot": False, "duration_ms": 0})
+        return JSONResponse(
+            status_code=200,
+            content={"response": text, "used_cot": False, "duration_ms": 0},
+        )
     except Exception as e:
         log.error("LLM failure: %s", e)
-        return JSONResponse(status_code=500, content={"response": "Error fetching reply", "used_cot": False, "duration_ms": 0})
+        return JSONResponse(
+            status_code=500,
+            content={
+                "response": "Error fetching reply",
+                "used_cot": False,
+                "duration_ms": 0,
+            },
+        )
+
 
 @app.post("/chat_stream", dependencies=[Depends(verify_token)])
 async def chat_stream(req: ChatRequest) -> StreamingResponse:
@@ -274,6 +306,7 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
         ) + "\n"
 
     return StreamingResponse(gen(), media_type="application/json")
+
 
 # ---------------------------------------------------------------------
 # Synthetic-monitoring alias endpoint (no auth, graceful degradation)
@@ -328,6 +361,7 @@ async def chat_monitor(body: dict) -> JSONResponse:
 
     return JSONResponse(status_code=200, content={"reply": text})
 
+
 # ---------------------------------------------------------------------
 # Health probes & Metrics
 # ---------------------------------------------------------------------
@@ -335,6 +369,7 @@ async def chat_monitor(body: dict) -> JSONResponse:
 async def liveness_check() -> dict[str, str]:
     """Always return 200 if the process is up."""
     return {"status": "alive"}
+
 
 @app.get("/readiness")
 async def readiness_check() -> Response:
@@ -360,6 +395,7 @@ async def readiness_check() -> Response:
         return Response(status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(status_code=status.HTTP_200_OK)
+
 
 @app.get("/metrics")
 async def metrics(request: Request) -> Response:

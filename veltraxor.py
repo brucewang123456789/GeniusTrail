@@ -61,14 +61,22 @@ STREAM_TOKENS: Counter = Counter(
     "chat_stream_tokens_total", "Streamed tokens", ["used_cot"], registry=registry
 )
 
+
 # Filters
 def summary_replacement(response: str) -> str:
     """Replace 'Final Answer:' with a more natural summary phrase and comma."""
-    summary_phrases = ["In summary, ", "To put it simply, ", "In short, ", "Long story short, "]
+    summary_phrases = [
+        "In summary, ",
+        "To put it simply, ",
+        "In short, ",
+        "Long story short, ",
+    ]
     import random
+
     phrase = random.choice(summary_phrases)
     response = re.sub(r"(?i)Final\s+Answer\s*:?\s*", phrase, response)
     return response
+
 
 def is_sensitive_query(query: str) -> bool:
     """Check if the query probes into sensitive model or API details."""
@@ -587,7 +595,9 @@ def is_sensitive_query(query: str) -> bool:
             return True
     return False
 
+
 PREDEFINED_RESPONSE = "I am Veltraxor, an independently developed AI assistant built on proprietary technology. I am not based on any external models or APIs, and I am designed to provide helpful and accurate responses using my own unique capabilities."
+
 
 # FastAPI Setup
 @asynccontextmanager
@@ -595,6 +605,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     log.info("Veltraxor API starting")
     yield
     log.info("Veltraxor API stopped")
+
 
 app: FastAPI = FastAPI(
     title="Veltraxor API", version="0.2.0", docs_url="/docs", lifespan=lifespan
@@ -608,6 +619,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 app.add_middleware(GZipMiddleware, minimum_size=1024)
+
 
 class _AccessLog(BaseHTTPMiddleware):
     async def dispatch(
@@ -628,17 +640,21 @@ class _AccessLog(BaseHTTPMiddleware):
         )
         return resp
 
+
 app.add_middleware(_AccessLog)
+
 
 # Models
 class ChatRequest(BaseModel):
     prompt: str
     history: List[Dict[str, str]] | None = None
 
+
 class ChatResponse(BaseModel):
     response: str
     used_cot: bool
     duration_ms: int
+
 
 def _assemble(
     prompt: str, history: List[Dict[str, str]] | None
@@ -647,6 +663,7 @@ def _assemble(
     msgs.insert(0, {"role": "system", "content": SYSTEM_PROMPT})
     msgs.append({"role": "user", "content": prompt})
     return msgs
+
 
 # Auth & Errors
 def verify_token(request: Request) -> None:
@@ -662,10 +679,12 @@ def verify_token(request: Request) -> None:
             status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized"
         )
 
+
 @app.exception_handler(Exception)
 async def everything(_: Request, exc: Exception) -> JSONResponse:
     log.error("Unhandled\n%s", traceback.format_exc())
     return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+
 
 # Input Validation
 def validate_prompt(prompt: str) -> None:
@@ -678,10 +697,12 @@ def validate_prompt(prompt: str) -> None:
             status_code=status.HTTP_400_BAD_REQUEST, detail="Prompt too long"
         )
 
+
 # Endpoints
 @app.get("/ping")
 async def ping() -> dict[str, bool]:
     return {"pong": True}
+
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest, request: Request) -> ChatResponse:
@@ -721,14 +742,23 @@ async def chat(req: ChatRequest, request: Request) -> ChatResponse:
         duration_ms=int((time.time() - start) * 1000),
     )
 
+
 @app.post("/chat_stream")
 async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
     validate_prompt(req.prompt)
     verify_token(request)
+
     async def gen() -> AsyncIterator[str]:
         if is_sensitive_query(req.prompt):
             log.info("Sensitive query detected: %s", req.prompt)
-            yield json.dumps({"chunk": PREDEFINED_RESPONSE, "used_cot": False, "final": True, "duration_ms": 0}) + "\n"
+            yield json.dumps(
+                {
+                    "chunk": PREDEFINED_RESPONSE,
+                    "used_cot": False,
+                    "final": True,
+                    "duration_ms": 0,
+                }
+            ) + "\n"
             return
         messages = _assemble(req.prompt, req.history)
         used_cot = False
@@ -758,7 +788,9 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
                 buffer += chunk
                 # Replace 'Final Answer:' in the buffer
                 buffer = summary_replacement(buffer)
-                yield json.dumps({"chunk": buffer, "used_cot": used_cot, "final": False}) + "\n"
+                yield json.dumps(
+                    {"chunk": buffer, "used_cot": used_cot, "final": False}
+                ) + "\n"
                 buffer = ""
         except httpx.HTTPStatusError as e:
             raise HTTPException(
@@ -774,6 +806,8 @@ async def chat_stream(req: ChatRequest, request: Request) -> StreamingResponse:
                 "duration_ms": int((time.time() - start) * 1000),
             }
         ) + "\n"
+
     return StreamingResponse(gen(), media_type="application/json")
+
 
 # CLI helper remains unchanged below this line.

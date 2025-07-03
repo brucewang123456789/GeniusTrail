@@ -1,4 +1,4 @@
-name: Button Test
+name: Frontend Unit Testing
 
 on:
   push:
@@ -10,30 +10,28 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Restore private core
+        run: |
+          echo "${{ secrets.PRIVATE_CORE_ZIP_B64 }}" > core.b64
+          base64 --decode core.b64 > PrivateCore.zip
+          unzip -o PrivateCore.zip -d core
+
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v2
         with:
-          python-version: '3.x'
+          node-version: '16.x'
 
-      - name: Create virtual environment
-        run: python -m venv .venv
-
-      - name: Activate virtual environment and install dependencies
+      - name: Install dependencies
         run: |
-          & .\.venv\Scripts\Activate.ps1
-          npm ci
-          npm install --save-dev @vitejs/plugin-react @testing-library/react @testing-library/jest-dom vitest@latest msw
-          npm install vitest@latest cac@latest
-        shell: pwsh
+          npm install
+          npm install vitest --save-dev
 
-      - name: Run tests with multiple paths
+      - name: Run tests
         run: |
-          & .\.venv\Scripts\Activate.ps1
-          npx vitest run 'src/components/test/**/*.{test,spec}.js' 'src/components/**/*.{test,spec}.js' 'src/**/*.{test,spec}.js'
-        shell: pwsh
+          npm run test

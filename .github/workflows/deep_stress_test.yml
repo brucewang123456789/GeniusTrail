@@ -1,6 +1,5 @@
 name: Deep Stress Test
 
-# Trigger on push to main or deep-stress-test branch, or manual dispatch
 on:
   push:
     branches:
@@ -14,6 +13,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Restore private core
+        run: |
+          echo "${{ secrets.PRIVATE_CORE_ZIP_B64 }}" > core.b64
+          base64 --decode core.b64 > PrivateCore.zip
+          unzip -o PrivateCore.zip -d core
 
       - name: Setup Python 3.13
         uses: actions/setup-python@v4
@@ -34,7 +39,6 @@ jobs:
           export VELTRAX_API_TOKEN="${{ secrets.VELTRAX_API_TOKEN }}"
           export MOCK_LLM="1"
           export DEEP_STRESS="1"
-          # Launch uvicorn in background
           uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info &
           sleep 5
 

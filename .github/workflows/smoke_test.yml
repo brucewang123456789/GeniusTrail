@@ -14,21 +14,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+      - name: Restore private core
+        run: |
+          echo "${{ secrets.PRIVATE_CORE_ZIP_B64 }}" > core.b64
+          base64 --decode core.b64 > PrivateCore.zip
+          unzip -o PrivateCore.zip -d core
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.13'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Start FastAPI service
         run: |
           nohup python -m uvicorn api_server:app --host 127.0.0.1 --port 8000 --log-level info &
-
       - name: Wait for /ping readiness
         run: |
           for i in {1..5}; do
@@ -40,7 +41,6 @@ jobs:
               sleep 1
             fi
           done
-
       - name: Run smoke-test script
         env:
           STRESS_BASE_URL: http://127.0.0.1:8000

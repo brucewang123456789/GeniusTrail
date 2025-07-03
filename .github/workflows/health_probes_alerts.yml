@@ -1,4 +1,3 @@
-# File: .github/workflows/ci-production-health-probes-alerts.yml
 name: health_probes_alerts tests
 
 on:
@@ -13,48 +12,43 @@ jobs:
     strategy:
       matrix:
         python-version: [3.13]
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      - name: Restore private core
+        run: |
+          echo "${{ secrets.PRIVATE_CORE_ZIP_B64 }}" > core.b64
+          base64 --decode core.b64 > PrivateCore.zip
+          unzip -o PrivateCore.zip -d core
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-
       - name: Install dependencies
         run: |
           python -m venv .venv
           source .venv/bin/activate
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
-          pip install fastapi uvicorn httpx python-dotenv prometheus-client starlette
-
       - name: Configure environment variables
         run: |
           echo "VELTRAX_API_TOKEN=${{ secrets.VELTRAX_API_TOKEN }}" >> $GITHUB_ENV
           echo "VELTRAX_MODEL=${{ secrets.VELTRAX_MODEL }}" >> $GITHUB_ENV
           echo "VELTRAX_SYSTEM_PROMPT=${{ secrets.VELTRAX_SYSTEM_PROMPT }}" >> $GITHUB_ENV
           echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> $GITHUB_ENV
-
       - name: Run health probes tests
         run: |
           source .venv/bin/activate
           pytest test/test_health_probes.py::test_liveness_endpoint_up -q
           pytest test/test_health_probes.py::test_readiness_endpoint_all_dependencies_ok -q
           pytest test/test_health_probes.py::test_readiness_endpoint_redis_down -q
-
       - name: Run metrics endpoint test
         run: |
           source .venv/bin/activate
           pytest test/test_metrics_endpoint.py::test_metrics_contains_core_counters -q
-
       - name: Run synthetic monitoring test
         run: |
           source .venv/bin/activate
           pytest test/test_synthetic_monitoring.py::test_synthetic_readiness_then_chat -q
-
       - name: Run API tests
         run: |
           source .venv/bin/activate
@@ -62,7 +56,6 @@ jobs:
           pytest test/test_api_client.py::test_chat_requires_auth -q
           pytest test/test_api_client.py::test_chat_success -q
           pytest test/test_chat_request.py::test_chat_basic -q
-
       - name: Final pytest
         run: |
           source .venv/bin/activate

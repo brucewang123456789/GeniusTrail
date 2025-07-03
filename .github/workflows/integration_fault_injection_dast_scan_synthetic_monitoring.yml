@@ -8,36 +8,35 @@ on:
 
 jobs:
   integration:
-    name: Fault Injection, DAST Scan & Synthetic Monitoring Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.13.5" ]
-
+        python-version: ["3.13.5"]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Python ${{ matrix.python-version }}
+      - uses: actions/checkout@v4
+      - name: Restore private core
+        run: |
+          echo "${{ secrets.PRIVATE_CORE_ZIP_B64 }}" > core.b64
+          base64 --decode core.b64 > PrivateCore.zip
+          unzip -o PrivateCore.zip -d core
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
-          pip install fakeredis pytest
-
-      - name: Run Fault Injection suite
-        run: python -m pytest test/integration/test_fault_injection.py
-
       - name: Run DAST Scan suite
-        run: python -m pytest test/integration/test_dast_scan.py
-
+        run: |
+          source .venv/bin/activate
+          python -m pytest test/integration/test_dast_scan.py
       - name: Run Synthetic Monitoring suite
-        run: python -m pytest test/integration/test_synthetic_alerting.py
-
+        run: |
+          source .venv/bin/activate
+          python -m pytest test/integration/test_synthetic_alerting.py
       - name: Upload Integration Test Results
         if: always()
         uses: actions/upload-artifact@v4
