@@ -113,16 +113,18 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 
 app: FastAPI = FastAPI(title="Veltraxor Chat API", version="0.3.0", lifespan=lifespan)
-app.add_middleware(RequestIDMiddleware)
-app.add_middleware(AccessLogMiddleware)
-app.add_middleware(GZipMiddleware, minimum_size=1024)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS,
+    allow_origins=[
+        os.getenv("VELTRAX_CORS_ORIGINS", "http://localhost:4173").split(",")
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
 )
+app.add_middleware(RequestIDMiddleware)
+app.add_middleware(AccessLogMiddleware)
+app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 __all__ = ["app"]
 
@@ -227,6 +229,37 @@ async def chat(req: ChatRequest) -> ChatResponse:
     return ChatResponse(response=text, used_cot=used_cot, duration_ms=duration_ms)
 
 
+@app.get("/chat")
+async def chat_get(prompt: str = ""):
+    if not prompt:
+        return JSONResponse(
+            status_code=200,
+            content={
+                "response": "No prompt provided",
+                "used_cot": False,
+                "duration_ms": 0,
+            },
+        )
+    msgs = assemble(prompt, None)
+    try:
+        raw = client.chat(msgs)
+        text = raw["choices"][0]["message"]["content"].strip()
+        return JSONResponse(
+            status_code=200,
+            content={"response": text, "used_cot": False, "duration_ms": 0},
+        )
+    except Exception as e:
+        log.error("LLM failure: %s", e)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "response": "Error fetching reply",
+                "used_cot": False,
+                "duration_ms": 0,
+            },
+        )
+
+
 @app.post("/chat_stream", dependencies=[Depends(verify_token)])
 async def chat_stream(req: ChatRequest) -> StreamingResponse:
     async def gen() -> AsyncIterator[str]:
@@ -281,9 +314,6 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
 # ---------------------------------------------------------------------
 # Synthetic-monitoring alias endpoint (no auth, graceful degradation)
 # ---------------------------------------------------------------------
-# 修改后的chat_monitor函数
-
-
 @app.post("/chat_monitor")
 async def chat_monitor(body: dict) -> JSONResponse:
     """
