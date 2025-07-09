@@ -1,0 +1,35 @@
+Mitigating Sycophancy in Decoder-Only Transformers
+
+Overview
+This repository implements a synthetic data intervention technique to mitigate sycophancy in decoder-only transformer architectures, as detailed in the paper "Mitigating Sycophancy in Decoder-Only Transformer Architectures: Synthetic Data Intervention". The approach leverages synthetic data to enhance objectivity and reduce the tendency of large language models (LLMs) to cater excessively to user biases, a common issue in models trained with Reinforcement Learning from Human Feedback (RLHF).
+Features
+
+Synthetic Data Generation: Creates diverse prompts (neutral, biased, adversarial) to train models for factual responses.
+Data Augmentation: Employs paraphrasing, contextual diversity, and noise injection for robust training data.
+Decoder-Only Integration: Adapts synthetic data for autoregressive generation in transformer architectures.
+Evaluation Metrics: Quantifies sycophancy via Sycophancy Rate (SR), Correction Rate (CR), and Helpfulness Score (HS).
+
+Installation
+git clone https://github.com/username/sycophancy-mitigation.git
+cd sycophancy-mitigation
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments: python scripts/run_experiments.py --model gpt4o --dataset claude_tf.
+View results in outputs/results/.
+
+Results
+The Synthetic Data Intervention (SDI)-trained GPT4o model achieves a 91% accuracy rate and a 4% SR, outperforming the baseline GPT4o (85% accuracy, 7% SR) on 100 true-false questions from Claude 3.5.
+Contributing
+See CONTRIBUTING.md for contribution guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{sycophancy_mitigation_2024,
+  title={Mitigating Sycophancy in Decoder-Only Transformer Architectures: Synthetic Data Intervention},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2024}
+}
