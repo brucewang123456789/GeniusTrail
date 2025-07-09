@@ -1,0 +1,42 @@
+Interactive Cycle Model: ASR-LLMs-Smart Glasses
+
+Overview
+The Interactive Cycle Model, proposed in the paper "Interactive Cycle Architecture: The Linkage Combination among Automatic Speech Recognition, Large Language Models, and Smart Glasses" by Libo Wang, integrates Automatic Speech Recognition (ASR), Large Language Models (LLMs), and smart glasses to enable seamless human-computer interaction. The model processes speech via ASR, interprets it with LLMs, and displays results on smart glasses, forming a feedback loop. Implemented in Python 3.13 IDLE with a custom GPT-based simulator, the framework was tested for accuracy, coherence, and latency, demonstrating robust modularity despite minor LLM decoding issues.
+Key Features
+
+Speech Capture: Converts audio to digital signals using microphone arrays.
+Feature Extraction: Applies MFCC for robust acoustic feature extraction.
+Acoustic and Language Modeling: Uses HMM and perplexity for accurate transcription.
+LLM Processing: Employs transformer-based tokenization, embedding, and decoding.
+Smart Glasses Display: Parses and renders text for augmented reality visualization.
+
+Installation
+git clone https://github.com/brucewang123456789/GeniusTrail.git
+cd GeniusTrail/main/Interactive%20Cycle%20Model
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments:python scripts/run_interactive_cycle.py --metrics accuracy coherence latency
+
+
+View results in outputs/results/.
+
+Results
+
+ASR: Stable speech-to-text conversion with high accuracy.
+LLMs: Effective text generation, but decoding errors (e.g., index out-of-range) noted.
+Smart Glasses: Successful data parsing and display, ensuring clear visualization.
+
+Contributing
+See CONTRIBUTING.md for guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2025interactive,
+  title={Interactive Cycle Architecture: The Linkage Combination among Automatic Speech Recognition, Large Language Models, and Smart Glasses},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2025}
+}
