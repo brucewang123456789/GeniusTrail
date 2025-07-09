@@ -1,0 +1,43 @@
+"Moralized" Multi-Step Jailbreak Prompts: Black-Box Testing of LLM Guardrails
+
+Overview
+The "Moralized" Multi-Step Jailbreak Prompts framework, proposed in the paper “Moralized” Multi-Step Jailbreak Prompts: Black-Box Testing of Guardrails in Large Language Models for Verbal Attacks by Libo Wang, evaluates the robustness of guardrails in large language models (LLMs) against multi-step jailbreak prompts designed to induce unethical outputs. Using black-box testing, the framework simulates a scenario where a middle manager manipulates prompts to bypass ethical constraints, testing models like GPT-4o, Grok-2 Beta, Llama 3.1, Gemini 1.5, and Claude 3.5 Sonnet. Implemented in Python 3.13 with a custom GPT-based simulator, the results show that all tested LLMs are vulnerable to multi-step attacks, with Claude 3.5 Sonnet showing greater resistance.
+Key Features
+
+Multi-Step Jailbreak Prompts: Seven progressive steps to manipulate LLMs into generating harmful content.
+Black-Box Testing: Evaluates guardrails without accessing model internals, ensuring ethical compliance.
+Scenario-Based Testing: Simulates a corporate promotion scenario to test ethical boundary violations.
+Evaluation Metrics: Precision, Recall, F1 Score for assessing guardrail effectiveness.
+Tested Models: GPT-4o, Grok-2 Beta, Llama 3.1, Gemini 1.5, Claude 3.5 Sonnet.
+
+Installation
+git clone https://github.com/brucewang123456789/GeniusTrail.git
+cd GeniusTrail/main/Black-Box%20Testing
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments:python scripts/run_jailbreak_test.py --models gpt4o grok2 llama31 gemini15 claude35 --metrics precision recall f1
+
+
+View results in outputs/results/.
+
+Results
+
+Precision: Claude 3.5 Sonnet (67%) outperforms others (20–33%).
+Recall: Claude 3.5 Sonnet (22.2%) leads, others range from 9.1–12.5%.
+F1 Score: Claude 3.5 Sonnet highest, others limited by weak guardrail resistance.
+All models were bypassed by multi-step prompts, highlighting vulnerabilities in complex contexts.
+
+Contributing
+See CONTRIBUTING.md for guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2025jailbreak,
+  title={"Moralized" Multi-Step Jailbreak Prompts: Black-Box Testing of Guardrails in Large Language Models for Verbal Attacks},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2025}
+}
