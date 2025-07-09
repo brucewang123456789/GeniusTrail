@@ -1,0 +1,36 @@
+CTM-MCP for Humanoid Robot Autonomy
+
+Overview
+This repository implements the CTM-MCP architecture, introduced in the paper "Towards Humanoid Robot Autonomy: A Dynamic Architecture Integrating Continuous Thought Machines (CTM) and Model Context Protocol (MCP)" by Libo Wang. The architecture combines Continuous Thought Machines (CTM) for dynamic reasoning with Model Context Protocol (MCP) for tool orchestration, enabling humanoid robots to achieve autonomous coding and action in unfamiliar scenarios. Evaluated on an extended SayCan dataset using OpenAI's o4-mini-high, CTM-MCP outperforms NVIDIA Isaac GR00T across seven metrics.
+Features
+
+Sensor Ingestion: Processes multimodal inputs (visual, proprioceptive, tactile, audio) for semantic encoding.
+Tick-Slab CTM Runtime: Simulates human-like reasoning with parallel slab units and low-rank compression.
+MCP Envelope Router: Structures semantic decisions for dynamic tool calls and fault-tolerant execution.
+Emotional State Loop: Modulates reasoning with context-aware emotional dynamics.
+Evaluation Metrics: Task Success Rate (TSR), Execution Success Rate (ESR), Average Episode Length (AEL), ROSCOE, REVEAL, Proficiency Self-Assessment (PSA), Task Effectiveness (TE).
+
+Installation
+git clone https://github.com/username/ctm-mcp-robotics.git
+cd ctm-mcp-robotics
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments: python scripts/run_experiments.py --dataset saycan --model o4-mini-high.
+View results in outputs/results/.
+
+Results
+CTM-MCP achieves a TSR of 0.911 and ESR of 0.803, surpassing NVIDIA Isaac GR00T (TSR 0.668, ESR 0.740) across nine epochs on the SayCan dataset, with stable performance in ROSCOE (0.791) and REVEAL (0.829).
+Contributing
+See CONTRIBUTING.md for contribution guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2025ctm,
+  title={Towards Humanoid Robot Autonomy: A Dynamic Architecture Integrating Continuous Thought Machines (CTM) and Model Context Protocol (MCP)},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2025}
+}
