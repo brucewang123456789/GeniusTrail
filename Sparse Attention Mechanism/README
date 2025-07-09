@@ -1,0 +1,37 @@
+Sparse Attention for Chain of Thought Optimization
+
+Overview
+This repository implements a transformer architecture with a sparse attention mechanism to optimize Chain of Thought (CoT) reasoning in large language models, as presented in the paper "Reducing Reasoning Costs - The Path of Optimization for Chain of Thought via Sparse Attention Mechanism". The model, GiantRabbit, leverages sparse attention to reduce computational complexity, achieving faster reasoning and shorter CoT sequences compared to o1 Preview, with minimal accuracy trade-offs.
+Features
+
+Sparse Embedding Layer: Reduces computational load for high-dimensional data.
+Masked Multi-Head Sparse Self-Attention: Enhances efficiency in token interactions.
+SparseMax Activation: Replaces softmax for optimized probability distributions.
+CoT Module: Generates intermediate reasoning steps for complex problem-solving.
+Evaluation: Tested on MIT OpenCourseWare linear algebra questions.
+
+Installation
+git clone https://github.com/username/sparse-attention-cot.git
+cd sparse-attention-cot
+pip install -r requirements.txt
+
+Usage
+
+Configure the environment as per docs/installation.md.
+Run experiments with python scripts/run_experiments.py --dataset mit_ocw.
+View results in outputs/results/.
+
+Results
+GiantRabbit achieves reasoning times of 3.5–5 seconds (vs. 7–50 seconds for o1 Preview) and shorter CoT lengths, with accuracy ranging from 70%–100% (vs. 95%–100%).
+Contributing
+Contributions are welcome! Please read CONTRIBUTING.md for guidelines.
+License
+This project is licensed under the MIT License. See LICENSE for details.
+Citation
+If you use this work, please cite:
+@article{sparse_attention_cot_2024,
+  title={Reducing Reasoning Costs - The Path of Optimization for Chain of Thought via Sparse Attention Mechanism},
+  author={Author Name},
+  journal={arXiv preprint},
+  year={2024}
+}
