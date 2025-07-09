@@ -1,0 +1,43 @@
+Wormhole Transport: Toward the Bridge of Artificial Spacetime
+
+Overview
+The Wormhole Transport Architecture, introduced in the paper "Wormhole Transport: Toward the Bridge of Artificial Spacetime" by Libo Wang, proposes a simulation-based framework to model stable wormhole structures for matter teleportation. Utilizing a pedagogical SDP five-module pipeline and a high-fidelity HQCOG adaptive pipeline, the architecture integrates Physics-Informed Neural Networks (PINNs), DeepSDF, and sparse attention mechanisms. Implemented in Python 3.13 IDLE with a synthetic dataset of 1,000 object samples, it achieves high task success rate (~0.74), low chamfer distance (<0.01), and millisecond-level efficiency, demonstrating robust simulation of wormhole transport.
+Key Features
+
+IoT Capture & Sensor Fusion: Integrates multi-sensor data (LIDAR, RGB-D, etc.) with PTP synchronization.
+PINN-Based Deconstruction: Optimizes PDE residuals for geometric and material latent vectors.
+Quantum Wormhole Simulation: Simulates spacetime geometry with tensor compression.
+Virtual Object Re-Organisation: Reconstructs objects with atomic-level precision.
+Evaluation Metrics: Task Efficiency (TE), Task Success Rate (TSR), Channel Distance (CD), Throughput (TH), One-Way Delay (OWD).
+
+Installation
+git clone https://github.com/brucewang123456789/GeniusTrail.git
+cd GeniusTrail/main/Wormhole%20Transport
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments:python scripts/run_wormhole_transport.py --dataset synthetic_objects --metrics te tsr cd th owd
+
+
+View results in outputs/results/.
+
+Results
+
+Task Success Rate: Stable at ~0.74 across experiments.
+Channel Distance: Consistently <0.01, indicating precise reconstruction.
+Throughput: >50 ops/s, showcasing high processing efficiency.
+Task Efficiency & OWD: Millisecond-level performance, ensuring low latency.
+
+Contributing
+See CONTRIBUTING.md for guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2025wormholetransport,
+  title={Wormhole Transport: Toward the Bridge of Artificial Spacetime},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2025}
+}
