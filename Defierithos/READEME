@@ -1,0 +1,36 @@
+Deferithos: Self-Resonance Field Architecture
+
+Overview
+This repository implements the Deferithos architecture, introduced in the paper "Deferithos: The Lonely Warrior Rises from Resonance" by Libo Wang. Deferithos replaces traditional transformer self-attention with a self-resonance field (SRF) using waveform-based semantic processing to address computational complexity in long-sequence tasks. Evaluated on synthetic text data, HumanEval, and GSM8k datasets, Deferithos outperforms GPT4-Turbo-based transformers in metrics like ROUGE-L, METEOR, Pass@k, MMLU, Accuracy, and ARC-AGI.
+Features
+
+Self-Resonance Field (SRF): Utilizes wave interference for semantic association, eliminating token-based attention.
+Waveform Imprint Representation: Converts text into continuous waveforms for dynamic semantic matching.
+Wormhole Memory Space: Enables adaptive memory retrieval across dialogues.
+Dynamic Chain-of-Thought Controller: Supports parallel processing for efficient reasoning.
+Evaluation Metrics: ROUGE-L, METEOR, Pass@k, MMLU, Accuracy, ARC-AGI.
+
+Installation
+git clone https://github.com/username/deferithos.git
+cd deferithos
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run training: python scripts/train_deferithos.py --datasets synthetic humaneval gsm8k.
+View results in outputs/results/.
+
+Results
+Deferithos achieves a ROUGE-L of 0.72 (vs. 0.65 for transformers), with superior performance in Pass@k (0.85 vs. 0.78) and MMLU (0.80 vs. 0.74) across 50 training epochs.
+Contributing
+See CONTRIBUTING.md for contribution guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2025deferithos,
+  title={Deferithos: The Lonely Warrior Rises from Resonance},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2025}
+}
