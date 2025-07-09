@@ -1,0 +1,36 @@
+Graph-of-Causal Evolution (GoCE)
+
+Overview
+This repository implements the Graph-of-Causal Evolution (GoCE) framework, introduced in the paper "Graph-of-Causal Evolution: Challenging Chain-of-Model for Reasoning" by Libo Wang. GoCE enhances transformer architectures by addressing the limitations of Chain-of-Model (CoM) in capturing long-range causal dependencies. It employs differentiable sparse gating, causal-masked attention, and a self-evolution gate to enable dynamic causal reasoning and continuous model adaptation. Evaluated on datasets like CLUTRR, CLADDER, EX-FEVER, and CausalQA, GoCE outperforms baseline LLMs in causal reasoning tasks.
+Features
+
+Latent-Causal Graph Builder: Maps tokens to sparse causal adjacency matrices.
+Causal-Masked Multi-Head Attention: Enforces causal order in attention mechanisms.
+Causal-MoE: Integrates sparse expert feed-forward networks for efficient reasoning.
+Intervention & Counterfactual Module: Ensures consistency via KL divergence-based loss.
+Self-Evolution Gate: Dynamically updates parameters for adaptive learning.
+
+Installation
+git clone https://github.com/username/goce-reasoning.git
+cd goce-reasoning
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments: python scripts/run_experiments.py --datasets clutttr cladder ex-fever causalqa --models claude-sonnet-4 o4-mini-high deepseek-r1.
+View results in outputs/results/.
+
+Results
+GoCE improves Claude Sonnet 4’s CLUTRR Accuracy@K from 0.688 to 0.732, EX-FEVER EM from 0.681 to 0.730, and CausalQA IRS from 0.731 to 0.842, with similar gains in o4-mini-high and DeepSeek R1.
+Contributing
+See CONTRIBUTING.md for contribution guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2024goce,
+  title={Graph-of-Causal Evolution: Challenging Chain-of-Model for Reasoning},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2024}
+}
