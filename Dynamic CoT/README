@@ -1,25 +1,126 @@
-# Dynamic Chain‐of‐Thought (D‐CoT)
+Dynamic Chain-of-Thought (D-CoT): Adaptive Deep Reasoning Framework
 
-This repository implements D‐CoT, an adaptive reasoning framework that minimizes the computational redundancy and latency inherent in long chain-of-thought (CoT) methods by dynamically adjusting both the number of reasoning steps and the depth of exploration during inference :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}.
+Overview
+The Dynamic Chain-of-Thought (D-CoT) framework, proposed in the paper "Dynamic Chain-of-Thought: Towards Adaptive Deep Reasoning" by Libo Wang, addresses the computational inefficiencies of traditional Long Chain-of-Thought (Long CoT) reasoning in large language models (LLMs). Long CoT, while effective for complex reasoning, suffers from computational redundancy and delayed reward feedback, leading to excessive resource consumption and prolonged reasoning times. D-CoT introduces an adaptive reasoning mechanism that dynamically adjusts the number of reasoning steps and optimizes computational paths based on task complexity, significantly reducing reasoning time, CoT length, and token count. Evaluated on MIT OpenCourseWare's Linear Algebra (18.06 Spring 2022) problem sets, D-CoT outperforms DeepSeek R1 in efficiency metrics, offering a scalable solution for deep reasoning tasks.
+This README provides a detailed technical breakdown of the D-CoT framework, its implementation, experimental results, and practical insights for researchers and practitioners aiming to optimize LLM reasoning.
+Key Features
 
-## Key Components  
-- **Tokenization & Embedding**  
-  Natural language inputs are decomposed into subword tokens, embedded into high-dimensional vectors, and enriched with positional encodings before entering the MoE transformer stack :contentReference[oaicite:2]{index=2}.  
+Adaptive Reasoning Steps: Dynamically adjusts CoT length based on task complexity using importance-driven pruning and partial reward estimation.
+Hierarchical Adaptive Reinforcement Learning (HARO): Integrates reward gradients to optimize token selection and reasoning paths, balancing semantic fidelity and structural efficiency.
+MoE-Enabled Transformer Stack: Enhances semantic expression through multi-head self-attention with adaptive pruning.
+Hierarchical CoT Assembly: Combines macro-level summaries and micro-level details for context-aware reasoning.
+Evaluation Metrics: Measures performance via reasoning time, CoT length, and token count, achieving significant reductions compared to Long CoT.
 
-- **MoE-Enabled Transformer Stack**  
-  A Mixture-of-Experts (MoE) mechanism routes intermediate representations through the most relevant expert layers, enhancing selective computation and gradient stability via residual-norm modules :contentReference[oaicite:3]{index=3}.  
+Technical Details
+Motivation and Problem Statement
+Long CoT, as implemented in models like DeepSeek R1, relies on a static, linear reasoning framework that decomposes complex tasks into numerous intermediate steps. This approach, while improving accuracy for multi-step reasoning (e.g., Jin et al., 2024), introduces significant drawbacks:
 
-- **Dynamic CoT Controller**  
-  The core module applies adaptive pruning and hierarchical summarization: each candidate token is scored by combining RL-based dominance estimates and attention-gate signals. Low-impact tokens below a dynamic threshold τₜ are pruned to keep only high-value reasoning steps :contentReference[oaicite:4]{index=4}.  
+Computational Redundancy: Excessive intermediate steps that do not directly contribute to the final answer increase computational overhead.
+Delayed Feedback: Lack of immediate reward signals in reasoning steps hinders efficient credit assignment.
+Static Framework: Inability to adaptively adjust reasoning steps based on task complexity leads to resource inefficiency.
 
-- **Auto‐Regressive Decoding with Feedback**  
-  Partial‐reward estimators evaluate each decoded block in real time, guiding iterative generation or compression of reasoning fragments and updating the progressive buffer Bt+1 accordingly :contentReference[oaicite:5]{index=5}.  
+D-CoT addresses these issues by introducing a dynamic framework that optimizes reasoning paths in real-time, reducing unnecessary steps and aligning rewards more effectively.
+Framework Composition
+The D-CoT framework consists of six key components, each designed to enhance reasoning efficiency and adaptability:
+1. Tokenization & Embedding
 
-- **Hierarchical CoT Assembly (HARO)**  
-  The Hierarchical Adaptive Reward Optimization algorithm allocates reward signals across multiple reasoning granularities, using macro-summaries for global context and micro-details for fine-grained insights. Policy updates borrow clipping and advantage-estimation techniques from PPO to ensure stable convergence :contentReference[oaicite:6]{index=6}.  
+Function: Converts natural language input into dense vector representations, capturing semantic and contextual information.
+Process:
+Tokenization: Decomposes text into subword units using a tokenizer (e.g., BPE, as in Tunstall et al., 2022).
+Embedding: Maps tokens to high-dimensional vectors via an embedding layer, combined with positional encoding to preserve sequence order (Vaswani et al., 2017).
+Algorithm:T = \text{Tokenize}(S)
+X = \text{Embed}(T) + \text{PosEnc}(T)
 
-## Experimental Setup & Results  
-Simulation experiments on MIT OCW 18.06 linear algebra problems compare D-CoT against DeepSeek R1 (long CoT). Metrics include reasoning time, CoT length, and token count. D-CoT reduces average inference time from ~150s to ~80s, shrinks step count by 25%, and cuts token usage by over 40% :contentReference[oaicite:7]{index=7}.
+Where ( S ) is the input string, ( T ) is the tokenized sequence, ( X ) is the embedded vector with positional encoding.
 
-## License & Citation  
-All code and data in this repository are released under the MIT License. When using or extending D-CoT, please cite the original manuscript and repository to acknowledge open-source contributions.
+
+
+2. MoE-Enabled Transformer Stack
+
+Function: Enhances semantic expression using a Mixture-of-Experts (MoE) approach integrated with multi-head self-attention.
+Details:
+Applies adaptive pruning to attention scores to focus on high-value tokens.
+Uses MoE to selectively activate expert modules, reducing computational load (Dai et al., 2024).
+Algorithm:H = \text{MoE}(\text{MultiHeadAttention}(X))
+
+Where ( H ) is the output hidden state, and MoE dynamically selects expert pathways.
+
+
+
+3. Dynamic CoT Controller
+
+Function: Core module for optimizing CoT length and content, reducing redundant calculations.
+Mechanism:
+Importance-Driven Pruning: Evaluates the relevance of reasoning steps and prunes low-value steps.
+Partial Reward Estimation: Assigns intermediate rewards to guide step selection.
+Algorithm:S_t = \text{Prune}(\text{Score}(H_t), \theta)
+R_t = \text{PartialReward}(S_t)
+
+Where ( S_t ) is the selected step at time ( t ), ( H_t ) is the hidden state, and ( \theta ) is the pruning threshold.
+
+
+
+4. Auto-Regressive Decoding
+
+Function: Generates tokens incrementally, guided by partial reward estimation.
+Details:
+Uses a feedback loop to refine token selection based on reward signals.
+Reduces token count by focusing on high-reward tokens.
+Algorithm:T_{t+1} = \text{Decode}(H_t, R_t)
+
+
+
+
+
+5. Hierarchical Adaptive Reinforcement Learning (HARO)
+
+Function: Optimizes token selection and reasoning paths using reward gradients.
+Details:
+Incorporates Proximal Policy Optimization (PPO) for stable training (Schulman et al., 2017).
+Uses adaptive thresholding to filter high-value reasoning paths.
+Algorithm:\nabla_\theta \mathbb{E}_C [R_{\text{sem}}(C) + \lambda R_{\text{str}}(C)] + \nabla \log \pi_\theta(C)
+
+Where ( R_{\text{sem}} ) is the semantic reward, ( R_{\text{str}} ) is the structural reward, ( \lambda ) balances fidelity and efficiency, and ( \pi_\theta(C) ) is the policy for token selection.
+
+
+
+6. Hierarchical CoT Assembly
+
+Function: Integrates macro-level (high-level semantics) and micro-level (fine-grained details) information for robust reasoning.
+Components:
+Macro Summary Builder: Extracts global reasoning structure.
+Micro Detail Buffer: Retains detailed reasoning steps.
+Contextual Mapper: Adapts reasoning to contextual changes.
+Reward-Signed Refinement: Adjusts weights based on RL rewards.
+Algorithm:\{M_t, m_t\} = \text{AssembleSplit}(F_t)
+M_t = \text{RewardMap}(M_t, R_t)
+F_{t+1} = \text{Refine}(M_t, m_t, R_t)
+
+Where ( M_t ) and ( m_t ) are macro and micro token segments, and ( F_{t+1} ) is the final CoT representation.
+
+
+
+Experimental Setup
+Environment
+
+Platform: Python 3.13 IDLE combined with a custom GPT-based Python simulator for flexible code execution.
+Control Group: DeepSeek R1 running Long CoT, selected for its robust reasoning capabilities.
+Rationale: The simulator allows real-time construction of reasoning scenarios, bypassing hardware-intensive setups like PyTorch or TensorFlow.
+
+Dataset
+
+Source: MIT OpenCourseWare 18.06 Linear Algebra (Spring 2022) Problem Sets and Exams, converted to computer-readable format (18 questions).
+Reasoning Requirements: Multi-step calculations and logical derivations, ideal for testing CoT adaptability.
+License: Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA).
+
+Implementation
+
+Code Development: Written in Python 3.13 IDLE, ensuring stable logic execution.
+Execution: D-CoT and Long CoT codes were uploaded to the simulator and DeepSeek R1, respectively.
+Metrics:
+Reasoning Time: Time taken to complete reasoning.
+CoT Length: Number of reasoning steps.
+Token Count: Total tokens generated during reasoning.
+
+
+**Procedure
