@@ -1,0 +1,42 @@
+Targeted Domain Refinement (TDR) Framework for Humanoid Robotics
+
+Overview
+The Targeted Domain Refinement (TDR) framework, introduced in the paper "Addressing Domain Mismatch in Humanoid Robotics Through Targeted Domain Refinement Framework", tackles the domain mismatch problem in sim-to-real transfer for humanoid robots. Unlike Adaptive Domain Randomization (ADR), which struggles with static randomization and limited generalization, TDR dynamically adapts policies using a hierarchical learning structure inspired by cognitive science (ACT-R and CLARION theories). Implemented in Python 3.13 IDLE with a custom GPT-based simulator, TDR was tested on synthetic mechanical and environmental datasets, outperforming ADR in sample efficiency, adaptation speed, robustness, policy stability, and domain gap reduction.
+Key Features
+
+Sensory Perception System: Processes multi-modal environmental data with sparse attention and fusion pyramid.
+Dynamic Causal Reasoner: Builds causal models for hierarchical decision-making and predictive error correction.
+Hierarchical Decision Former: Refines decisions from high-level goals to specific actions.
+Cross-Domain Memory Bank: Stores and generalizes scene data for robust adaptation.
+Evaluation Metrics: Sample Efficiency, Adaptation Speed, Robustness, Policy Stability, Domain Gap.
+
+Installation
+git clone https://github.com/username/tdr-humanoid-robotics.git
+cd tdr-humanoid-robotics
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments:python scripts/run_tdr.py --datasets mechanical environmental --control adr --metrics efficiency speed robustness stability gap
+
+
+View results in outputs/results/.
+
+Results
+TDR achieves superior performance over ADR:
+
+Mechanical Data: Sample Efficiency (0.745 vs. 0.568), Robustness (0.946 vs. 0.599), Policy Stability (0.717 vs. 0.485).
+Environmental Data: Sample Efficiency (0.607 vs. 0.479), Robustness (0.821 vs. 0.543), Policy Stability (0.673 vs. 0.531).
+
+Contributing
+See CONTRIBUTING.md for contribution guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2025tdr,
+  title={Addressing Domain Mismatch in Humanoid Robotics Through Targeted Domain Refinement Framework},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2025}
+}
