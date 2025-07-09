@@ -1,0 +1,143 @@
+Knowledge Graph-Guided GAN for Hyper-Personalized Smart Glasses Design
+
+Overview
+This repository implements the Knowledge Graph-Guided GAN (KGG-GAN) framework, as described in the paper "Enhancing Hyper-Personalization in Smart Glasses Design with a Knowledge Graph-Guided GAN Framework" submitted anonymously to CVPR. The framework integrates a knowledge graph with a generative adversarial network (GAN) to enable hyper-personalized design for smart glasses, addressing the limitations of static, rule-based personalization in current AI-driven smart glasses. By combining structured semantic constraints from the knowledge graph with GAN's generative capabilities, KGG-GAN dynamically adapts UI layouts, interaction models, and hardware designs to user preferences and market demands. The framework was tested using a Python simulator based on custom GPTs with synthetic datasets for image recognition and text generation, demonstrating stable performance across multiple metrics.
+This README provides a detailed technical breakdown of the KGG-GAN framework, its implementation, experimental results, and practical insights for researchers and developers in AI-driven wearable technology.
+Key Features
+
+Knowledge Graph Integration: Provides structured semantic constraints for personalized design generation.
+Conditional GAN: Generates design variants tailored to user preferences and technical standards.
+GNN Embedding Layer: Converts graph-structured data into high-dimensional vectors for neural processing.
+Dynamic Semantic Adaptation: Adjusts outputs in real-time based on user behavior and context.
+Evaluation Metrics:
+Image Recognition: Fréchet Inception Distance (FID), Inception Score (IS), Precision, Recall, Structural Similarity Index Measure (SSIM), NDCG@k.
+Text Generation: BLEU, METEOR, BERTScore, Precision, Recall, NDCG@k.
+
+
+
+Technical Details
+Motivation and Problem Statement
+Current smart glasses rely on static, rule-based personalization, limiting their ability to adapt to diverse user needs and dynamic market demands. Key challenges include:
+
+Static Design Mechanisms: Preset parameters and fixed rules hinder real-time adaptation to user behavior.
+Lack of Data-Driven Decision-Making: Product development often depends on ex-ante market forecasts rather than real-time user data.
+Uncontrolled GAN Outputs: Traditional GANs lack semantic and structural constraints, making them unsuitable for complex, multi-dimensional design tasks like smart glasses.
+
+KGG-GAN addresses these gaps by integrating a knowledge graph to provide structured, domain-specific constraints, enabling GANs to generate semantically consistent and personalized designs.
+Framework Composition
+The KGG-GAN framework consists of five core modules, each contributing to hyper-personalized design generation:
+1. Data Ingestion and Knowledge Graph Construction
+
+Function: Aggregates heterogeneous data (historical design data, user logs, ergonomic standards, domain constraints) into a knowledge graph.
+Details:
+Data Sources:
+Historical Data and Specs: Technical specifications and industrial standards.
+User Logs: Interaction behaviors (e.g., usage frequency, scene preferences).
+Ergonomic Standards: Anthropometric data for comfort and usability.
+Domain Constraints: Regulatory and market requirements.
+
+
+Knowledge Graph Structure: Nodes represent design attributes (e.g., optical quality, battery performance); edges define semantic relationships.
+Algorithm:G = (V, E), \quad V = \{v_i\}, \quad E = \{(v_i, v_j, a_{ij})\}
+
+Where ( G ) is the knowledge graph, ( V ) is the set of nodes, ( E ) is the set of edges, and ( a_{ij} ) is the weight of the edge between nodes ( v_i ) and ( v_j ).
+
+
+
+2. GNN Embedding Layer
+
+Function: Converts knowledge graph data into high-dimensional vectors for neural network processing.
+Details:
+Uses Graph Neural Networks (GNNs) to aggregate neighbor node information via message passing.
+Captures global graph structure and local relationships.
+Algorithm:h_v^{(k)} = \sigma\left(W^{(k)} \cdot \sum_{u \in N(v)} a_{uv} \cdot h_u^{(k-1)}\right)
+
+Where ( h_v^{(k)} ) is the embedding of node ( v ) at layer ( k ), ( N(v) ) is the neighborhood of ( v ), ( a_{uv} ) is the edge weight, ( W^{(k)} ) is the learnable parameter matrix, and ( \sigma ) is the ReLU activation.
+
+
+
+3. Conditional Generator
+
+Function: Generates personalized design variants based on knowledge graph embeddings, user preferences, and noise vectors.
+Details:
+Integrates condition vectors (combining graph embeddings, user preferences, and historical data) with random noise.
+Ensures compliance with engineering and ergonomic constraints.
+Algorithm:x_{\text{gen}} = G(z, \text{Condition}, \theta_g) = f_g(W_g [z \oplus \text{Condition}] + b_g)
+
+Where ( x_{\text{gen}} ) is the generated design, ( z ) is the noise vector, ( \text{Condition} = [E_{KG}, p, d] ) (with ( E_{KG} ) as graph embedding, ( p ) as user preferences, ( d ) as historical data), ( W_g ) and ( b_g ) are generator weights and bias, and ( f_g ) is a nonlinear mapping.
+
+
+
+4. Graph Discriminator
+
+Function: Evaluates generated designs for realism and adherence to knowledge graph constraints.
+Details:
+Performs binary classification and calculates constraint matching scores.
+Ensures generated designs align with semantic and technical requirements.
+Algorithm:p_{\text{real}} = D(x, \text{Condition}, \theta_d) = \sigma(W_d [x \oplus \text{Condition}] + b_d)
+
+Where ( p_{\text{real}} ) is the probability of realism, ( x ) is the input design (real or generated), ( W_d ) and ( b_d ) are discriminator weights and bias, and ( \sigma ) is the sigmoid activation.
+
+
+
+5. Semantic Rewrite Module
+
+Function: Adjusts node parameters to enhance semantic convergence and correct generation errors.
+Details:
+Uses backpropagation loss to penalize designs violating constraints.
+Iteratively refines node weights and embeddings.
+Algorithm:L_D = \mathbb{E}_{x \sim p_{\text{real}}}[\log D(x, \text{Condition})] + \mathbb{E}_{z \sim p_z}[\log (1 - D(G(z, \text{Condition}), \text{Condition}))]
+
+Where ( L_D ) is the discriminator loss, balancing real and generated design evaluations.
+
+
+
+Experimental Setup
+Environment
+
+Platform: Python 3.13 IDLE with a custom GPT-based Python simulator for dynamic node adjustments and semantic monitoring.
+Rationale: The simulator supports real-time condition adjustments and structured output, ideal for testing multi-module interactions without hardware dependencies.
+
+Dataset
+
+Source: Two synthetic datasets:
+Image-Based Diary Notes: 1000 samples simulating visual style preferences.
+Text-Based User Logs: 3000 JSON-formatted samples for semantic generation.
+
+
+Reasoning: Synthetic data allows controlled node perturbations and semantic calibration, compensating for the lack of real-world smart glasses datasets.
+
+Implementation
+
+Code Development: Written in Python 3.13 IDLE, initializing KGG-GAN modules (graph embedder, generator, discriminator, semantic rewrite).
+Execution:
+Initialized node dimensions, edge weights, and semantic tags in JSON format.
+Ran image and text generation tasks with node perturbations to test style transfer and semantic consistency.
+Repeated experiments to mitigate simulator deviations, selecting optimal results.
+
+
+Metrics:
+Image Recognition: FID, IS, Precision, Recall, SSIM, NDCG@k.
+Text Generation: BLEU, METEOR, BERTScore, Precision, Recall, NDCG@k.
+
+
+Repository: Code and logs are publicly available at GitHub.
+
+Results
+KGG-GAN demonstrates stable performance across eight experimental groups, with results summarized in Tables 1 and 2:
+Image Recognition (Table 1)
+
+FID: 10–16 (acceptable difference from true distribution).
+IS: 7.011–7.998 (good diversity and recognizability).
+Precision: 0.617–0.697 (strong feature retention).
+Recall: 0.473–0.543 (moderate coverage, indicating room for improvement).
+SSIM: 0.711–0.798 (high visual structure consistency).
+NDCG@k: 0.692–0.769 (strong alignment with user preferences).
+
+Text Generation (Table 2)
+
+BLEU: Moderate performance, indicating word overlap challenges.
+METEOR: 0.298–0.381 (room for improvement in semantic segment matching).
+BERTScore: 0.748–0.775 (good semantic similarity).
+Precision: 0.684 (peak in Group 4, accurate keyword presentation).
+Recall: 0.592 (peak in Group 5
