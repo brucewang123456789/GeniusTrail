@@ -1,0 +1,25 @@
+# Dynamic Chain‐of‐Thought (D‐CoT)
+
+This repository implements D‐CoT, an adaptive reasoning framework that minimizes the computational redundancy and latency inherent in long chain-of-thought (CoT) methods by dynamically adjusting both the number of reasoning steps and the depth of exploration during inference :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}.
+
+## Key Components  
+- **Tokenization & Embedding**  
+  Natural language inputs are decomposed into subword tokens, embedded into high-dimensional vectors, and enriched with positional encodings before entering the MoE transformer stack :contentReference[oaicite:2]{index=2}.  
+
+- **MoE-Enabled Transformer Stack**  
+  A Mixture-of-Experts (MoE) mechanism routes intermediate representations through the most relevant expert layers, enhancing selective computation and gradient stability via residual-norm modules :contentReference[oaicite:3]{index=3}.  
+
+- **Dynamic CoT Controller**  
+  The core module applies adaptive pruning and hierarchical summarization: each candidate token is scored by combining RL-based dominance estimates and attention-gate signals. Low-impact tokens below a dynamic threshold τₜ are pruned to keep only high-value reasoning steps :contentReference[oaicite:4]{index=4}.  
+
+- **Auto‐Regressive Decoding with Feedback**  
+  Partial‐reward estimators evaluate each decoded block in real time, guiding iterative generation or compression of reasoning fragments and updating the progressive buffer Bt+1 accordingly :contentReference[oaicite:5]{index=5}.  
+
+- **Hierarchical CoT Assembly (HARO)**  
+  The Hierarchical Adaptive Reward Optimization algorithm allocates reward signals across multiple reasoning granularities, using macro-summaries for global context and micro-details for fine-grained insights. Policy updates borrow clipping and advantage-estimation techniques from PPO to ensure stable convergence :contentReference[oaicite:6]{index=6}.  
+
+## Experimental Setup & Results  
+Simulation experiments on MIT OCW 18.06 linear algebra problems compare D-CoT against DeepSeek R1 (long CoT). Metrics include reasoning time, CoT length, and token count. D-CoT reduces average inference time from ~150s to ~80s, shrinks step count by 25%, and cuts token usage by over 40% :contentReference[oaicite:7]{index=7}.
+
+## License & Citation  
+All code and data in this repository are released under the MIT License. When using or extending D-CoT, please cite the original manuscript and repository to acknowledge open-source contributions.
