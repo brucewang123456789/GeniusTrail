@@ -1,0 +1,59 @@
+Wormhole Memory Module (WMM): Cross-Dialogue Memory Retrieval
+
+Overview
+The Wormhole Memory Module (WMM), introduced in the paper "Wormhole Memory: A Rubik’s Cube for Cross-Dialogue Retrieval" by Libo Wang, addresses the critical limitation of current large language models (LLMs) in sharing memory across multiple dialogues. Traditional LLMs, constrained by fixed-length context windows and linear memory access, struggle with non-linear, cross-dialogue memory retrieval, leading to high computational costs and limited scalability in long-term interactive scenarios. WMM leverages a high-dimensional indexing mechanism inspired by the wormhole principle from general relativity, enabling dynamic, non-linear memory retrieval across dialogues. Evaluated on the CoQA dataset using a Python simulator based on custom GPTs, WMM outperforms existing memory modules like Titans and MemGPT in cross-dialogue retrieval efficiency and stability across six metrics: Precision, Recall, F1 Score, Memory Utilization, Accuracy, and BLEU.
+This README provides a comprehensive technical overview of the WMM framework, its implementation details, experimental results, and practical guidance for researchers aiming to enhance LLM memory management.
+Key Features
+
+Multi-Axis Index/Cache: Enables non-linear memory retrieval using high-dimensional indexing based on user ID, topic, and time.
+Gating and Momentum-Based Update: Dynamically adjusts memory weights for efficient integration of new and historical information.
+Cross-Dialogue Retrieval Mechanism: Facilitates rapid memory access across multiple dialogues using query builders and multi-session matchers.
+Residual Gating Merger: Integrates retrieved memories with transformer representations for stable outputs.
+Evaluation Metrics: Precision, Recall, F1 Score, Memory Utilization, Accuracy, BLEU.
+
+Technical Details
+Motivation and Problem Statement
+Current LLMs, such as GPT, Llama, Gemini, Claude, and Grok, rely on fixed-length context windows and linear memory access, which pose significant challenges:
+
+Linear Memory Access: Traditional memory management uses serialized encoding, making cross-dialogue retrieval computationally expensive (O(n²) complexity for self-attention).
+Single-Dialogue Limitation: Modules like Google’s Titans excel in single-dialogue long-sequence processing but lack cross-dialogue memory sharing (Behrouz et al., 2024).
+Scalability Issues: Exponential cost increases with sequence length hinder scalability in dynamic, multi-session interactions (Wang et al., 2024).
+
+WMM introduces a novel approach by modeling memory as a high-dimensional "Rubik’s Cube," allowing non-linear jumps across dialogue sessions, inspired by the wormhole concept from general relativity (Einstein & Rosen, 1935).
+Framework Composition
+The WMM framework consists of four core components, integrated into a decoder-only transformer architecture for seamless cross-dialogue memory retrieval:
+1. Multi-Axis Index/Cache
+
+Function: Constructs a hierarchical index for non-linear memory retrieval across dialogues.
+Details:
+Uses a Key Builder to create multi-dimensional indices based on user ID, topic, and temporal features.
+Stores indices in a vector database for rapid positioning.
+Algorithm:M_{\text{index}}(q) = f_{\text{key}}(u, t, \tau)
+
+Where ( M_{\text{index}} ) is the index mapping function, ( q ) is the query, ( u ) is the user ID, ( t ) is the topic vector, ( \tau ) is the timestamp, and ( f_{\text{key}} ) is a high-dimensional embedding function.
+
+
+
+2. Gating and Momentum-Based Update
+
+Function: Dynamically updates memory weights to balance new and historical information.
+Details:
+Employs a momentum-based decay mechanism to prioritize relevant memories.
+Uses gating to control memory retention and integration.
+Algorithm:M_t = \delta M_{t-1} + (1 - \delta) M_{\text{new}}, \quad \delta \in [0, 1]
+
+Where ( M_t ) is the updated memory state, ( M_{t-1} ) is the previous state, ( M_{\text{new}} ) is the new memory input, and ( \delta ) is the decay rate (e.g., 0.9).
+
+
+
+3. Cross-Dialogue Retrieval Mechanism
+
+Function: Enables efficient memory retrieval across multiple dialogues.
+Components:
+Query Builder: Constructs high-dimensional semantic queries based on user ID and topic vectors.
+Multi-Session Matcher: Uses a Top-K retrieval strategy to identify relevant memory segments.
+Algorithm:M_{\text{ret}} = \text{TopK}(\text{Sim}(Q, M_i)), \quad \text{Sim}(Q, M_i) = \cos(\text
+
+
+
+
