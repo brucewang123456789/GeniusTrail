@@ -1,0 +1,42 @@
+Cognitive Modular Control (CMC) for Autonomous Self-Reconfiguration in Modular Robots
+
+Overview
+The Cognitive Modular Control (CMC) architecture, proposed in the paper "Cognitive Modular Control: Paving the Pathway for Autonomous Self-Reconfiguration in Modular Robots", addresses the limitations of manual coding and binary instructions in modular robot reconfiguration. Inspired by the ACT-R cognitive theory, CMC enables autonomous, multi-step deformation by simulating human-like perception, memory, and decision-making. Implemented in Python 3.13 IDLE with the ReForm simulator, CMC was tested on synthetic visual and self-reconstruction datasets, outperforming traditional methods in Success Rate (SR), Time-to-Completion (TTC), Energy Consumption (EC), Manipulability Inside (MI), and Robustness.
+Key Features
+
+Multimodal Data Gateway: Processes and validates multi-sensor data for consistent input.
+Semantic Scene Processor: Extracts actionable semantic information using sparse attention.
+Instruction Generator: Converts semantics into multi-step, non-binary instructions.
+Adaptive Execution Manager: Optimizes and adjusts actions in real-time.
+Environmental Feedback Integrator: Enhances adaptability via multi-modal feedback.
+
+Installation
+git clone https://github.com/username/cmc-modular-robots.git
+cd cmc-modular-robots
+pip install -r requirements.txt
+
+Usage
+
+Follow setup instructions in docs/installation.md.
+Run experiments:python scripts/run_cmc.py --datasets visual self_reconstruction --metrics sr ttc ec mi robustness
+
+
+View results in outputs/results/.
+
+Results
+CMC excels in:
+
+Visual Data: SR (0.91), TTC (<4.9s), EC (<60J), MI (0.68), Robustness (~0.87).
+Self-Reconstruction: SR (0.87), TTC (10s), EC (140J), MI (0.63), Robustness (~0.82).
+
+Contributing
+See CONTRIBUTING.md for guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{anonymous2025cmc,
+  title={Cognitive Modular Control: Paving the Pathway for Autonomous Self-Reconfiguration in Modular Robots},
+  author={Anonymous},
+  journal={CVPR preprint},
+  year={2025}
+}
