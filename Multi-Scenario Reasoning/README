@@ -1,0 +1,36 @@
+Multi-Scenario Reasoning for Humanoid Robots
+
+Overview
+This repository implements a multi-scenario reasoning architecture for enhancing cognitive autonomy in humanoid robots, as described in the paper "Multi-Scenario Reasoning: Unlocking Cognitive Autonomy in Humanoid Robots for Multimodal Understanding" by Libo Wang. The architecture integrates visual, auditory, and tactile data using a simulator named "Mahh" to enable dynamic multi-modal reasoning, inspired by situated cognition theory.
+Features
+
+Multi-Modal Data Integration: Combines visual, auditory, and tactile inputs for semantic alignment.
+Sparse Attention Filtering: Optimizes data prioritization for efficient reasoning.
+Memory-Augmented Reasoning: Utilizes short-term and long-term memory for contextual analysis.
+Sim2Real Module: Maps simulated plans to real-world actions via domain randomization.
+Evaluation Metrics: Includes precision, recall, F1-score, specificity, and accuracy for performance assessment.
+
+Installation
+git clone https://github.com/username/multi-scenario-reasoning.git
+cd multi-scenario-reasoning
+pip install -r requirements.txt
+
+Usage
+
+Set up the environment per docs/installation.md.
+Run simulations: python scripts/run_mahh_simulation.py --modalities visual auditory tactile.
+View results in outputs/results/.
+
+Results
+The Mahh simulator achieves high precision (0.93) and recall (0.91) on visual synthetic data, with an F1-score of 0.92, demonstrating robust multi-modal reasoning capabilities.
+Contributing
+See CONTRIBUTING.md for contribution guidelines.
+License
+Licensed under the MIT License. See LICENSE for details.
+Citation
+@article{wang2024multi,
+  title={Multi-Scenario Reasoning: Unlocking Cognitive Autonomy in Humanoid Robots for Multimodal Understanding},
+  author={Wang, Libo},
+  journal={arXiv preprint},
+  year={2024}
+}
