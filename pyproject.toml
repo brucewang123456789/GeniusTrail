@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=77", "wheel", "build"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skotergy"
+version = "1.0.1"  # bump this for each new release (e.g., 1.0.2 for the next upload)
+description = "Skotergy: latency-first LLM inference with single-GPU closure and request-level multi-GPU routing."
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+
+# PEP 639: SPDX license expression (no file decoding at build time)
+license = "Apache-2.0"
+
+# PEP 639: ensure LICENSE/NOTICE are included in wheel & sdist
+license-files = ["LICENSE*"]
+
+authors = [{ name = "Skotergy Authors" }]
+keywords = ["llm", "inference", "router", "triton", "cuda", "mps", "xpu"]
+
+classifiers = [
+  # (No "License :: ..." classifier — superseded by SPDX in PEP 639)
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries"
+]
+
+dependencies = [
+  "transformers>=4.42,<5",
+  "sentencepiece>=0.1.99",
+  "filelock>=3.12",
+  "packaging>=23"
+]
+
+[project.optional-dependencies]
+serve = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
+dev   = ["pytest>=8", "ruff>=0.5", "mypy>=1.8", "build>=1.2", "twine>=5"]
+accel = ["accelerate>=0.31"]
+
+[project.scripts]
+skote-generate = "skote.cli.generate_cli:main"   # safe wrapper (deferred imports)
+skote-eval     = "skote.eval.runner:main"
+skote-router   = "skote.runtime.router:main"
+skote-serve    = "skote.service.app:main"
+
+[project.urls]
+Homepage = "https://github.com/brucewang123456789/Private-Vault/tree/skotergy"
+Source = "https://github.com/brucewang123456789/Private-Vault"
+Issues = "https://github.com/brucewang123456789/Private-Vault/issues"
+Documentation = "https://github.com/brucewang123456789/Private-Vault/tree/skotergy#readme"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["skote*"]
+exclude = ["tests*", "examples*"]
+
+[tool.setuptools.package-data]
+skote = ["**/*.json", "**/*.txt"]
