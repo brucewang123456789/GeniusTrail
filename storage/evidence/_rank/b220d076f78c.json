@@ -1,0 +1,148 @@
+{
+  "run_id": "b220d076f78c",
+  "query": "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers",
+  "sub_queries": [
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers review",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers meta-analysis",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers survey"
+  ],
+  "generated_at": 1761403561,
+  "items": [
+    {
+      "rank": 1,
+      "score": 10.5773,
+      "type": "paragraph",
+      "doc_id": "4a1c934d3d98f3ce",
+      "evidence_id": "fb_005",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Attention is all you need",
+      "year": 2017
+    },
+    {
+      "rank": 2,
+      "score": 2.5361,
+      "type": "paragraph",
+      "doc_id": "4e3df1ab9015e017",
+      "evidence_id": "fb_003",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Supporting the development of engineers' interdisciplinary competence",
+      "year": 2017
+    },
+    {
+      "rank": 3,
+      "score": 2.0772,
+      "type": "paragraph",
+      "doc_id": "8b089b0bb32daa51",
+      "evidence_id": "fb_007",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Integration of engineering into K-12 education: A systematic review of teacher professional development programs",
+      "year": 2021
+    },
+    {
+      "rank": 4,
+      "score": 2.0283,
+      "type": "paragraph",
+      "doc_id": "f6557d5057f5a66f",
+      "evidence_id": "fb_006",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Construction automation and robotics: From one-offs to follow-ups based on practices of Chinese construction companies",
+      "year": 2020
+    },
+    {
+      "rank": 5,
+      "score": 0.6,
+      "type": "paragraph",
+      "doc_id": "e95d0fb35dda8b84",
+      "evidence_id": "fb_001",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Unmoderated usability studies evolved: Can gpt ask useful follow-up questions?",
+      "year": 2025
+    },
+    {
+      "rank": 6,
+      "score": 0.2834,
+      "type": "paragraph",
+      "doc_id": "9f9ae5ca928c90b5",
+      "evidence_id": "fb_002",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Which professional skills do students learn in engineering team-based projects?",
+      "year": 2022
+    },
+    {
+      "rank": 7,
+      "score": 0.2834,
+      "type": "paragraph",
+      "doc_id": "2d8ecbfb3b40da5c",
+      "evidence_id": "fb_008",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "An exploration of engineering instructors' pedagogical adaptations early in the COVID‐19 pandemic",
+      "year": 2022
+    },
+    {
+      "rank": 8,
+      "score": 0.0812,
+      "type": "paragraph",
+      "doc_id": "43ae01596e75cbdd",
+      "evidence_id": "fb_004",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Green walls for a restorative classroom environment: a controlled evaluation study",
+      "year": 2017
+    },
+    {
+      "rank": 9,
+      "score": 0.0812,
+      "type": "paragraph",
+      "doc_id": "24d957a334cb119d",
+      "evidence_id": "fb_009",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "The perceived role of ward-based primary healthcare outreach teams in rural KwaZulu-Natal, South Africa",
+      "year": 2017
+    },
+    {
+      "rank": 10,
+      "score": 0.0812,
+      "type": "paragraph",
+      "doc_id": "d2e4c5d134363f85",
+      "evidence_id": "fb_010",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Gender in engineering departments: Are there gender differences in interruptions of academic job talks?",
+      "year": 2017
+    }
+  ],
+  "meta": {
+    "doc_ids": [
+      "8328ccf764416a0f",
+      "24d957a334cb119d",
+      "4ca9cead843f6112"
+    ],
+    "bm25_docs": 10,
+    "reranker_used": false,
+    "recency_halflife_years": 4.0,
+    "type_boosts": {
+      "figure": 0.15,
+      "table": 0.1
+    },
+    "fallback_used": true
+  }
+}

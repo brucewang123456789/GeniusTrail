@@ -1,0 +1,82 @@
+{
+  "doc_id": "test",
+  "paragraphs": [],
+  "tables": [],
+  "figures": [
+    {
+      "id": "test_fg_006_001_dcca7257fc",
+      "type": "figure",
+      "doc_id": "test",
+      "page": 6,
+      "figure_no": null,
+      "table_no": null,
+      "text": null,
+      "csv_path": null,
+      "image_path": "figures/figure_006_001.png",
+      "caption": "Table 1: Maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types. n is the sequence length, d is the representation dimension, k is the kernel size of convolutions and r the size of the neighborhood in restricted self-attention.",
+      "bbox": null,
+      "source_url": null,
+      "doi": null
+    },
+    {
+      "id": "test_fg_003_002_5d85c3573c",
+      "type": "figure",
+      "doc_id": "test",
+      "page": 3,
+      "figure_no": "1:",
+      "table_no": null,
+      "text": null,
+      "csv_path": null,
+      "image_path": "figures/figure_003_002.png",
+      "caption": "Figure 1: The Transformer - model architecture.",
+      "bbox": null,
+      "source_url": null,
+      "doi": null
+    },
+    {
+      "id": "test_fg_008_003_f595d4aa93",
+      "type": "figure",
+      "doc_id": "test",
+      "page": 8,
+      "figure_no": null,
+      "table_no": null,
+      "text": null,
+      "csv_path": null,
+      "image_path": "figures/figure_008_003.png",
+      "caption": "Table 2: The Transformer achieves better BLEU scores than previous state-of-the-art models on the English-to-German and English-to-French newstest2014 tests at a fraction of the training cost.",
+      "bbox": null,
+      "source_url": null,
+      "doi": null
+    },
+    {
+      "id": "test_fg_004_004_2117b672f2",
+      "type": "figure",
+      "doc_id": "test",
+      "page": 4,
+      "figure_no": "2:",
+      "table_no": null,
+      "text": null,
+      "csv_path": null,
+      "image_path": "figures/figure_004_004.png",
+      "caption": "Figure 2: (left) Scaled Dot-Product Attention. (right) Multi-Head Attention consists of several attention layers running in parallel.",
+      "bbox": null,
+      "source_url": null,
+      "doi": null
+    },
+    {
+      "id": "test_fg_009_005_4b812f2137",
+      "type": "figure",
+      "doc_id": "test",
+      "page": 9,
+      "figure_no": null,
+      "table_no": null,
+      "text": null,
+      "csv_path": null,
+      "image_path": "figures/figure_009_005.png",
+      "caption": "Table 3: Variations on the Transformer architecture. Unlisted values are identical to those of the base model. All metrics are on the English-to-German translation development set, newstest2013. Listed perplexities are per-wordpiece, according to our byte-pair encoding, and should not be compared to per-word perplexities.",
+      "bbox": null,
+      "source_url": null,
+      "doi": null
+    }
+  ]
+}

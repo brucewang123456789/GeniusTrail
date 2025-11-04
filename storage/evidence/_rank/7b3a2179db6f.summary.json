@@ -1,0 +1,23 @@
+{
+  "run_id": "7b3a2179db6f",
+  "query": "Key contributions and follow-ups of 'Attention Is All You Need' (2017)",
+  "lang": "en",
+  "max_highlights": 8,
+  "highlights": [
+    "The paper introduces scaled dot-product attention mechanism [1, p.4, Fig.2].",
+    "Multi-head attention involves multiple attention layers running in parallel [1, p.4, Fig.2].",
+    "Transformer architecture achieves better BLEU scores compared to previous models on English-to-German and English-to-French translations [1, p.8].",
+    "Table 3 shows variations of the Transformer architecture with performance metrics [1, p.9]."
+  ],
+  "figure_captions": {
+    "1_p.3_Fig.1": "Figure 1: The Transformer model architecture [1, p.3, Fig.1]",
+    "1_p.4_Fig.2": "Figure 2: Scaled Dot-Product Attention and Multi-Head Attention [1, p.4, Fig.2]"
+  },
+  "llm_usage": {
+    "prompt_tokens": 542,
+    "total_tokens": 758,
+    "completion_tokens": 216,
+    "prompt_tokens_details": null
+  },
+  "model": "Qwen/Qwen2.5-14B-Instruct-AWQ"
+}

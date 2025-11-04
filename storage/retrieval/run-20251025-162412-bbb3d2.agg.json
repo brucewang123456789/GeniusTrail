@@ -1,0 +1,24 @@
+{
+  "plan": {
+    "plan_id": "run-20251025-162412-bbb3d2"
+  },
+  "items": [
+    {
+      "doc_id": null,
+      "title": "Attention is all you need",
+      "url": "https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+      "doi": null,
+      "year": 2017,
+      "source": "scholar",
+      "score": 0.004098,
+      "authors": [],
+      "venue": null,
+      "is_review": null,
+      "open_access": null,
+      "region": null
+    }
+  ],
+  "stats": {
+    "count": 1
+  }
+}

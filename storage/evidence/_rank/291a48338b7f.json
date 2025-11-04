@@ -1,0 +1,86 @@
+{
+  "run_id": "291a48338b7f",
+  "query": "Key contributions and follow-ups of 'Attention Is All You Need' (2017)",
+  "sub_queries": [
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017)",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) review",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) meta-analysis",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) survey"
+  ],
+  "generated_at": 1761410394,
+  "items": [
+    {
+      "rank": 1,
+      "score": 2.2631,
+      "type": "figure",
+      "doc_id": "test",
+      "evidence_id": "test_fg_004_004_2117b672f2",
+      "page": 4,
+      "figure_no": "2:",
+      "table_no": null,
+      "snippet": "Figure 2: (left) Scaled Dot-Product Attention. (right) Multi-Head Attention consists of several attention layers running in parallel.",
+      "year": null
+    },
+    {
+      "rank": 2,
+      "score": 1.238,
+      "type": "figure",
+      "doc_id": "test",
+      "evidence_id": "test_fg_009_005_4b812f2137",
+      "page": 9,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Table 3: Variations on the Transformer architecture. Unlisted values are identical to those of the base model. All metrics are on the English-to-German translation development set, newstest2013. Listed perplexities are per-wordpiece, according to our byte-pair encoding, and should not be compared to per-word perplexiti",
+      "year": null
+    },
+    {
+      "rank": 3,
+      "score": 0.15,
+      "type": "figure",
+      "doc_id": "test",
+      "evidence_id": "test_fg_006_001_dcca7257fc",
+      "page": 6,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Table 1: Maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types. n is the sequence length, d is the representation dimension, k is the kernel size of convolutions and r the size of the neighborhood in restricted self-attention.",
+      "year": null
+    },
+    {
+      "rank": 4,
+      "score": 0.15,
+      "type": "figure",
+      "doc_id": "test",
+      "evidence_id": "test_fg_003_002_5d85c3573c",
+      "page": 3,
+      "figure_no": "1:",
+      "table_no": null,
+      "snippet": "Figure 1: The Transformer - model architecture.",
+      "year": null
+    },
+    {
+      "rank": 5,
+      "score": 0.15,
+      "type": "figure",
+      "doc_id": "test",
+      "evidence_id": "test_fg_008_003_f595d4aa93",
+      "page": 8,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Table 2: The Transformer achieves better BLEU scores than previous state-of-the-art models on the English-to-German and English-to-French newstest2014 tests at a fraction of the training cost.",
+      "year": null
+    }
+  ],
+  "meta": {
+    "doc_ids": [
+      "test"
+    ],
+    "bm25_docs": 5,
+    "reranker_used": false,
+    "recency_halflife_years": 4.0,
+    "type_boosts": {
+      "figure": 0.15,
+      "table": 0.1
+    },
+    "fallback_used": false
+  }
+}

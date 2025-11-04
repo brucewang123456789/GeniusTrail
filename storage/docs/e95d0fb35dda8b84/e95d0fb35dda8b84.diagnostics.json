@@ -1,0 +1,40 @@
+{
+  "attempts": [
+    {
+      "url": "https://www.tandfonline.com/doi/full/10.1080/10447318.2024.2427978",
+      "final_url": null,
+      "head": {
+        "status": 403,
+        "final_url": "https://www.tandfonline.com/doi/full/10.1080/10447318.2024.2427978",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 8962
+      },
+      "get": {
+        "status": 403,
+        "final_url": "https://www.tandfonline.com/doi/full/10.1080/10447318.2024.2427978"
+      },
+      "sniff": {},
+      "result": "exhausted",
+      "ts": 1761403471
+    },
+    {
+      "url": "https://dl.acm.org/doi/pdf/10.1080/10447318.2024.2427978",
+      "final_url": null,
+      "head": {
+        "status": 403,
+        "final_url": "https://dl.acm.org/doi/pdf/10.1080/10447318.2024.2427978",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 8908
+      },
+      "get": {
+        "status": 403,
+        "final_url": "https://dl.acm.org/doi/pdf/10.1080/10447318.2024.2427978"
+      },
+      "sniff": {},
+      "result": "exhausted",
+      "ts": 1761403477
+    }
+  ],
+  "error": "all_failed",
+  "ts": 1761403483
+}

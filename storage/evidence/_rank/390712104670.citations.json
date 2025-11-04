@@ -1,0 +1,271 @@
+{
+  "run_id": "390712104670",
+  "query": "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers",
+  "sub_queries": [
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers review",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers meta-analysis",
+    "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers survey"
+  ],
+  "generated_at": 1761384829,
+  "style": "compact",
+  "items": [
+    {
+      "rank": 1,
+      "type": "paragraph",
+      "doc_id": "4a1c934d3d98f3ce",
+      "evidence_id": "fb_005",
+      "ref_id": 1,
+      "label": "[1]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Attention is all you need",
+      "score": 10.5773,
+      "year": 2017
+    },
+    {
+      "rank": 2,
+      "type": "paragraph",
+      "doc_id": "4e3df1ab9015e017",
+      "evidence_id": "fb_003",
+      "ref_id": 2,
+      "label": "[2]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Supporting the development of engineers' interdisciplinary competence",
+      "score": 2.5361,
+      "year": 2017
+    },
+    {
+      "rank": 3,
+      "type": "paragraph",
+      "doc_id": "8b089b0bb32daa51",
+      "evidence_id": "fb_007",
+      "ref_id": 3,
+      "label": "[3]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Integration of engineering into K-12 education: A systematic review of teacher professional development programs",
+      "score": 2.0772,
+      "year": 2021
+    },
+    {
+      "rank": 4,
+      "type": "paragraph",
+      "doc_id": "f6557d5057f5a66f",
+      "evidence_id": "fb_006",
+      "ref_id": 4,
+      "label": "[4]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Construction automation and robotics: From one-offs to follow-ups based on practices of Chinese construction companies",
+      "score": 2.0283,
+      "year": 2020
+    },
+    {
+      "rank": 5,
+      "type": "paragraph",
+      "doc_id": "e95d0fb35dda8b84",
+      "evidence_id": "fb_001",
+      "ref_id": 5,
+      "label": "[5]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Unmoderated usability studies evolved: Can gpt ask useful follow-up questions?",
+      "score": 0.6,
+      "year": 2025
+    },
+    {
+      "rank": 6,
+      "type": "paragraph",
+      "doc_id": "9f9ae5ca928c90b5",
+      "evidence_id": "fb_002",
+      "ref_id": 6,
+      "label": "[6]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Which professional skills do students learn in engineering team-based projects?",
+      "score": 0.2834,
+      "year": 2022
+    },
+    {
+      "rank": 7,
+      "type": "paragraph",
+      "doc_id": "2d8ecbfb3b40da5c",
+      "evidence_id": "fb_008",
+      "ref_id": 7,
+      "label": "[7]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "An exploration of engineering instructors' pedagogical adaptations early in the COVID‐19 pandemic",
+      "score": 0.2834,
+      "year": 2022
+    },
+    {
+      "rank": 8,
+      "type": "paragraph",
+      "doc_id": "43ae01596e75cbdd",
+      "evidence_id": "fb_004",
+      "ref_id": 8,
+      "label": "[8]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Green walls for a restorative classroom environment: a controlled evaluation study",
+      "score": 0.0812,
+      "year": 2017
+    },
+    {
+      "rank": 9,
+      "type": "paragraph",
+      "doc_id": "24d957a334cb119d",
+      "evidence_id": "fb_009",
+      "ref_id": 9,
+      "label": "[9]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "The perceived role of ward-based primary healthcare outreach teams in rural KwaZulu-Natal, South Africa",
+      "score": 0.0812,
+      "year": 2017
+    },
+    {
+      "rank": 10,
+      "type": "paragraph",
+      "doc_id": "d2e4c5d134363f85",
+      "evidence_id": "fb_010",
+      "ref_id": 10,
+      "label": "[10]",
+      "page": null,
+      "figure_no": null,
+      "table_no": null,
+      "snippet": "Gender in engineering departments: Are there gender differences in interruptions of academic job talks?",
+      "score": 0.0812,
+      "year": 2017
+    }
+  ],
+  "refs": [
+    {
+      "ref_id": 1,
+      "doc_id": "4a1c934d3d98f3ce",
+      "title": null,
+      "venue": null,
+      "year": null,
+      "doi": null,
+      "url": null,
+      "authors": null
+    },
+    {
+      "ref_id": 2,
+      "doc_id": "4e3df1ab9015e017",
+      "title": "Supporting the development of engineers' interdisciplinary competence",
+      "venue": null,
+      "year": 2017,
+      "doi": "10.1002/jee.20155",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/jee.20155",
+      "authors": []
+    },
+    {
+      "ref_id": 3,
+      "doc_id": "8b089b0bb32daa51",
+      "title": "Integration of engineering into K-12 education: A systematic review of teacher professional development programs",
+      "venue": null,
+      "year": 2021,
+      "doi": "10.1080/02635143.2020.1740669",
+      "url": "https://www.tandfonline.com/doi/abs/10.1080/02635143.2020.1740669",
+      "authors": []
+    },
+    {
+      "ref_id": 4,
+      "doc_id": "f6557d5057f5a66f",
+      "title": null,
+      "venue": null,
+      "year": null,
+      "doi": null,
+      "url": null,
+      "authors": null
+    },
+    {
+      "ref_id": 5,
+      "doc_id": "e95d0fb35dda8b84",
+      "title": "Unmoderated usability studies evolved: Can gpt ask useful follow-up questions?",
+      "venue": null,
+      "year": 2025,
+      "doi": "10.1080/10447318.2024.2427978",
+      "url": "https://www.tandfonline.com/doi/abs/10.1080/10447318.2024.2427978",
+      "authors": []
+    },
+    {
+      "ref_id": 6,
+      "doc_id": "9f9ae5ca928c90b5",
+      "title": "Which professional skills do students learn in engineering team-based projects?",
+      "venue": null,
+      "year": 2022,
+      "doi": "10.1080/03043797.2021.1920890",
+      "url": "https://www.tandfonline.com/doi/abs/10.1080/03043797.2021.1920890",
+      "authors": []
+    },
+    {
+      "ref_id": 7,
+      "doc_id": "2d8ecbfb3b40da5c",
+      "title": "An exploration of engineering instructors' pedagogical adaptations early in the COVID‐19 pandemic",
+      "venue": null,
+      "year": 2022,
+      "doi": "10.1002/jee.20483",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/jee.20483",
+      "authors": []
+    },
+    {
+      "ref_id": 8,
+      "doc_id": "43ae01596e75cbdd",
+      "title": "Green walls for a restorative classroom environment: a controlled evaluation study",
+      "venue": null,
+      "year": 2017,
+      "doi": "10.1177/0013916516667976",
+      "url": "https://journals.sagepub.com/doi/abs/10.1177/0013916516667976",
+      "authors": []
+    },
+    {
+      "ref_id": 9,
+      "doc_id": "24d957a334cb119d",
+      "title": "The perceived role of ward-based primary healthcare outreach teams in rural KwaZulu-Natal, South Africa",
+      "venue": null,
+      "year": 2017,
+      "doi": "10.4102/phcfm.v9i1.1388",
+      "url": "https://journals.co.za/doi/abs/10.4102/phcfm.v9i1.1388",
+      "authors": []
+    },
+    {
+      "ref_id": 10,
+      "doc_id": "d2e4c5d134363f85",
+      "title": null,
+      "venue": null,
+      "year": null,
+      "doi": null,
+      "url": null,
+      "authors": null
+    }
+  ],
+  "meta": {
+    "doc_ids": [
+      "8328ccf764416a0f",
+      "24d957a334cb119d",
+      "46792afe9a3aa2d5"
+    ],
+    "bm25_docs": 10,
+    "reranker_used": false,
+    "recency_halflife_years": 4.0,
+    "type_boosts": {
+      "figure": 0.15,
+      "table": 0.1
+    },
+    "fallback_used": true
+  }
+}

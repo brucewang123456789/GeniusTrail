@@ -1,0 +1,39 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+# Core GPU stack (Python 3.10)
+torch==2.4.0+cu121
+vllm==0.6.2
+
+# OpenAI-compatible client/server deps
+openai==1.46.0
+fastapi==0.115.3
+starlette==0.41.3
+uvicorn==0.29.0
+aiofiles==23.2.1
+uvloop==0.19.0; sys_platform != "win32"
+httptools==0.6.1; sys_platform != "win32"
+
+# HF toolchain
+transformers==4.57.1
+tokenizers==0.22.1
+accelerate==0.33.0
+
+# Guided decoding safety net (so server won't 500 if accidentally hit)
+outlines==0.0.46
+pyairports==0.0.1
+
+# Parsing / figures / reporting
+PyMuPDF==1.24.9
+pytesseract==0.3.10
+Pillow==10.4.0
+numpy==1.26.4
+pandas==2.2.2
+matplotlib==3.8.4
+python-pptx==0.6.23
+lxml==5.3.0
+jinja2==3.1.4
+
+# Utilities
+requests==2.32.5
+typing_extensions==4.12.2
+pydantic==2.9.2

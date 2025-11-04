@@ -1,0 +1,31 @@
+{
+  "searchParameters": {
+    "q": "Key contributions and follow-ups of 'Attention Is All You Need' (2017)",
+    "hl": "en",
+    "type": "scholar",
+    "num": 8,
+    "engine": "google-scholar"
+  },
+  "organic": [
+    {
+      "title": "Attention is all you need",
+      "link": "https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html",
+      "publicationInfo": "A Vaswani, N Shazeer, N Parmar… - Advances in neural …, 2017 - proceedings.neurips.cc",
+      "snippet": "The dominant sequence transduction models are based on complex recurrent orconvolutional neural networks in an encoder and decoder configuration. The best performing such models also connect the encoder and decoder through an attentionm echanisms. We propose a novel, simple network architecture based solely onan attention mechanism, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superiorin quality while being more …",
+      "year": 2017,
+      "citedBy": 200281,
+      "pdfUrl": "https://proceedings.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf",
+      "id": "5Gohgn6QFikJ"
+    },
+    {
+      "title": "Attention is all you need",
+      "link": "https://cir.nii.ac.jp/crid/1370849946232757637",
+      "publicationInfo": "V Ashish - Advances in neural information processing systems, 2017 - cir.nii.ac.jp",
+      "snippet": "Attention is All you Need | CiNii Research … Attention is All you Need … Advances in Neural Information Processing Systems 30 I-, 2017 …",
+      "year": 2017,
+      "citedBy": 2267,
+      "id": "feCCwD5mIrkJ"
+    }
+  ],
+  "credits": 1
+}

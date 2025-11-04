@@ -1,0 +1,20 @@
+{
+  "run_id": "1c005af4f526",
+  "query": "Key contributions and follow-ups of 'Attention Is All You Need' (2017) for engineers",
+  "lang": "en",
+  "max_highlights": 8,
+  "highlights": [
+    "The paper introduced the Transformer model which relies solely on attention mechanisms without recurrent or convolutional layers [1].",
+    "It demonstrated that the Transformer model could achieve state-of-the-art results in machine translation tasks [1].",
+    "The work emphasized the importance of self-attention mechanisms in processing sequential data [1].",
+    "The paper's findings have been influential in various fields including natural language processing and computer vision [Insufficient evidence [ref]]."
+  ],
+  "figure_captions": {},
+  "llm_usage": {
+    "prompt_tokens": 838,
+    "total_tokens": 951,
+    "completion_tokens": 113,
+    "prompt_tokens_details": null
+  },
+  "model": "Qwen/Qwen2.5-14B-Instruct-AWQ"
+}

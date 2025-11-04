@@ -1,0 +1,40 @@
+{
+  "attempts": [
+    {
+      "url": "https://ascelibrary.org/doi/10.1061/%28ASCE%29CO.1943-7862.0001910",
+      "final_url": null,
+      "head": {
+        "status": 403,
+        "final_url": "https://ascelibrary.org/doi/10.1061/%28ASCE%29CO.1943-7862.0001910",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 9223
+      },
+      "get": {
+        "status": 403,
+        "final_url": "https://ascelibrary.org/doi/10.1061/%28ASCE%29CO.1943-7862.0001910"
+      },
+      "sniff": {},
+      "result": "exhausted",
+      "ts": 1761403522
+    },
+    {
+      "url": "https://dl.acm.org/doi/pdf/10.1061/(ASCE)CO.1943-7862.0001910",
+      "final_url": null,
+      "head": {
+        "status": 403,
+        "final_url": "https://dl.acm.org/doi/pdf/10.1061/(ASCE)CO.1943-7862.0001910",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 9179
+      },
+      "get": {
+        "status": 403,
+        "final_url": "https://dl.acm.org/doi/pdf/10.1061/(ASCE)CO.1943-7862.0001910"
+      },
+      "sniff": {},
+      "result": "exhausted",
+      "ts": 1761403528
+    }
+  ],
+  "error": "all_failed",
+  "ts": 1761403534
+}

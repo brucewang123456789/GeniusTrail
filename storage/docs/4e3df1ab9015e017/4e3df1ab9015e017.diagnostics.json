@@ -1,0 +1,40 @@
+{
+  "attempts": [
+    {
+      "url": "https://onlinelibrary.wiley.com/doi/10.1002/jee.20155",
+      "final_url": null,
+      "head": {
+        "status": 403,
+        "final_url": "https://onlinelibrary.wiley.com/doi/10.1002/jee.20155",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 9169
+      },
+      "get": {
+        "status": 403,
+        "final_url": "https://onlinelibrary.wiley.com/doi/10.1002/jee.20155"
+      },
+      "sniff": {},
+      "result": "exhausted",
+      "ts": 1761403497
+    },
+    {
+      "url": "https://dl.acm.org/doi/pdf/10.1002/jee.20155",
+      "final_url": null,
+      "head": {
+        "status": 403,
+        "final_url": "https://dl.acm.org/doi/pdf/10.1002/jee.20155",
+        "content_type": "text/html; charset=UTF-8",
+        "content_length": 9128
+      },
+      "get": {
+        "status": 403,
+        "final_url": "https://dl.acm.org/doi/pdf/10.1002/jee.20155"
+      },
+      "sniff": {},
+      "result": "exhausted",
+      "ts": 1761403503
+    }
+  ],
+  "error": "all_failed",
+  "ts": 1761403509
+}
