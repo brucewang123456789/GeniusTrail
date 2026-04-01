@@ -2,371 +2,310 @@
 
 **Evidence-governed harness engineering for code-capable foundation models.**
 
-VeriLoop Coder is a coding-model repository built around a simple premise: **the model is the agent, and the code around it is the harness**. This project does not treat intelligence as a prompt graph, a no-code workflow, or a pile of orchestration glue. Instead, it treats the base model as the decision-making core and builds a disciplined runtime around it: tools, context management, permissions, execution interfaces, memory, task persistence, and evidence-governed control.
-
-This repository combines three distinct layers:
-
-1. **Anthropic public Claude Code materials** as a reference for a production-grade terminal-native coding workflow, public command patterns, and developer-facing integration style.
-2. **shareAI-lab's harness-engineering pedagogy** as a reference for progressive agent runtime construction, especially the transition from a minimal tool loop to planning, task graphs, subagents, teams, and worktree isolation.
-3. **VeriLoop's original control-plane architecture** as the governing layer that adds evidence contracts, uncertainty-aware routing, budgeted action selection, rollback discipline, and auditable execution.
-
-The result is not a clone of Claude Code, not a template pack, and not a prompt wrapper. It is a **VeriLoop-native coding harness** designed to support the development of robust code models, code agents, and coding-oriented foundation-model products.
-
----
-
-## Design Position
-
-### 1. The model is the agent
-A coding agent is fundamentally a trained model operating in an environment. The harness does not create intelligence; it provides the environment in which intelligence can perceive, reason, and act.
-
-### 2. The harness is the runtime world
-For coding tasks, the runtime world includes file operations, shell access, repository state, diagnostics, tool invocation, task persistence, worktree isolation, and permission boundaries.
-
-### 3. VeriLoop adds evidence-governed control
-Where a conventional coding harness focuses on capability exposure, VeriLoop adds a stricter control layer:
-
-- **state-centered execution** rather than prompt-only drift,
-- **claim-and-evidence binding** rather than free-form assertion,
-- **budget-aware action routing** rather than uncontrolled tool cascades,
-- **rollback and correction** rather than one-pass completion,
-- **auditable loop logs** rather than opaque agent traces.
-
-This is the differentiator of VeriLoop Coder: it does not stop at making a model act; it constrains the action process so that coding behavior can become more inspectable, reproducible, and trustworthy.
+> **Project status**
+>
+> **VeriLoop Coder is still under construction.**
+>
+> This branch should be understood primarily as a **research and contribution branch for publicly obtainable coding-harness materials, reference implementations, and architecture-aligned notes**, not as the final released VeriLoop Coder product.
+>
+> At the current stage, this repository mainly serves four purposes:
+>
+> 1. to preserve and organize publicly accessible coding-agent and harness-related reference materials;
+> 2. to study production-grade coding-harness patterns that became visible through public Claude Code materials and the widely circulated source-map-derived code incident;
+> 3. to incorporate lessons from the MIT-licensed **shareAI-lab / learn-claude-code** harness-engineering pedagogy;
+> 4. to prepare the future engineering substrate for **VeriLoop Coder** as a distinct, original, evidence-governed coding system.
 
 ---
 
-## What This Repository Is For
+## What This Repository Is Right Now
 
-VeriLoop Coder is intended to serve as:
+This repository is **not yet the final VeriLoop Coder runtime**.
 
-- a **clean harness foundation** for code-capable models,
-- a **runtime control shell** for future VeriLoop coding products,
-- a **development and evaluation platform** for tool-using code agents,
-- a **bridge** between publicly visible coding-agent practices and VeriLoop's evidence-driven architecture,
-- a **training and post-training environment** for capturing high-value coding trajectories.
+At present, it should be understood as a **curated research workbench** for future VeriLoop coding infrastructure. The current branch contains a mixture of:
 
-This repository is therefore aimed at engineers who are not merely prompting a model, but building the runtime conditions under which a model can become a reliable coding agent.
+- third-party public reference materials,
+- publicly circulated source-map-derived code resources collected from the open internet for research and comparative study,
+- MIT-licensed harness-engineering learning materials,
+- repository-local documentation, tests, web assets, and scaffolding that align these resources with VeriLoop's future architecture.
 
----
-
-## Architectural Thesis
-
-```text
-Backbone Model
-    ↓
-Harness Runtime
-    ↓
-VeriLoop Control Plane
-    ↓
-Task / Team / Worktree Execution
-    ↓
-Evidence, Memory, Rollback, Evaluation
-```
-
-### Layer 1 — Backbone Model
-The base model may be a proprietary API model or an open-weight backbone. It is the inference core that interprets goals, proposes actions, consumes tool results, and generates responses.
-
-### Layer 2 — Harness Runtime
-The harness runtime provides the environment:
-
-- file read / write / edit,
-- shell and process execution,
-- repository inspection,
-- search and retrieval,
-- structured task state,
-- subagent or teammate delegation,
-- worktree or sandbox isolation,
-- approval and permission controls.
-
-### Layer 3 — VeriLoop Control Plane
-VeriLoop overlays the harness with an evidence-driven loop. In this repository, that means the coding runtime is governed by the following principles:
-
-- **State (`St`)** is explicit rather than implicit.
-- **Goals (`Q`)** are maintained as controlled convergence targets.
-- **Uncertainty (`U`)** informs whether to answer, retrieve, inspect, or execute.
-- **Budget (`B`)** constrains tool use, expansion, and iterative correction.
-- **Evidence (`E`)** binds conclusions to inspectable traces.
-- **Claims (`C`)** can be decomposed, checked, revised, or rolled back.
-- **Logs (`L`)** preserve auditable loop history.
-
-### Layer 4 — Execution Fabric
-The execution layer is where practical coding work happens:
-
-- single-turn tool execution,
-- planning and task breakdown,
-- background jobs,
-- teammate coordination,
-- asynchronous messaging,
-- isolated work directories,
-- structured review and verification.
-
-### Layer 5 — Evaluation and Improvement
-The repository is also a data-generation and evaluation environment. Each coding trace can become:
-
-- a harness debug record,
-- an audit trail,
-- an evaluation case,
-- a post-training trajectory,
-- a failure-analysis sample for future model refinement.
+In other words, **the current value of this branch is not that VeriLoop Coder is already complete**, but that it establishes a serious, architecture-aware starting point for building it correctly.
 
 ---
 
-## Why Harness Engineering Matters Here
+## What VeriLoop Coder Is Intended To Become
 
-Harness engineering is not secondary infrastructure. In practice, it determines whether a coding model behaves like a fragile demo or a deployable engineering system.
+VeriLoop Coder is the future coding product line within the VeriLoop family.
 
-This repository adopts harness engineering as a first-class discipline for five reasons:
+Its long-term goal is **not** to become a superficial clone of Claude Code, a prompt wrapper around a base model, or a generic automation shell. Its goal is to become a **VeriLoop-native coding system** in which a strong code-capable model operates inside a disciplined harness and is governed by an evidence-aware runtime.
 
-1. **Capability exposure must be controlled.** A model with unrestricted tools is not automatically useful.
-2. **Context must be organized, not merely accumulated.** Long coding sessions require compaction, decomposition, and selective recall.
-3. **Execution must be structured.** Planning, task graphs, and worktree isolation reduce interference and improve completion quality.
-4. **Permission boundaries must be explicit.** Safe coding requires controlled action surfaces.
-5. **Reasoning must be grounded in evidence.** VeriLoop is designed to prevent unsupported coding assertions from passing unchecked.
+In practical terms, the future VeriLoop Coder is intended to support:
 
-For this reason, VeriLoop Coder treats harness engineering not as an accessory to the model, but as the operational substrate that lets the model become a usable coding system.
+- code generation under explicit control boundaries,
+- repository understanding across large codebases,
+- testing and CI-driven repair loops,
+- tool-mediated coding work rather than prompt-only behavior,
+- auditable execution traces,
+- rollback-aware correction,
+- evidence-linked coding conclusions,
+- integration with a broader VeriLoop control architecture.
 
----
-
-## Upstream Provenance and File Attribution
-
-This repository draws from two upstream reference lines and one original line.
-
-### A. Files derived from Anthropic public Claude Code materials
-These are files or patterns originating from Anthropic's public Claude Code repository, public examples, or official public-facing developer materials.
-
-They should be identified as one of the following in file headers, notices, or repository documentation:
-
-- `Source: Anthropic public Claude Code materials`
-- `Derived from Anthropic Claude Code public examples/guides`
-- `Adapted from Anthropic public Claude Code repository`
-
-Typical content in this category includes:
-
-- public command patterns,
-- example integration workflows,
-- public GitHub automation examples,
-- developer-facing CLI or repository usage conventions,
-- public documentation-derived structure or interface guidance.
-
-### B. Files derived from shareAI-lab / learn-claude-code
-These are files or patterns adapted from the educational harness-engineering repository `learn-claude-code`.
-
-They should be identified as one of the following in file headers, notices, or repository documentation:
-
-- `Source: shareAI-lab learn-claude-code`
-- `Derived from shareAI-lab harness engineering sessions`
-- `Adapted from shareAI-lab learn-claude-code examples`
-
-Typical content in this category includes:
-
-- progressive session structure for harness building,
-- minimal agent loop demonstrations,
-- tool-dispatch pedagogy,
-- planning and task-system teaching patterns,
-- subagent, team, and worktree educational scaffolds,
-- mental-model-first explanatory organization.
-
-### C. Files original to VeriLoop
-These are the files that define the actual identity of this repository and should be treated as VeriLoop-native original work.
-
-Typical content in this category includes:
-
-- E³-Loop or VeriLoop control logic,
-- evidence-gated routing,
-- uncertainty and budget handling,
-- rollback and correction mechanisms,
-- schema contracts and state representations,
-- model adapters and product-specific execution policies,
-- evaluation logic aligned with VeriLoop objectives,
-- any repository design that reinterprets upstream references under a new control architecture.
-
-### Attribution rule
-If a file is mixed rather than purely inherited, it should be marked as:
-
-- `Mixed provenance: Anthropic public materials + shareAI-lab pedagogy + VeriLoop original modifications`
-
-This repository should therefore preserve **clear provenance boundaries** rather than pretending that all imported material is homogeneous.
+That future system is still being built. This branch is part of the preparation layer.
 
 ---
 
-## What Was Taken from Each Upstream Line
+## Why Claude Code Matters Here
 
-### From Anthropic public Claude Code materials
-This repository draws inspiration from Anthropic's public Claude Code positioning as a terminal-native coding agent that can understand a codebase, execute routine tasks, and interact through natural-language commands. That public framing establishes the practical target: a coding system that is usable by engineers inside real repositories and workflows.
+Claude Code matters to this repository because it provides one of the clearest publicly visible examples of a **terminal-native coding harness** for a strong model. It demonstrates a practical coding-agent runtime with repository awareness, file editing, command execution, context handling, and developer-facing workflow design.
 
-In this project, Anthropic-derived influence is primarily operational rather than doctrinal:
+For VeriLoop, the importance of Claude Code is not ideological imitation. It is architectural reference.
 
-- terminal-first coding interaction,
-- coding-agent workflow orientation,
-- repository-aware execution expectations,
-- public integration patterns,
-- real engineering use-case framing.
+The most valuable lesson is that a serious coding system is not just “a powerful model with a prompt.” It is a runtime environment in which the model can inspect code, act through tools, coordinate state, and remain productive over multi-step engineering work.
 
-### From shareAI-lab's learn-claude-code
-This repository draws direct methodological value from the harness-engineering decomposition presented by `learn-claude-code`, especially its explicit separation between the **agent loop** and the **surrounding harness mechanisms**.
+That lesson aligns directly with VeriLoop's own view that:
 
-The most valuable imported ideas from that line are:
-
-- the progression from minimal loop to full harness,
-- the notion that the loop stays stable while tools and runtime mechanisms expand,
-- structured pedagogy around planning, skills, tasks, background work, teams, and worktree isolation,
-- the treatment of harness engineering as a domain-general discipline rather than a coding-only trick.
-
-### What VeriLoop adds beyond both
-VeriLoop adds a layer that neither source provides in the same form:
-
-- evidence binding,
-- uncertainty-structured routing,
-- budget-sensitive control,
-- rollback discipline,
-- explicit state contracts,
-- audit-oriented logs,
-- controllable convergence rather than purely free-running orchestration.
-
-That is the point of this repository: not to duplicate either upstream source, but to synthesize them into a stricter and more research-oriented coding-model harness.
+- the **model is the agent**,
+- the **harness is the runtime world**,
+- and the **control layer must regulate how that world is used**.
 
 ---
 
-## Core Repository Layout
+## Why the Source-Map-Derived Materials Matter Here
 
-This project follows the canonical VeriLoop build order:
+A major reason this branch exists in its current form is that a large amount of Claude Code implementation detail became publicly visible through the 2026 source-map exposure and the subsequent circulation of mirror or derivative repositories on the public internet.
 
-```text
-01_foundation/          Base abstractions, shared runtime contracts, minimal loop surfaces
-02_schema_contracts/    State, claim, evidence, task, and message schemas
-03_backbone_adapters/   Connectors for supported model backbones and providers
-04_control_plane/       VeriLoop routing, gating, budget, rollback, termination logic
-05_memory_evidence/     Evidence stores, retrieval, memory shaping, trace persistence
-06_sandbox_runtime/     Tool execution, shell boundaries, worktree or sandbox controls
-07_harness_engineering/ Tool registry, task system, planning, teams, agent workflows
-08_peft/                Optional adaptation, trajectory shaping, lightweight specialization
-09_inference_serving/   Serving paths, session runtime, APIs, deployment interfaces
-10_evals/               Harness evaluation, coding benchmarks, audit tests, failure analysis
-11_ops/                 CI/CD, observability, governance, maintenance operations
-```
+That event matters to VeriLoop Coder for one reason: it exposed a rare, large-scale view of how a production-grade coding harness is actually assembled in practice.
 
-This layout reflects the actual logic of the project:
+For future VeriLoop Coder work, these materials are being treated as:
 
-- first define the foundation,
-- then define the contracts,
-- then bind the model,
-- then govern the model,
-- then expose tools and memory,
-- then engineer the harness,
-- then evaluate and operationalize the result.
+- **publicly visible reference inputs**,
+- **comparative engineering study material**,
+- **harness design evidence**,
+- **not** as the final identity of VeriLoop Coder.
+
+This distinction is critical.
+
+The future VeriLoop Coder should take inspiration where useful, discard what is not aligned, and recompose the runtime in VeriLoop's own design language. The goal is **learning and synthesis**, not brand substitution or source appropriation masquerading as originality.
 
 ---
 
-## Core Harness Mechanisms in VeriLoop Coder
+## Why shareAI-lab / learn-claude-code Matters Here
 
-The harness mechanisms in this repository are expected to include, at minimum:
+This repository also draws directly from **shareAI-lab / learn-claude-code**, which is especially valuable because it explains harness engineering as a first-class discipline rather than treating it as scattered implementation trivia.
 
-1. **Agent loop** — the minimal inference-and-tool cycle.
-2. **Tool registry** — a stable dispatch surface for external actions.
-3. **Planning surface** — explicit decomposition before execution.
-4. **Task graph** — persistent goals, dependencies, and status transitions.
-5. **Knowledge loading** — on-demand injection rather than unbounded prompt inflation.
-6. **Context control** — compaction, trimming, or structured carry-forward.
-7. **Subagent support** — isolated contexts for bounded subtasks.
-8. **Team coordination** — asynchronous multi-agent collaboration.
-9. **Execution isolation** — worktree, sandbox, or equivalent boundary control.
-10. **Permission governance** — controlled action approval and trust boundaries.
-11. **Evidence binding** — code claims tied to traces, outputs, or inspections.
-12. **Rollback and correction** — ability to revise, reverse, or re-run under control.
+That project is important for VeriLoop Coder because it makes explicit several truths that also matter to VeriLoop:
 
-These mechanisms define the repository more than any single model call does.
+- the model is the real agent;
+- the harness is what gives the model a usable environment;
+- planning, tools, memory shaping, task systems, delegation, and isolation are runtime mechanisms, not “the intelligence itself”;
+- a good harness can make a strong model far more useful without pretending that the harness itself is the intelligence.
+
+This is one of the strongest conceptual overlaps between the repository's upstream references and VeriLoop's own long-term direction.
 
 ---
 
-## VeriLoop-Specific Coding Logic
+## VeriLoop's Distinct Position
 
-VeriLoop Coder is not just a coding assistant shell. It is a coding runtime shaped by the following logic:
+Even though this branch currently contains third-party reference material, the architectural stance of VeriLoop remains distinct.
 
-### Evidence-governed coding
-Code changes, repository claims, and diagnostic conclusions should not be accepted merely because the model states them confidently. The runtime should favor inspection, verification, and trace-linked justification.
+VeriLoop does **not** define a coding agent as “just a workflow graph,” “just a bigger context window,” or “just a tool loop.” It aims to add a stricter governing layer around coding behavior.
 
-### Budget-sensitive iteration
-The model should not expand indefinitely. Planning depth, tool invocation count, inspection breadth, and revision loops should be shaped by budget constraints.
+The future VeriLoop Coder is intended to stand on three layers:
 
-### Structured uncertainty
-When confidence is low, the system should not simply continue producing text. It should transition into retrieval, inspection, controlled execution, or user escalation.
+1. **Backbone model capability**  
+   A strong code-capable base model or family of models.
 
-### Recovery by design
-A robust coding system must support correction, not just generation. Rollback and repair are part of the architecture, not afterthoughts.
+2. **Harness runtime capability**  
+   Files, shell, repository inspection, context shaping, tasks, subagents, teams, worktree isolation, browser/tool surfaces, and execution interfaces.
 
-### Clean separation of intelligence and mechanism
-The model decides. The harness exposes the environment. The control plane regulates the conditions of action. This separation is necessary for both engineering clarity and future model substitution.
+3. **VeriLoop control discipline**  
+   A governing runtime that constrains execution through explicit state, uncertainty handling, evidence discipline, budget-aware routing, rollback logic, and auditable traces.
 
----
-
-## Intended Outcomes
-
-VeriLoop Coder is designed to support the development of systems that can:
-
-- read and modify large codebases with stronger control,
-- operate across multi-step engineering tasks without uncontrolled drift,
-- generate auditable coding traces,
-- support model replacement without redesigning the runtime,
-- serve as a foundation for post-training and evaluation,
-- evolve from a coding harness into a broader evidence-governed agent runtime.
+That third layer is what keeps VeriLoop Coder from collapsing into “just another coding wrapper.”
 
 ---
 
-## Non-Goals
+## Harness Engineering Is the Mainline, Not Context Inflation
 
-This repository is **not** intended to be:
+This repository should be read through the lens of **Harness Engineering**, not old-style context inflation.
 
-- a no-code workflow engine,
-- a prompt-library product,
-- a blind clone of Claude Code,
-- a purely educational toy with no path to productization,
-- a monolithic claim that orchestration alone creates agency.
+VeriLoop has already moved away from treating long prompt assembly as the primary way to create agent behavior. In this project, the direction is instead:
 
-Its purpose is narrower and more serious: to provide a rigorous harness foundation for code-capable models under VeriLoop's control logic.
+- stateful runtime objects,
+- explicit tool surfaces,
+- session-state discipline,
+- controlled memory packets,
+- structured receipts and artifacts,
+- validator-aware execution,
+- bounded rollback and revision.
 
----
+This matters for two reasons.
 
-## Build Philosophy
+First, it means the future VeriLoop Coder is being designed as a **runtime system**, not a long-prompt trick.
 
-The build philosophy of VeriLoop Coder can be summarized in one sentence:
-
-> **Use public coding-agent harness insights where they are useful, adopt progressive harness engineering where it is structurally sound, and re-govern the whole runtime through VeriLoop's evidence-driven control plane.**
-
-That is why this repository matters.
-
-It takes the practical terminal-native coding horizon represented by Anthropic's public Claude Code materials, combines it with the pedagogically clean harness decomposition demonstrated by shareAI-lab, and then restructures both under a stricter control architecture suitable for VeriLoop's long-term model and product ambitions.
+Second, it explains why the Claude Code source-map-derived materials and the shareAI harness pedagogy are relevant at all: both expose practical evidence that modern code agents succeed when the harness is well-designed.
 
 ---
 
-## License and Upstream Respect
+## What This Branch Contains
 
-This repository must preserve all upstream license obligations.
+At the current stage, this branch should be understood as containing several content categories:
 
-- Files derived from Anthropic public materials remain subject to the terms attached to those materials.
-- Files derived from shareAI-lab material remain subject to the MIT terms attached to that repository.
-- VeriLoop-original files should carry their own project license and attribution policy.
+### 1. Third-party reference lines
 
-This repository is therefore a **synthesis project**, not an ownership erasure project.
+These include:
+
+- public Claude Code materials,
+- publicly circulated source-map-derived code resources,
+- shareAI-lab harness-engineering teaching materials.
+
+### 2. Repository-local organization layers
+
+These include:
+
+- repository-local documentation,
+- tests,
+- skills,
+- web assets,
+- branch-level structure for future VeriLoop Coder work.
+
+### 3. Future-facing VeriLoop scaffolding
+
+These are the parts that begin to connect external reference materials with VeriLoop's own direction, while the full product is still under construction.
 
 ---
 
-## Status
+## How To Interpret This Repository Correctly
 
-VeriLoop Coder should be understood as a **harness-first coding-model repository**:
+Please interpret this repository according to the following rules.
 
-- model-aware,
-- tool-capable,
-- evidence-governed,
-- architecture-driven,
-- attribution-conscious,
-- built for serious coding-agent engineering rather than superficial automation.
+### Rule 1 — Do not confuse this branch with the finished product
+
+The current repository is a **build-stage research branch**, not the final release of VeriLoop Coder.
+
+### Rule 2 — Do not confuse reference code with VeriLoop-original architecture
+
+Third-party public materials may be preserved here for study, comparison, or contribution purposes. They are not, by themselves, the full substance of VeriLoop Coder.
+
+### Rule 3 — Do not confuse public source-map exposure with official open-sourcing
+
+Some materials in the public ecosystem arose because implementation details became publicly exposed and were then mirrored or reconstructed by third parties. That is different from an official project deciding to open-source a codebase under a formal release process.
+
+### Rule 4 — Do not assume that the future VeriLoop Coder will simply replicate upstream code
+
+The long-term intent is to build an original VeriLoop coding runtime that is informed by public evidence, not defined by it.
+
+---
+
+## Third-Party Provenance Notice
+
+This repository may include, reference, discuss, or structurally learn from third-party materials drawn from multiple origins. These may include:
+
+- official public Claude Code documentation or repositories published by Anthropic;
+- publicly circulated source-map-derived Claude Code materials made accessible by third parties after a public exposure event;
+- educational harness-engineering materials from **shareAI-lab / learn-claude-code**;
+- repository-local notes and adaptations created by the maintainer of this repository.
+
+Where possible, provenance should be made explicit at the file level or directory level.
+
+### Provenance categories
+
+#### A. Official public materials
+These are materials that were intentionally published on official public channels by their original publisher.
+
+#### B. Publicly circulated source-map-derived materials
+These are materials that became visible through public exposure and were then mirrored, reconstructed, or circulated by third parties in public repositories or archives.
+
+#### C. MIT-licensed educational harness materials
+These are materials drawn from repositories such as **shareAI-lab / learn-claude-code**, where the upstream license permits reuse subject to retention of notices and license terms.
+
+#### D. VeriLoop-original materials
+These are repository-local documents, architectural notes, tests, and future implementation layers authored specifically for VeriLoop.
+
+This repository should therefore be read as a **mixed-provenance research and build branch**, not as a homogeneous codebase of single-origin materials.
+
+---
+
+## Third-Party Disclaimer
+
+### No affiliation or endorsement
+This repository is **not affiliated with, endorsed by, sponsored by, or officially connected to Anthropic, Claude Code, or shareAI-lab**, unless explicitly stated otherwise in a specific file with supporting evidence.
+
+### No claim of official source status
+Where third-party materials are preserved or referenced, this repository does **not** claim that those materials constitute an official release by the original vendor unless that status can be independently verified from the original publisher.
+
+### Respect for upstream rights
+All third-party names, product names, trademarks, and original copyrights remain the property of their respective owners. Users of this repository are responsible for reviewing the terms attached to any upstream material they choose to use.
+
+### Research and interoperability purpose
+At this stage, this branch is being shared primarily for **research, learning, engineering comparison, interoperability study, and future architecture preparation**, while VeriLoop Coder itself is still under active construction.
+
+### No transfer of third-party ownership
+The presence of third-party-derived or third-party-referenced materials in this repository does not convert them into VeriLoop-owned original work.
+
+### Correction / removal policy
+If a file is incorrectly attributed, should carry additional upstream notice, or should be removed for documented rights reasons, the maintainer should be notified with specific evidence so the repository can be corrected in a timely and responsible manner.
+
+### Informational notice only
+This README is an engineering and provenance notice. It is **not legal advice**.
+
+---
+
+## License Handling Expectations
+
+This repository should preserve and respect upstream license obligations wherever applicable.
+
+- If material comes from an MIT-licensed source such as **shareAI-lab / learn-claude-code**, the relevant copyright and license notice should be preserved.
+- If material comes from official public Claude Code repositories or documentation, it should be handled according to the terms attached to those sources.
+- If material comes from third-party source-map-derived public mirrors, users should independently review provenance, rights status, and downstream use implications before reuse.
+- VeriLoop-original material should be clearly distinguishable from third-party material wherever possible.
+
+A clean future state for this repository is one in which provenance is not vague, but explicit.
+
+---
+
+## The Long-Term VeriLoop Coder Vision
+
+The long-term goal is to develop a coding system that is:
+
+- **model-centric**, not workflow-centric;
+- **harness-first**, not prompt-fragile;
+- **evidence-governed**, not assertion-driven;
+- **rollback-capable**, not one-pass brittle;
+- **stateful and auditable**, not opaque;
+- **productizable**, not merely demonstrative.
+
+This means the future VeriLoop Coder is expected to move beyond simply preserving public materials. It should become a full runtime for code-capable foundation models that can support repository understanding, tool use, execution, correction, evaluation, and governance under a VeriLoop-native architecture.
+
+That future system is still being built.
+
+This branch is part of the groundwork.
+
+---
+
+## Repository Reading Guide
+
+If you are new here, the correct reading order is:
+
+1. understand that **VeriLoop Coder is under construction**;
+2. understand that the current branch is primarily a **public-reference and research branch**;
+3. understand that **Harness Engineering is the mainline methodology**;
+4. understand that future VeriLoop-original implementation is intended to sit **on top of**, and **beyond**, the current mixed-provenance materials;
+5. understand that the purpose of this branch is to contribute useful public reference structure now while the larger VeriLoop Coder system is still being built.
 
 ---
 
 ## Final Statement
 
-The foundation model is the agent.
-The harness is the world in which the agent can work.
-VeriLoop is the control discipline that keeps that world auditable, evidence-bound, and strategically convergent.
+VeriLoop Coder is not presenting itself as a finished coding product today.
 
-**VeriLoop Coder exists to turn code-capable models into better-governed coding systems.**
+It is presenting itself honestly as:
+
+- a serious coding-harness research branch,
+- a contribution branch for publicly obtainable reference materials,
+- a legally cautious, provenance-aware repository,
+- and a forward-looking foundation for the future VeriLoop Coder system.
+
+The immediate branch value is **shared public code and harness study**.  
+The long-term value is **a distinct VeriLoop-native coding runtime still under construction**.
+
+That distinction is intentional, and this README exists to make it explicit.
