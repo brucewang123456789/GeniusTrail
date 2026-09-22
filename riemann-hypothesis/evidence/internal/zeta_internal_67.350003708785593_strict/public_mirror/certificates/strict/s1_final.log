@@ -1,0 +1,104 @@
+===== AGGREGATED STRICT s=1 CERTIFICATE; 5/5 EXACT ROOT SHARDS =====
+Shard partition is verifier-native NSH=5, SH=0..4; aggregation occurs only after each shard independently terminates stack_left=0 HARD=0 result=PROVED.
+
+===== SHARD 0/5 nodes=15102289 =====
+active independently-certified wells=157
+coarse table 606805 cells building...
+fine table loaded from cache
+table cells=606805 h=0.000244141 Xmax=148.146 K0=0.918415839907
+separable LB = 0.0043018398  vs eps 0.0080132
+  g1: 2 components, span [0.9002,15.4413]
+  g2: 2 components, span [0.9413,9.1486]
+  g3: 3 components, span [0.9451,7.0242]
+  g4: 4 components, span [0.9535,6.1768]
+  g5: 4 components, span [0.9535,6.1768]
+  g6: 3 components, span [0.9451,7.0242]
+  g7: 2 components, span [0.9413,9.1486]
+  g8: 2 components, span [0.9002,15.4413]
+SYMMETRY_PREFLIGHT=PASS
+root components = 2304
+symmetry mirror roots skipped = 1128
+roots this shard = 69 (shard 0/5) tables done
+slope=1 eps=0.0080132 nodes=15102289 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0080132 gap=-1.000e+300) result=PROVED
+
+===== SHARD 1/5 nodes=20464383 =====
+active independently-certified wells=157
+coarse table loaded from cache
+fine table loaded from cache
+table cells=606805 h=0.000244141 Xmax=148.146 K0=0.918415839907
+separable LB = 0.0043018398  vs eps 0.0080132
+  g1: 2 components, span [0.9002,15.4413]
+  g2: 2 components, span [0.9413,9.1486]
+  g3: 3 components, span [0.9451,7.0242]
+  g4: 4 components, span [0.9535,6.1768]
+  g5: 4 components, span [0.9535,6.1768]
+  g6: 3 components, span [0.9451,7.0242]
+  g7: 2 components, span [0.9413,9.1486]
+  g8: 2 components, span [0.9002,15.4413]
+SYMMETRY_PREFLIGHT=PASS
+root components = 2304
+symmetry mirror roots skipped = 1128
+roots this shard = 69 (shard 1/5) tables done
+slope=1 eps=0.0080132 nodes=20464383 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0080132 gap=-1.000e+300) result=PROVED
+
+===== SHARD 2/5 nodes=18547216 =====
+active independently-certified wells=157
+coarse table loaded from cache
+fine table loaded from cache
+table cells=606805 h=0.000244141 Xmax=148.146 K0=0.918415839907
+separable LB = 0.0043018398  vs eps 0.0080132
+  g1: 2 components, span [0.9002,15.4413]
+  g2: 2 components, span [0.9413,9.1486]
+  g3: 3 components, span [0.9451,7.0242]
+  g4: 4 components, span [0.9535,6.1768]
+  g5: 4 components, span [0.9535,6.1768]
+  g6: 3 components, span [0.9451,7.0242]
+  g7: 2 components, span [0.9413,9.1486]
+  g8: 2 components, span [0.9002,15.4413]
+SYMMETRY_PREFLIGHT=PASS
+root components = 2304
+symmetry mirror roots skipped = 1128
+roots this shard = 68 (shard 2/5) tables done
+slope=1 eps=0.0080132 nodes=18547216 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0080132 gap=-1.000e+300) result=PROVED
+
+===== SHARD 3/5 nodes=18784416 =====
+active independently-certified wells=157
+coarse table loaded from cache
+fine table loaded from cache
+table cells=606805 h=0.000244141 Xmax=148.146 K0=0.918415839907
+separable LB = 0.0043018398  vs eps 0.0080132
+  g1: 2 components, span [0.9002,15.4413]
+  g2: 2 components, span [0.9413,9.1486]
+  g3: 3 components, span [0.9451,7.0242]
+  g4: 4 components, span [0.9535,6.1768]
+  g5: 4 components, span [0.9535,6.1768]
+  g6: 3 components, span [0.9451,7.0242]
+  g7: 2 components, span [0.9413,9.1486]
+  g8: 2 components, span [0.9002,15.4413]
+SYMMETRY_PREFLIGHT=PASS
+root components = 2304
+symmetry mirror roots skipped = 1128
+roots this shard = 68 (shard 3/5) tables done
+slope=1 eps=0.0080132 nodes=18784416 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0080132 gap=-1.000e+300) result=PROVED
+
+===== SHARD 4/5 nodes=18538984 =====
+active independently-certified wells=157
+coarse table loaded from cache
+fine table loaded from cache
+table cells=606805 h=0.000244141 Xmax=148.146 K0=0.918415839907
+separable LB = 0.0043018398  vs eps 0.0080132
+  g1: 2 components, span [0.9002,15.4413]
+  g2: 2 components, span [0.9413,9.1486]
+  g3: 3 components, span [0.9451,7.0242]
+  g4: 4 components, span [0.9535,6.1768]
+  g5: 4 components, span [0.9535,6.1768]
+  g6: 3 components, span [0.9451,7.0242]
+  g7: 2 components, span [0.9413,9.1486]
+  g8: 2 components, span [0.9002,15.4413]
+SYMMETRY_PREFLIGHT=PASS
+root components = 2304
+symmetry mirror roots skipped = 1128
+roots this shard = 68 (shard 4/5) tables done
+slope=1 eps=0.0080132 nodes=18538984 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0080132 gap=-1.000e+300) result=PROVED
+
+slope=1 eps=0.0080132 nodes=91437288 stack_left=0 HARD=0 worst_lb=NA (aggregated 5/5 strict shards) result=PROVED

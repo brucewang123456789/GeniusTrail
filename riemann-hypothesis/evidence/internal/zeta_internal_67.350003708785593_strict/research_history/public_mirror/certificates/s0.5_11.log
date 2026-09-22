@@ -1,0 +1,14 @@
+fine table loaded from cache
+table cells=510500 h=0.000244141 Xmax=124.634 K0=0.918415839907
+separable LB = 0.00429879222  vs eps 0.0067328
+  g1: 1 components, span [0.8786,10.4171]
+  g2: 2 components, span [0.9245,6.2376]
+  g3: 4 components, span [0.9287,4.9721]
+  g4: 5 components, span [0.9380,4.2278]
+  g5: 5 components, span [0.9380,4.2278]
+  g6: 4 components, span [0.9287,4.9721]
+  g7: 2 components, span [0.9245,6.2376]
+  g8: 1 components, span [0.8786,10.4171]
+root components = 1600
+roots this shard = 12 (shard 11/16) tables done
+slope=0.5 eps=0.0067328 nodes=2080980 stack_left=0 HARD=0 worst_lb=1e+30 (eps=0.0067328 gap=-1.000e+30) result=PROVED

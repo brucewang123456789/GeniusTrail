@@ -1,0 +1,25 @@
+bb26_strict_wells_symmetry.cpp: In function 'void rng(int, int, double&, double&, double&)':
+bb26_strict_wells_symmetry.cpp:174:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  174 |   if(l<0)l=0; if(r>=NCELL)r=NCELL-1; if(r<l){wm=0;w1=1e30;w2=-1e30;return;}
+      |   ^~
+bb26_strict_wells_symmetry.cpp:174:15: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  174 |   if(l<0)l=0; if(r>=NCELL)r=NCELL-1; if(r<l){wm=0;w1=1e30;w2=-1e30;return;}
+      |               ^~
+bb26_strict_wells_symmetry.cpp: In function 'void rngd(double, double, double&, double&, double&)':
+bb26_strict_wells_symmetry.cpp:180:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  180 |   if(lo<0) lo=0; if(hi<lo){wm=0;w1=1e30;w2=-1e30;return;}
+      |   ^~
+bb26_strict_wells_symmetry.cpp:180:18: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  180 |   if(lo<0) lo=0; if(hi<lo){wm=0;w1=1e30;w2=-1e30;return;}
+      |                  ^~
+bb26_strict_wells_symmetry.cpp: In function 'I W1centerI(I)':
+bb26_strict_wells_symmetry.cpp:303:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  303 |     if(a<0)a=0;if(b>=NCF)b=NCF-1; double m2=0;
+      |     ^~
+bb26_strict_wells_symmetry.cpp:303:16: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  303 |     if(a<0)a=0;if(b>=NCF)b=NCF-1; double m2=0;
+      |                ^~
+bb26_strict_wells_symmetry.cpp: In function 'bool prove(Box)':
+bb26_strict_wells_symmetry.cpp:375:31: warning: variable 'gc' set but not used [-Wunused-but-set-variable]
+  375 |   double cen[NG],rad[NG],Fc=0,gc[NG];
+      |                               ^~

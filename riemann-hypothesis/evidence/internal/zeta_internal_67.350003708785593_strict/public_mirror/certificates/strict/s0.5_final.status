@@ -1,0 +1,5 @@
+===== s0.5 BEGIN 2026-09-16T17:43:36Z =====
+ELAPSED=876.51 RSS_KB=347476 EXIT=0
+slope=0.5 eps=0.0067328 nodes=23644472 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0067328 gap=-1.000e+300) result=PROVED
+EXIT_CODE=0
+===== s0.5 END 2026-09-16T17:58:13Z =====

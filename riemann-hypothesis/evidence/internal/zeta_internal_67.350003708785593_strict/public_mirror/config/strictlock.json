@@ -1,0 +1,75 @@
+{
+  "schema": "veriloop-zeta-67.3500-strict-v1",
+  "author": "Libo Wang",
+  "frozen_date": "2026-09-17",
+  "q": 8,
+  "m": 531,
+  "eta": [
+    1,
+    1
+  ],
+  "H": [
+    672167187145431,
+    1000000000000000
+  ],
+  "R": [
+    1113172768314043426732876281699,
+    265625000000000000000000000000
+  ],
+  "C": [
+    722547711262091300265625000000000,
+    1072825050442925667061714615173641
+  ],
+  "percent": "67.350003708785593",
+  "eps": {
+    "1/2": [
+      526,
+      78125
+    ],
+    "19/20": [
+      9879,
+      1250000
+    ],
+    "1": [
+      20033,
+      2500000
+    ]
+  },
+  "local_certificates": [
+    {
+      "name": "s0.5",
+      "slope": "1/2",
+      "epsilon": "526/78125",
+      "nodes": 23644472,
+      "checker": "bb24_strict_symmetry (direct strict B&B; no well shortcut)",
+      "result": "PROVED"
+    },
+    {
+      "name": "s0.95",
+      "slope": "19/20",
+      "epsilon": "9879/1250000",
+      "nodes": 75294070,
+      "checker": "bb26_strict_wells_symmetry",
+      "result": "PROVED"
+    },
+    {
+      "name": "s1",
+      "slope": "1",
+      "epsilon": "20033/2500000",
+      "nodes": 91437288,
+      "checker": "bb26_strict_wells_symmetry (5 exact root shards)",
+      "result": "PROVED"
+    }
+  ],
+  "well_certificate": {
+    "boxes": 327,
+    "proved": 327,
+    "failed": 0,
+    "checker": "verifier/strict_wells_batch_v2.cpp"
+  },
+  "direct_checker": "verifier/bb24_strict_symmetry.cpp",
+  "global_checker": "verifier/bb26_strict_wells_symmetry.cpp",
+  "compiler": "g++ -O3 -std=c++17 -fopenmp -frounding-math -ffp-contract=off",
+  "acceptance": "each local run must end stack_left=0 HARD=0 result=PROVED; well batch 327/327; exact rational assembly PASS",
+  "claim_boundary": "Strict finite-dimensional computer-assisted certificate outside Lean. External peer review / leaderboard acceptance is not self-declared."
+}

@@ -1,0 +1,10 @@
+[2026-09-16T18:14:48Z] Waiting for s=19/20 bb26 full strict run (PID 6711)
+[2026-09-16T18:19:45Z] s=19/20 PROVED; final evidence frozen
+[2026-09-16T18:19:45Z] Resumed s=1 shard 0; launching shards 1..4 on remaining cores
+[2026-09-16T18:39:18Z] s=1 shard 0 PROVED
+[2026-09-16T18:39:18Z] s=1 shard 1 PROVED
+[2026-09-16T18:39:18Z] s=1 shard 2 PROVED
+[2026-09-16T18:39:18Z] s=1 shard 3 PROVED
+[2026-09-16T18:39:18Z] s=1 shard 4 PROVED
+S1_TOTAL_NODES 91437288
+[2026-09-16T18:39:19Z] FAIL: verify_strict result not PASS

@@ -1,0 +1,5 @@
+VeriLoop E2 — Riemann zeta strict release inventory
+Frozen witness: 67.350003708785593%
+Internal extracted files: 287
+Public extracted files: 7
+Extraction policy: source archive member bytes preserved; no evidence file rewritten.

@@ -1,0 +1,70 @@
+PASS BR[0] lower-rounded <= exact b
+PASS BR[1] lower-rounded <= exact b
+PASS BR[2] lower-rounded <= exact b
+PASS BR[3] lower-rounded <= exact b
+PASS BR[4] lower-rounded <= exact b
+PASS BR[5] lower-rounded <= exact b
+PASS BR[6] lower-rounded <= exact b
+PASS BR[7] lower-rounded <= exact b
+PASS AW[0] lower-rounded <= exact a
+PASS AW[1] lower-rounded <= exact a
+PASS AW[2] lower-rounded <= exact a
+PASS AW[3] lower-rounded <= exact a
+PASS AW[4] lower-rounded <= exact a
+PASS AW[5] lower-rounded <= exact a
+PASS AW[6] lower-rounded <= exact a
+PASS AW[7] lower-rounded <= exact a
+PASS AW[8] lower-rounded <= exact a
+PASS AW[9] lower-rounded <= exact a
+PASS AW[10] lower-rounded <= exact a
+PASS AW[11] lower-rounded <= exact a
+PASS AW[12] lower-rounded <= exact a
+PASS AW[13] lower-rounded <= exact a
+PASS AW[14] lower-rounded <= exact a
+PASS AW[15] lower-rounded <= exact a
+PASS AW[16] lower-rounded <= exact a
+PASS AW[17] lower-rounded <= exact a
+PASS AW[18] lower-rounded <= exact a
+PASS AW[19] lower-rounded <= exact a
+PASS AW[20] lower-rounded <= exact a
+PASS AW[21] lower-rounded <= exact a
+PASS AW[22] lower-rounded <= exact a
+PASS AW[23] lower-rounded <= exact a
+PASS AW[24] lower-rounded <= exact a
+PASS AW[25] lower-rounded <= exact a
+PASS AW[26] lower-rounded <= exact a
+PASS AW[27] lower-rounded <= exact a
+PASS AW[28] lower-rounded <= exact a
+PASS AW[29] lower-rounded <= exact a
+PASS AW[30] lower-rounded <= exact a
+PASS AW[31] lower-rounded <= exact a
+PASS AW[32] lower-rounded <= exact a
+PASS AW[33] lower-rounded <= exact a
+PASS AW[34] lower-rounded <= exact a
+PASS AW[35] lower-rounded <= exact a
+PASS CJ[0] one-ulp interval contains exact c
+PASS CJ[1] one-ulp interval contains exact c
+PASS CJ[2] one-ulp interval contains exact c
+PASS CJ[3] one-ulp interval contains exact c
+PASS CJ[4] one-ulp interval contains exact c
+PASS CJ[5] one-ulp interval contains exact c
+PASS CJ[6] one-ulp interval contains exact c
+PASS CJ[7] one-ulp interval contains exact c
+PASS CJ[8] one-ulp interval contains exact c
+PASS CJ[9] one-ulp interval contains exact c
+PASS CJ[10] one-ulp interval contains exact c
+PASS CJ[11] one-ulp interval contains exact c
+PASS CJ[12] one-ulp interval contains exact c
+PASS CJ[13] one-ulp interval contains exact c
+PASS CJ[14] one-ulp interval contains exact c
+PASS CJ[15] one-ulp interval contains exact c
+PASS CJ[16] one-ulp interval contains exact c
+PASS omega0/2 one-ulp interval contains exact rational
+PASS P0 < pi < P1
+PASS slope 1/2: dn(parsed) <= exact slope
+PASS eps 526/78125: up(parsed) >= exact epsilon
+PASS slope 19/20: dn(parsed) <= exact slope
+PASS eps 9879/1250000: up(parsed) >= exact epsilon
+PASS slope 1: dn(parsed) <= exact slope
+PASS eps 20033/2500000: up(parsed) >= exact epsilon
+RESULT: PASS

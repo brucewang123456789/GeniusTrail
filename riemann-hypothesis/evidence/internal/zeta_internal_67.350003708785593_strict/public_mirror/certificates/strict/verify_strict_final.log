@@ -1,0 +1,18 @@
+PASS R lock is a valid rational lower bound of the complete kink minimum
+PASS exact C equals frozen fraction
+PASS exact C > 0.6735
+PASS 327/327 strict well boxes proved
+PASS constant/rational enclosure audit passed
+PASS s0.5: fail-closed terminal state
+PASS s0.5: slope label matches
+PASS s0.5: epsilon label matches
+PASS s0.95: fail-closed terminal state
+PASS s0.95: slope label matches
+PASS s0.95: epsilon label matches
+PASS s1: fail-closed terminal state
+PASS s1: slope label matches
+PASS s1: epsilon label matches
+TOTAL_STRICT_BB_NODES= 190375830
+C= 722547711262091300265625000000000/1072825050442925667061714615173641
+PERCENT= 67.350003708785593
+RESULT: ALL STRICT 67.35 CHECKS PASS

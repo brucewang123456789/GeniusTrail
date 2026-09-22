@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "libo-wang-q8-pressure",
+  "track": "critical-line",
+  "author": {
+    "github": "",
+    "displayName": "Libo Wang"
+  },
+  "score": {
+    "numerator": "722547711262091300265625000000000",
+    "denominator": "1072825050442925667061714615173641"
+  },
+  "proof": {
+    "solution": "proof/Solution.lean",
+    "theorem": "candidate_critical_line_bound",
+    "cumulativeTheorem": "candidate_critical_line_bound_cumulative",
+    "improvementTheorem": "candidate_strict_improvement"
+  },
+  "summary": "Window plus graph-degree matrix theorem and eight-dimensional local pressure certificates.",
+  "method": "Weil-form interface of Zeta23 retained; Theorem D step Delta(M)>=0 replaced by Delta(G)>=h(E) with bandwidth q=8 and three certified local inequalities.",
+  "model": null,
+  "harness": null,
+  "license": "Apache-2.0"
+}

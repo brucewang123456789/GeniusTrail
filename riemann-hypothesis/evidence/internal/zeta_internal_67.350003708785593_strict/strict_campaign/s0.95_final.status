@@ -1,0 +1,4 @@
+===== s0.95 FINAL STRICT =====
+ELAPSED=972.24 RSS_KB=369152 EXIT=0
+slope=0.95 eps=0.0079032 nodes=75294070 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0079032 gap=-1.000e+300) result=PROVED
+EXIT_CODE=0

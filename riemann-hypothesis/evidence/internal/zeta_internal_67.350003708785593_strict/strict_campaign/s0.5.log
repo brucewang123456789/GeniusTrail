@@ -1,0 +1,17 @@
+coarse table 510500 cells building...
+fine table 1835010 cells (h=3.05176e-05) building...
+table cells=510500 h=0.000244141 Xmax=124.634 K0=0.918415839907
+separable LB = 0.0042991807  vs eps 0.0067328
+  g1: 1 components, span [0.8786,10.4159]
+  g2: 2 components, span [0.9246,6.2373]
+  g3: 3 components, span [0.9287,4.9713]
+  g4: 4 components, span [0.9381,4.2277]
+  g5: 4 components, span [0.9381,4.2277]
+  g6: 3 components, span [0.9287,4.9713]
+  g7: 2 components, span [0.9246,6.2373]
+  g8: 1 components, span [0.8786,10.4159]
+SYMMETRY_PREFLIGHT=PASS
+root components = 576
+symmetry mirror roots skipped = 276
+roots this shard = 86 (shard 0/1) tables done
+slope=0.5 eps=0.0067328 nodes=23644472 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0067328 gap=-1.000e+300) result=PROVED

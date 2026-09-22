@@ -1,0 +1,1 @@
+./run_campaign.sh: line 8:  6254 Killed                  /usr/bin/time -f 'ELAPSED=%e RSS_KB=%M EXIT=%x' "$HERE/bb24_strict_symmetry" "$s" "$eps" "$CAP" "$HC" 1 0 "$WMIN" > "${name}.log" 2> "${name}.time"

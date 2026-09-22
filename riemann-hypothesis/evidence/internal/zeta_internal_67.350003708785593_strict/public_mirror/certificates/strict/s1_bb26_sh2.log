@@ -1,0 +1,18 @@
+active independently-certified wells=157
+coarse table loaded from cache
+fine table loaded from cache
+table cells=606805 h=0.000244141 Xmax=148.146 K0=0.918415839907
+separable LB = 0.0043018398  vs eps 0.0080132
+  g1: 2 components, span [0.9002,15.4413]
+  g2: 2 components, span [0.9413,9.1486]
+  g3: 3 components, span [0.9451,7.0242]
+  g4: 4 components, span [0.9535,6.1768]
+  g5: 4 components, span [0.9535,6.1768]
+  g6: 3 components, span [0.9451,7.0242]
+  g7: 2 components, span [0.9413,9.1486]
+  g8: 2 components, span [0.9002,15.4413]
+SYMMETRY_PREFLIGHT=PASS
+root components = 2304
+symmetry mirror roots skipped = 1128
+roots this shard = 68 (shard 2/5) tables done
+slope=1 eps=0.0080132 nodes=18547216 stack_left=0 HARD=0 worst_lb=1e+300 (eps=0.0080132 gap=-1.000e+300) result=PROVED
