@@ -1,25 +1,28 @@
-# VeriLoop E2 — A Strict 67.350003708785593% Certificate for Simple Critical-Line Zeta Zeros
+# VeriLoop E2: 67.350003708785593% of Simple Critical-Line Zeta Zeros
 
-> **Research system:** VeriLoop E2  
-> **Author / maintainer:** Libo Wang  
-> **Status:** strict finite-dimensional computer-assisted certificate; independent reproduction and formal verification invited  
-> **Frozen result:** 2026-09-17
+| Field | Value |
+|---|---|
+| **Research system** | VeriLoop E2 |
+| **Author / maintainer** | Libo Wang |
+| **Status** | Strict finite-dimensional computer-assisted certificate; independent reproduction and formal verification invited |
+| **Frozen result** | 2026-09-17 |
 
 This repository releases the derivation, verifier, raw certificate logs, exact-rational assembly, audit material, and formalization roadmap for a **67.350003708785593% lower-bound witness** for the asymptotic proportion of nontrivial zeros of the Riemann zeta function that are **simple and lie on the critical line**.
 
 The work starts from the public analytic framework released by Anthropic in 2026, including the paper *More Than Two Thirds of the Zeros of the Riemann Zeta Function Lie on the Critical Line* and the accompanying Lean 4 formalization **Zeta23**. Anthropic's optimized public baseline is
 
-\[
+$$
 \kappa_0
 =
 0.672500703679\ldots
 =
 67.2500703679\ldots\%.
-\]
+
+$$
 
 The frozen VeriLoop E2 witness is
 
-\[
+$$
 \boxed{
 \kappa
 \ge
@@ -31,25 +34,29 @@ The frozen VeriLoop E2 witness is
 =
 0.67350003708785593\ldots
 }
-\]
+
+$$
 
 or
 
-\[
+$$
 \boxed{67.350003708785593\%}.
-\]
+
+$$
 
 The numerical improvement over the Anthropic baseline is therefore
 
-\[
+$$
 +0.0999333409\ \text{percentage points}.
-\]
+
+$$
 
 The important point is **where the gain comes from**. It is not obtained by claiming a better value of Anthropic's window functional. The frozen VeriLoop E2 window deliberately has
 
-\[
+$$
 H(v)\ge 0.672167187145431,
-\]
+
+$$
 
 which is below the Anthropic optimized window-only value. The improvement comes from retaining and certifying additional finite-dimensional matrix structure that the baseline estimate does not exploit.
 
@@ -57,31 +64,34 @@ which is below the Anthropic optimized window-only value. The improvement comes 
 
 ## 1. What is being bounded
 
-Let \(N(T)\) denote the number of nontrivial zeros
+Let $N(T)$ denote the number of nontrivial zeros
 
-\[
+$$
 \rho=\beta+i\gamma,\qquad 0<\gamma\le T,
-\]
 
-counted with multiplicity, and let \(S(T)\) denote the number of those zeros that are both
+$$
 
-1. on the critical line \(\beta=\tfrac12\), and
+counted with multiplicity, and let $S(T)$ denote the number of those zeros that are both
+
+1. on the critical line $\beta=\tfrac12$, and
 2. simple.
 
 The quantity studied here is
 
-\[
+$$
 \kappa
 =
 \liminf_{T\to\infty}
 \frac{S(T)}{N(T)}.
-\]
+
+$$
 
 This distinction is essential.
 
-**This repository does not prove the Riemann Hypothesis.**  
-It does not claim that 67.35% of the Riemann Hypothesis has been proved.  
-It gives a lower-bound witness for a proportion of zeta zeros satisfying a specific stronger property: **simple and on the critical line**.
+> [!IMPORTANT]
+> **This repository does not prove the Riemann Hypothesis.**  
+> It does not claim that 67.35% of RH has been proved.  
+> It gives a lower-bound witness for the proportion of nontrivial zeta zeros that are **simple and lie on the critical line**.
 
 Because a simple critical-line zero is in particular a distinct critical-line zero, this quantity is compatible with the distinct-critical-line count appearing in the public comparison framework.
 
@@ -98,13 +108,14 @@ The public paper and formalization are:
 
 At the optimized window, the public baseline is
 
-\[
+$$
 \kappa_0
 =
 2-\frac{1}{c_{\mathrm{MT}}}
 =
 0.672500703679\ldots.
-\]
+
+$$
 
 The VeriLoop E2 programme **uses this public analytic foundation as its starting point**. It does not present the Anthropic analysis as our own work.
 
@@ -112,18 +123,19 @@ The additional contribution developed here is a finite-dimensional spectral/bloc
 
 At a high level, the Anthropic interface supplies a bound of the form
 
-\[
+$$
 S
 \ge
 H(v)N+\Delta(M)-o(N),
-\]
 
-where \(M\) is a positive-semidefinite Gram-type matrix, \(H(v)\) is the window contribution, and \(\Delta(M)\ge0\) is a spectral correction.
+$$
 
-The baseline can discard the nonnegative correction and keep only the optimized \(H(v)\).  
+where $M$ is a positive-semidefinite Gram-type matrix, $H(v)$ is the window contribution, and $\Delta(M)\ge0$ is a spectral correction.
+
+The baseline can discard the nonnegative correction and keep only the optimized $H(v)$.  
 The VeriLoop E2 construction instead develops a quantitative, certified lower bound for that correction.
 
-That is the source of the 67.25% \(\rightarrow\) 67.35% gain.
+That is the source of the 67.25% $\rightarrow$ 67.35% gain.
 
 ---
 
@@ -131,31 +143,34 @@ That is the source of the 67.25% \(\rightarrow\) 67.35% gain.
 
 ### 3.1 Window term
 
-For an even nonnegative window \(v\) supported on \([-1/2,1/2]\), define
+For an even nonnegative window $v$ supported on $[-1/2,1/2]$, define
 
-\[
+$$
 I_1=\int v,\qquad
 I_2=\int v^2,\qquad
 J=\iint |s-t|\,v(s)v(t)\,ds\,dt,
-\]
+
+$$
 
 and
 
-\[
+$$
 H(v)=2-\frac{I_2+J}{I_1^2}.
-\]
+
+$$
 
 The frozen strict witness uses the rigorous lower bound
 
-\[
+$$
 H
 =
 \frac{672167187145431}{10^{15}}
 =
 0.672167187145431.
-\]
 
-This is deliberately **below** the best window-only value. The construction trades a small loss in \(H\) for a larger gain from finite-dimensional structure.
+$$
+
+This is deliberately **below** the best window-only value. The construction trades a small loss in $H$ for a larger gain from finite-dimensional structure.
 
 ---
 
@@ -163,76 +178,85 @@ This is deliberately **below** the best window-only value. The construction trad
 
 Define
 
-\[
+$$
 \Psi(t)=
 \begin{cases}
-(t-1)^2,&0\le t\le2,\\[4pt]
+(t-1)^2,&0\le t\le2,\$$4pt]
 2t-3,&t\ge2,
 \end{cases}
-\]
+
+$$
 
 and
 
-\[
+$$
 \Delta(G)=\operatorname{tr}\Psi(G).
-\]
 
-For \(X=G-I\) and \(U=(G-2I)_+\), the finite spectral identity proved in this release is
+$$
 
-\[
+For $X=G-I$ and $U=(G-2I)_+$, the finite spectral identity proved in this release is
+
+$$
 \Delta(G)
 =
 \|X-U\|_F^2
 +
 2\operatorname{tr}U.
-\]
 
-For retained bandwidth \(q\), define
+$$
 
-\[
+For retained bandwidth $q$, define
+
+$$
 E
 =
 2\sum_{1\le j-i\le q}|G_{ij}|^2.
-\]
 
-With maximum degree \(d=2q\), colouring number \(r=q+1\), and
+$$
 
-\[
+With maximum degree $d=2q$, colouring number $r=q+1$, and
+
+$$
 T=\frac{q+1}{q},
-\]
+
+$$
 
 the matrix theorem gives
 
-\[
+$$
 \Delta(G)\ge h(E),
-\]
+
+$$
 
 where
 
-\[
+$$
 h(E)=E,\qquad 0\le E\le T,
-\]
+
+$$
 
 and
 
-\[
+$$
 h(E)
 =
 E-\frac{d}{d+1}
 \left(\sqrt E-\sqrt T\right)^2,
 \qquad E\ge T.
-\]
+
+$$
 
 For the frozen witness,
 
-\[
+$$
 q=8,\qquad
 d=16,\qquad
 r=9,\qquad
 T=\frac98.
-\]
 
-The theorem is proved for general \((d,r)\); moving to \(q=8\) therefore changes the certification burden, not the underlying matrix theorem.
+$$
+
+The theorem is proved for general $(d,r)$; moving to $q=8$ therefore changes the certification burden, not the underlying matrix theorem.
 
 ---
 
@@ -240,59 +264,65 @@ The theorem is proved for general \((d,r)\); moving to \(q=8\) therefore changes
 
 Let
 
-\[
+$$
 W(x)=\left(\frac{K(x)}{K(0)}\right)^2,
-\]
 
-where \(K\) is the Fourier transform of the chosen window.
+$$
 
-For eight nonnegative gaps \(g_1,\ldots,g_8\), define cumulative positions
+where $K$ is the Fourier transform of the chosen window.
 
-\[
+For eight nonnegative gaps $g_1,\ldots,g_8$, define cumulative positions
+
+$$
 y_0=0,\qquad
 y_j=g_1+\cdots+g_j,
-\]
+
+$$
 
 and introduce
 
-\[
+$$
 P_{\mathrm{loc}}(g)
 =
 \sum_{r=1}^{8} b_r g_r,
-\]
 
-\[
+$$
+
+$$
 Q_{\mathrm{loc}}(g)
 =
 \sum_{0\le i<j\le8}
 a_{ij}W(y_j-y_i).
-\]
+
+$$
 
 The nonnegative pair weights satisfy the exact span-capacity identities
 
-\[
+$$
 \sum_{i=0}^{8-s}a_{i,i+s}=2,
 \qquad
 s=1,\ldots,8.
-\]
+
+$$
 
 The core local statement is
 
-\[
+$$
 P_{\mathrm{loc}}(g)+sQ_{\mathrm{loc}}(g)
 \ge
 \varepsilon_s
 \qquad
 \text{for all }g\in[0,\infty)^8.
-\]
+
+$$
 
 The frozen strict release certifies three slopes:
 
-| slope \(s\) | certified \(\varepsilon_s\) | strict B&B nodes | terminal state |
+| slope $s$ | certified $\varepsilon_s$ | strict B&B nodes | terminal state |
 |---:|---:|---:|---|
-| \(1/2\) | \(526/78125=0.0067328\) | 23,644,472 | **PROVED** |
-| \(19/20\) | \(9879/1250000=0.0079032\) | 75,294,070 | **PROVED** |
-| \(1\) | \(20033/2500000=0.0080132\) | 91,437,288 | **PROVED** |
+| $1/2$ | $526/78125=0.0067328$ | 23,644,472 | **PROVED** |
+| $19/20$ | $9879/1250000=0.0079032$ | 75,294,070 | **PROVED** |
+| $1$ | $20033/2500000=0.0080132$ | 91,437,288 | **PROVED** |
 | **total** |  | **190,375,830** | **3/3 PROVED** |
 
 Every committed local run terminates fail-closed with
@@ -303,9 +333,9 @@ HARD=0
 result=PROVED
 ```
 
-The \(s=\tfrac12\) inequality is closed by direct strict branch-and-bound.
+The $s=\tfrac12$ inequality is closed by direct strict branch-and-bound.
 
-For \(s=\tfrac{19}{20}\) and \(s=1\), the difficult local minima are isolated into an independently checked well layer. Before the global verifier may use those wells, a separate directed-interval checker proves all frozen well boxes:
+For $s=\tfrac{19}{20}$ and $s=1$, the difficult local minima are isolated into an independently checked well layer. Before the global verifier may use those wells, a separate directed-interval checker proves all frozen well boxes:
 
 ```text
 WELLS_V2_TOTAL=327
@@ -321,61 +351,68 @@ This separation is deliberate: numerical search may discover difficult regions, 
 
 ### 3.4 From local inequalities to a block inequality
 
-Take blocks of length \(m\) and let
+Take blocks of length $m$ and let
 
-\[
+$$
 n=m-q.
-\]
+
+$$
 
 For the frozen witness,
 
-\[
+$$
 m=531,\qquad
 q=8,\qquad
 n=523.
-\]
+
+$$
 
 Summing the local certificates over translated windows and using the span-capacity identities gives
 
-\[
+$$
 P+sE\ge n\varepsilon_s.
-\]
+
+$$
 
 Therefore define the piecewise-linear pressure envelope
 
-\[
+$$
 p(E)
 =
 \max\left(
 0,\,
 \max_s(n\varepsilon_s-sE)
 \right).
-\]
+
+$$
 
 Thus
 
-\[
+$$
 P\ge p(E).
-\]
 
-For \(\eta\ge0\),
+$$
 
-\[
+For $\eta\ge0$,
+
+$$
 R
 =
 \inf_{E\ge0}
 \left[h(E)+\eta p(E)\right].
-\]
+
+$$
 
 The frozen strict witness uses
 
-\[
+$$
 \eta=1
-\]
+
+$$
 
 and the exact rational lower bound
 
-\[
+$$
 R
 =
 \frac{
@@ -385,25 +422,28 @@ R
 }
 =
 4.190768068946987\ldots.
-\]
 
-Because \(p(E)\) is piecewise linear and the relevant minimization reduces to a finite set of kinks/endpoints, the committed value of \(R\) is evaluated in exact rational arithmetic.
+$$
+
+Because $p(E)$ is piecewise linear and the relevant minimization reduces to a finite set of kinks/endpoints, the committed value of $R$ is evaluated in exact rational arithmetic.
 
 The pressure-weight sum is
 
-\[
+$$
 B=\sum_r b_r=\frac{93}{23000}.
-\]
+
+$$
 
 The block averaging and pinching argument then yields
 
-\[
+$$
 \Delta(M)
 \ge
 \frac{R}{m}S
 -
 \frac{\eta B(m-q)}{m}N.
-\]
+
+$$
 
 The finite spectral inequality, pinching step, and shifted pressure accounting are audited explicitly in `AUDIT.md`.
 
@@ -413,13 +453,14 @@ The finite spectral inequality, pinching step, and shifted pressure accounting a
 
 Insert the block inequality into
 
-\[
+$$
 S\ge HN+\Delta(M)-o(N).
-\]
 
-Ignoring only the asymptotically vanishing \(o(N)\) term and rearranging,
+$$
 
-\[
+Ignoring only the asymptotically vanishing $o(N)$ term and rearranging,
+
+$$
 S
 \left(
 1-\frac{R}{m}
@@ -429,11 +470,12 @@ N
 \left(
 H-\frac{\eta B(m-q)}{m}
 \right).
-\]
+
+$$
 
 Hence
 
-\[
+$$
 \kappa
 \ge
 C
@@ -443,34 +485,38 @@ mH-\eta B(m-q)
 }{
 m-R
 }.
-\]
+
+$$
 
 For the frozen strict parameters
 
-\[
+$$
 q=8,\quad
 m=531,\quad
 \eta=1,\quad
 B=\frac{93}{23000},
-\]
 
-\[
+$$
+
+$$
 H=
 \frac{672167187145431}{10^{15}},
-\]
 
-\[
+$$
+
+$$
 R=
 \frac{
 1113172768314043426732876281699
 }{
 265625000000000000000000000000
 },
-\]
+
+$$
 
 the exact assembly gives
 
-\[
+$$
 C
 =
 \frac{
@@ -478,11 +524,12 @@ C
 }{
 1072825050442925667061714615173641
 }.
-\]
+
+$$
 
 Therefore
 
-\[
+$$
 \boxed{
 \kappa
 \ge
@@ -490,16 +537,17 @@ Therefore
 =
 67.350003708785593\%.
 }
-\]
 
-The final exact checker verifies both
+$$
+
+The final exact checker verifies both:
 
 ```text
 PASS exact C equals frozen fraction
 PASS exact C > 0.6735
 ```
 
-No ordinary floating-point decimal is used as the final acceptance criterion for \(C\).
+No ordinary floating-point decimal is used as the final acceptance criterion for $C$.
 
 ---
 
@@ -527,7 +575,7 @@ The accepted local inequalities are replayed by fail-closed interval branch-and-
 
 ### Exact assembly
 
-The final span identities, pressure sum, envelope evaluation, \(R\), and final \(C\) are checked over exact rationals.
+The final span identities, pressure sum, envelope evaluation, $R$, and final $C$ are checked over exact rationals.
 
 The committed strict evidence audit reports:
 
@@ -568,9 +616,11 @@ The following statements are the intended public claims of this repository.
 ### Achieved
 
 - **Exact frozen witness:**  
-  \[
+
+$$
   67.350003708785593\%.
-  \]
+
+$$
 
 - **Strict local finite-dimensional certification:**  
   all three frozen inequalities are fail-closed **PROVED**.
@@ -582,7 +632,7 @@ The following statements are the intended public claims of this repository.
   committed runs terminate with `stack_left=0` and `HARD=0`.
 
 - **Exact-rational assembly:**  
-  the final \(R\) and \(C\) checks do not rely on a rounded decimal comparison.
+  the final $R$ and $C$ checks do not rely on a rounded decimal comparison.
 
 - **Finite spectral and block-accounting audit:**  
   the spectral inequality, pinching step, and shifted pressure accounting are explicitly audited in this release.
@@ -597,7 +647,7 @@ The following statements are the intended public claims of this repository.
 
 The team is actively working on the remaining formal-verification boundary:
 
-1. **End-to-end correspondence with the upstream Zeta23 analytic interface**, including normalization of heights, gaps, multiplicities, and the exact attachment of the strengthened \(\Delta(M)\) estimate.
+1. **End-to-end correspondence with the upstream Zeta23 analytic interface**, including normalization of heights, gaps, multiplicities, and the exact attachment of the strengthened $\Delta(M)$ estimate.
 2. **A kernel-friendly short certificate** suitable for Lean replay. The current large branch-and-bound computation is excellent external evidence but is not an efficient object to replay directly inside the Lean kernel.
 3. **Lean formalization of the full candidate theorem** under the challenge's fixed theorem statements and permitted axioms.
 4. **Independent mathematical review and formal submission** once the end-to-end formal chain is complete.
@@ -606,7 +656,7 @@ The current formalization strategy is documented in `lean/LEAN_ROADMAP.md`.
 
 A promising route is to replace the enormous interval tree by a much shorter algebraic object:
 
-- rigorous polynomial lower bounds for the kernel \(W\) on the already reduced domain; then
+- rigorous polynomial lower bounds for the kernel $W$ on the already reduced domain; then
 - a Positivstellensatz / sum-of-squares certificate for the resulting polynomial inequalities.
 
 Such an object could potentially be checked by the Lean kernel as a bounded rational computation.
@@ -708,7 +758,7 @@ The strict 67.350003708785593% release was rebuilt around a stronger acceptance 
 3. certify difficult wells independently;
 4. prove the global complement fail-closed;
 5. audit constant directions and interval storage;
-6. perform final assembly exactly over \(\mathbb{Q}\).
+6. perform final assembly exactly over $\mathbb{Q}$.
 
 This is the evidence discipline behind the frozen number.
 
