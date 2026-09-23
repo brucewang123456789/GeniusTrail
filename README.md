@@ -23,9 +23,7 @@
   <a href="https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>Model</strong></a> ·
   <a href="https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX"><strong>Technical Report</strong></a> ·
   <a href="https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence"><strong>Evaluation Evidence</strong></a> ·
-  <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis"><strong>Riemann ζ Artifact</strong></a> ·
-  <a href="xxxx"><strong>GitHub</strong></a> ·
-  <a href="xxxx"><strong>Zenodo</strong></a>
+  <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis"><strong>Riemann ζ Artifact</strong></a>
 </p>
 
 ---
@@ -222,15 +220,13 @@ What this result **does** establish within the released artifact is a strict fin
 
 The public package therefore emphasizes claim discipline, reproducibility, and certificate structure rather than treating a numerical percentage as a substitute for mathematical provenance.
 
-**Artifact:** [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis) · **Technical note:** `xxxx` · **Zenodo:** `xxxx`
+**Artifact:** [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis)
 
 ### Black-hole information problem: Asymptotic Graviton Tomography
 
 **Asymptotic Graviton Tomography** is the second scientific reasoning demonstration. It studies an information-reconstruction route through asymptotic gravitational observables, using the Harness to separate retained derivations from rejected or insufficiently supported branches.
 
 The public claim is intentionally bounded: this is a **research demonstration of a verifier-governed theoretical-physics derivation**, not a declaration that the black-hole information paradox has been solved. The artifact is intended to expose the derivation structure, assumptions, checks, and remaining theoretical boundaries clearly enough for external scientific criticism.
-
-**Artifact:** `xxxx` · **Technical note:** `xxxx`
 
 > The Riemann and black-hole demo artifacts are released separately under **research-only, non-commercial terms**. They are not covered by the Apache-2.0 grant for the model weights and public inference utilities unless a specific file explicitly says otherwise.
 
@@ -364,12 +360,7 @@ The open model license does not disclose or license unpublished Harness orchestr
 | Hugging Face model | [https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2](https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2) |
 | Technical report | [https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX](https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX) |
 | Evaluation evidence | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence) |
-| GitHub | `xxxx` |
 | Riemann ζ artifact | [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis) |
-| Black-hole / Asymptotic Graviton Tomography artifact | `xxxx` |
-| Zenodo DOI | `xxxx` |
-
-Unresolved links in this table remain placeholders until their corresponding public artifacts are released. The Hugging Face model and evaluation-evidence links above are final public identifiers.
 
 ---
 
