@@ -1,824 +1,399 @@
-# VeriLoop E2: 67.350003708785593% for Simple Critical-Line Zeta Zeros
+<p align="center">
+  <img src="./veriloop_logo.png" width="154" alt="VeriLoop logo">
+</p>
 
-**A strict finite-dimensional computer-assisted certificate built on Anthropic's public 67.25% analytic foundation**
+<h1 align="center">VeriLoop E2</h1>
 
-| Item | Value |
-|---|---|
-| Research system | **VeriLoop E2** |
-| Author / maintainer | **Libo Wang** |
-| Frozen result | **67.350003708785593%** |
-| Public starting point | **Anthropic: 67.2500703679%** |
-| Improvement | **+0.0999333409 percentage points** |
-| Certificate status | **Strict finite-dimensional computer-assisted certificate** |
-| Formalization status | **End-to-end Lean verification in progress** |
-| Reproducibility | **Verifier, configuration, certificate logs, exact assembly, and audit material released** |
+<p align="center">
+  <strong>27B Post-Trained Model for Code, Mathematics, and Physics</strong><br>
+  <em>VeriLoop-Governed Recurrence (VGR) for Evidence-Convergent Reasoning</em><br><br>
+  <strong>Built on Qwen3.8-27B · 262K native context · Apache License 2.0</strong><br>
+  <strong>Developed by Tsinghua SIGS Robot Lab · Libo Wang</strong>
+</p>
+
+<p align="center">
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache--2.0-2F80ED?style=flat-square" alt="License: Apache 2.0"></a>
+  <img src="https://img.shields.io/badge/Base-Qwen3.8--27B-5B5BD6?style=flat-square" alt="Base: Qwen3.8-27B">
+  <img src="https://img.shields.io/badge/Context-262K-1F6FEB?style=flat-square" alt="Native context: 262K">
+  <img src="https://img.shields.io/badge/Serving-vLLM%200.17.0-0A7F6F?style=flat-square" alt="Serving: vLLM 0.17.0">
+  <img src="https://img.shields.io/badge/Stage-Post--Training-7C3AED?style=flat-square" alt="Stage: Post-Training">
+</p>
+
+<p align="center">
+  <a href="https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>Model</strong></a> ·
+  <a href="xxxx"><strong>Technical Report</strong></a> ·
+  <a href="https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence"><strong>Evaluation Evidence</strong></a> ·
+  <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis"><strong>Riemann ζ Artifact</strong></a> ·
+  <a href="xxxx"><strong>GitHub</strong></a> ·
+  <a href="xxxx"><strong>Zenodo</strong></a>
+</p>
 
 ---
 
 ## Overview
 
-This repository releases the derivation, numerical construction, strict verifier, raw certificate logs, exact-rational assembly, audit material, and formalization roadmap for the following lower-bound witness:
+**VeriLoop E2** is an open 27B post-trained model built on **Qwen3.8-27B**, targeting **code, mathematics, and physics**. Its core reasoning discipline is **VeriLoop-Governed Recurrence (VGR)**: candidate states are recursively proposed, externally checked, and retained only when the protected evidence state improves without regression.
 
-```text
-κ ≥ 0.67350003708785593...
-  = 67.350003708785593%
-```
+The system separates generative intelligence from verification authority. **VeriLoop E2** is responsible for proposal generation, abstraction, diagnosis, repair hypotheses, and structured reasoning. The **VeriLoop Harness** governs evidence admission, deterministic checks, external verification, commit/rollback, stopping, and evidence-state persistence. The model therefore does not self-certify its own progress.
 
-Here `κ` denotes the asymptotic lower proportion of nontrivial zeros of the Riemann zeta function that are both:
+This release focuses on the model weights, public inference path, evaluation record, and public functional description of the Harness. The production Harness implementation itself is **not included** in this repository.
 
-1. on the critical line `Re(s) = 1/2`; and
-2. simple.
+### Release highlights
 
-The work starts from Anthropic's public 2026 analytic framework and its public 67.25% result. VeriLoop E2 does **not** relabel that foundation as original work. The contribution developed here is a stricter finite-dimensional spectral/block construction that retains additional matrix information and converts it into a certified positive correction.
-
-The resulting frozen witness is:
-
-```text
-722547711262091300265625000000000
-──────────────────────────────────
-1072825050442925667061714615173641
-
-= 0.67350003708785593...
-= 67.350003708785593%
-```
-
-The improvement over the public Anthropic baseline is:
-
-```text
-67.350003708785593%
-− 67.2500703679%
-──────────────────
-≈ 0.0999333409 percentage points
-```
-
-> **Scientific boundary**
->
-> This repository does **not** prove the Riemann Hypothesis and does **not** claim that “67.35% of RH” has been solved.  
-> The claim is a lower-bound witness for the proportion of zeta zeros satisfying the specific property **simple and on the critical line**.
+- **27B open-weight post-trained model** for code, mathematics, and physics, derived from Qwen3.8-27B.
+- **262,144-token native context window** in the released tokenizer configuration.
+- Strong release results across nine code-agent, mathematics, and science benchmarks, including **76.2% SWE-bench Pro**, **88.8% Terminal-Bench 2.1**, **98.3% AIME 2026**, **93.9% GPQA Diamond**, and **89.6% Apex 2025**.
+- A reproducible scientific-reasoning program built around verifier-governed recurrence rather than unconstrained retry.
+- Two public-facing scientific demonstrations: a strict finite-dimensional **Riemann ζ zero-proportion certificate at 67.350003708785593%**, and **Asymptotic Graviton Tomography** for the black-hole information problem.
+- OpenAI-compatible serving through **vLLM 0.17.0** with a validated 131,072-token serving configuration.
 
 ---
 
-## 1. Quantity being bounded
+## Model Summary
 
-Let `N(T)` be the number of nontrivial zeros
-
-```text
-ρ = β + iγ,    0 < γ ≤ T
-```
-
-counted with multiplicity.
-
-Let `S(T)` be the number of those zeros that are both simple and satisfy
-
-```text
-β = 1/2.
-```
-
-The object studied in this repository is
-
-```text
-κ = lim inf_{T→∞} S(T) / N(T).
-```
-
-The frozen VeriLoop E2 certificate establishes the witness
-
-```text
-κ ≥ 67.350003708785593%.
-```
-
-A simple critical-line zero is, in particular, a distinct critical-line zero; the quantity therefore fits naturally into the public comparison framework used for critical-line zero proportions.
-
----
-
-## 2. Starting point: Anthropic's public 67.25% result
-
-The analytic starting point is Anthropic's public work:
-
-**More Than Two Thirds of the Zeros of the Riemann Zeta Function Lie on the Critical Line**
-
-Paper:
-
-https://www-cdn.anthropic.com/564f962e60643842f5fcb4a17c9dbc8f608f1c37.pdf
-
-Lean 4 formalization:
-
-https://github.com/anthropics/zeta-23-lean
-
-The public optimized baseline used here is
-
-```text
-κ₀ = 0.672500703679...
-   = 67.2500703679...%.
-```
-
-At a high level, the public analytic interface can be written in the form
-
-```text
-S ≥ H(v) N + Δ(M) − o(N),
-```
-
-where:
-
-- `H(v)` is the contribution from the chosen window;
-- `M` is a positive-semidefinite Gram-type matrix;
-- `Δ(M)` is a nonnegative finite-dimensional spectral correction.
-
-The baseline argument may retain the optimized window contribution while discarding the additional nonnegative correction.
-
-The VeriLoop E2 construction takes a different route:
-
-> **Rather than claiming a larger window value, it certifies a quantitative lower bound for the finite-dimensional correction `Δ(M)`.**
-
-That distinction is the central mechanism behind the move from approximately `67.25%` to `67.35%`.
-
----
-
-## 3. Derivation of the 67.350003708785593% witness
-
-### 3.1 Window contribution
-
-For an even nonnegative window `v` supported on `[-1/2, 1/2]`, define
-
-```text
-I₁ = ∫ v
-
-I₂ = ∫ v²
-
-J  = ∬ |s − t| v(s) v(t) ds dt
-```
-
-and
-
-```text
-H(v) = 2 − (I₂ + J) / I₁².
-```
-
-The frozen strict witness uses the rigorous lower bound
-
-```text
-H = 672167187145431 / 10¹⁵
-  = 0.672167187145431.
-```
-
-This value is deliberately **below** the best window-only value.
-
-The construction therefore does not obtain its gain by improving `H(v)`. It accepts a small loss in the window term in exchange for a larger certified gain from finite-dimensional matrix structure.
-
----
-
-### 3.2 Finite-dimensional spectral correction
-
-Define the scalar function
-
-```text
-Ψ(t) = (t − 1)²    for 0 ≤ t ≤ 2
-       2t − 3      for t ≥ 2
-```
-
-and the spectral functional
-
-```text
-Δ(G) = tr Ψ(G).
-```
-
-For
-
-```text
-X = G − I
-U = (G − 2I)₊,
-```
-
-the finite spectral identity used in this release is
-
-```text
-Δ(G) = ||X − U||_F² + 2 tr(U).
-```
-
-Now retain matrix interactions within bandwidth `q` and define
-
-```text
-E = 2 Σ |Gᵢⱼ|²
-```
-
-over pairs satisfying
-
-```text
-1 ≤ j − i ≤ q.
-```
-
-For maximum degree
-
-```text
-d = 2q,
-```
-
-colouring number
-
-```text
-r = q + 1,
-```
-
-and threshold
-
-```text
-T = (q + 1) / q,
-```
-
-the finite-dimensional matrix bound takes the form
-
-```text
-Δ(G) ≥ h(E),
-```
-
-with
-
-```text
-h(E) = E                                      for 0 ≤ E ≤ T
-
-h(E) = E − [d/(d+1)] (√E − √T)²             for E ≥ T.
-```
-
-The frozen strict configuration uses
-
-```text
-q = 8
-d = 16
-r = 9
-T = 9/8.
-```
-
-The theorem itself is formulated at the finite-dimensional level; moving to `q = 8` changes the certification burden rather than changing the logical form of the spectral argument.
-
----
-
-### 3.3 Eight-gap local certificates
-
-Let
-
-```text
-W(x) = [K(x) / K(0)]²,
-```
-
-where `K` is the Fourier transform of the chosen window.
-
-For eight nonnegative gaps
-
-```text
-g₁, g₂, ..., g₈ ≥ 0,
-```
-
-define cumulative positions
-
-```text
-y₀ = 0
-yⱼ = g₁ + ... + gⱼ.
-```
-
-The local pressure and pair-energy terms are
-
-```text
-P_loc(g) = Σ bᵣ gᵣ
-
-Q_loc(g) = Σ aᵢⱼ W(yⱼ − yᵢ).
-```
-
-The nonnegative pair weights are chosen to satisfy exact span-capacity identities:
-
-```text
-Σ aᵢ,ᵢ₊ₛ = 2,    s = 1, ..., 8.
-```
-
-The local certification target is
-
-```text
-P_loc(g) + s Q_loc(g) ≥ εₛ
-```
-
-for every point in the eight-dimensional nonnegative gap domain.
-
-The frozen strict release certifies the following three slopes:
-
-| Slope `s` | Certified `εₛ` | Strict B&B nodes | Status |
-|---:|---:|---:|:---:|
-| `1/2` | `526/78125 = 0.0067328` | `23,644,472` | **PROVED** |
-| `19/20` | `9879/1250000 = 0.0079032` | `75,294,070` | **PROVED** |
-| `1` | `20033/2500000 = 0.0080132` | `91,437,288` | **PROVED** |
-| **Total** |  | **190,375,830** | **3/3 PROVED** |
-
-Each committed strict run is fail-closed and terminates with
-
-```text
-stack_left=0
-HARD=0
-result=PROVED
-```
-
-The `s = 1/2` certificate is closed by direct strict branch-and-bound.
-
-For `s = 19/20` and `s = 1`, the difficult local minima are isolated into a separately certified well layer. Before those wells are allowed to participate in the global proof, an independent directed-interval checker verifies every frozen well box:
-
-```text
-WELLS_V2_TOTAL=327
-PROVED=327
-FAILED=0
-```
-
-This separation is intentional:
-
-> Numerical search is allowed to discover difficult regions, but discovery is never treated as proof.
-
----
-
-### 3.4 From local certificates to a block inequality
-
-Take blocks of length `m` and write
-
-```text
-n = m − q.
-```
-
-The frozen configuration is
-
-```text
-m = 531
-q = 8
-n = 523.
-```
-
-Summing the translated local certificates and using the exact span-capacity identities gives
-
-```text
-P + sE ≥ n εₛ.
-```
-
-Define the pressure envelope
-
-```text
-p(E) = max(0, maxₛ(n εₛ − sE)).
-```
-
-Hence
-
-```text
-P ≥ p(E).
-```
-
-For `η ≥ 0`, define
-
-```text
-R = inf_{E≥0} [ h(E) + η p(E) ].
-```
-
-The frozen witness uses
-
-```text
-η = 1
-```
-
-and the exact rational lower bound
-
-```text
-R =
-1113172768314043426732876281699
-───────────────────────────────
-265625000000000000000000000000
-
-= 4.190768068946987...
-```
-
-Because `p(E)` is piecewise linear, the committed evaluation reduces to a finite collection of relevant kinks and endpoints. The frozen lower bound for `R` is therefore checked in exact rational arithmetic.
-
-The pressure-weight sum is
-
-```text
-B = Σ bᵣ = 93/23000.
-```
-
-Block averaging and pinching then give
-
-```text
-Δ(M) ≥ (R/m) S − [η B (m−q) / m] N.
-```
-
-The finite spectral inequality, the pinching step, and the shifted pressure accounting are separately audited in this release.
-
----
-
-### 3.5 Exact final assembly
-
-Return to the analytic interface
-
-```text
-S ≥ HN + Δ(M) − o(N).
-```
-
-Insert the certified block bound
-
-```text
-Δ(M) ≥ (R/m) S − [η B (m−q) / m] N.
-```
-
-After rearrangement,
-
-```text
-S [1 − R/m]
-≥
-N [H − η B (m−q)/m].
-```
-
-Therefore
-
-```text
-κ ≥ C
-```
-
-with
-
-```text
-C = [mH − η B (m−q)] / [m − R].
-```
-
-The frozen exact parameters are
-
-```text
-q   = 8
-m   = 531
-η   = 1
-B   = 93/23000
-
-H   = 672167187145431 / 10¹⁵
-
-R   =
-      1113172768314043426732876281699
-      ───────────────────────────────
-      265625000000000000000000000000
-```
-
-The exact assembly produces
-
-```text
-C =
-722547711262091300265625000000000
-──────────────────────────────────
-1072825050442925667061714615173641
-```
-
-and therefore
-
-```text
-κ ≥ 0.67350003708785593...
-  = 67.350003708785593%.
-```
-
-The committed exact checker verifies:
-
-```text
-PASS exact C equals frozen fraction
-PASS exact C > 0.6735
-```
-
-The final acceptance condition is therefore not a rounded floating-point comparison.
-
----
-
-## 4. Why this is more than a numerical candidate
-
-The release separates three logically different activities.
-
-### Discovery
-
-Floating-point numerical search is used to propose:
-
-- candidate windows;
-- pressure weights;
-- pair weights;
-- slopes;
-- difficult local regions;
-- parameter combinations worth certifying.
-
-Search output is never accepted as proof.
-
-### Certification
-
-Accepted local statements are replayed through a strict fail-closed verification chain using:
-
-- interval branch-and-bound;
-- outward-safe interval storage;
-- directed widening at arithmetic boundaries;
-- interval Taylor enclosures for the transcendental kernel;
-- rigorous first- and second-derivative bounds;
-- symmetry preflight;
-- an independently certified well layer;
-- zero unresolved terminal boxes.
-
-### Exact assembly
-
-The final span identities, pressure sum, pressure-envelope evaluation, `R`, and the final lower bound `C` are checked with exact rational arithmetic.
-
-The committed evidence audit reports:
-
-```text
-PASS R lock is a valid rational lower bound of the complete kink minimum
-PASS exact C equals frozen fraction
-PASS exact C > 0.6735
-PASS 327/327 strict well boxes proved
-PASS constant/rational enclosure audit passed
-TOTAL_STRICT_BB_NODES=190375830
-RESULT: ALL STRICT 67.35 CHECKS PASS
-```
-
-This is why the frozen value is described as a **strict finite-dimensional computer-assisted certificate**, rather than as a floating-point optimization result.
-
----
-
-## 5. Development path
-
-The project retained a lower-cost certificate tier while pursuing the stricter 67.35% witness.
-
-| Stage | Certified value | Role |
-|---|---:|---|
-| Anthropic public baseline | **67.2500703679%** | Public analytic/formal starting point |
-| VeriLoop E2 short tier | **67.275055959117140%** | Lower-cost reproducible certificate; `793,374` B&B nodes |
-| VeriLoop E2 strict tier | **67.350003708785593%** | Primary frozen strict finite-dimensional certificate |
-
-The short tier is methodologically useful because it shows that certification cost is margin-driven. The project therefore does not optimize decimal digits in isolation: it first chooses the threshold that must be exceeded, then works backward to the loosest certificate margins that still close rigorously.
-
-The main frozen result of this repository is the strict tier:
-
-```text
-67.350003708785593%.
-```
-
----
-
-## 6. What has been achieved
-
-The following statements describe the current frozen release.
-
-### Exact frozen witness
-
-```text
-67.350003708785593%
-```
-
-### Strict local certification
-
-All three frozen local inequalities terminate fail-closed with
-
-```text
-result=PROVED.
-```
-
-### Independent difficult-well certification
-
-```text
-327 / 327 proved
-0 failed
-```
-
-### Zero unresolved terminal boxes
-
-Committed strict runs terminate with
-
-```text
-stack_left=0
-HARD=0.
-```
-
-### Exact-rational final assembly
-
-The final `R` and `C` checks do not depend on decimal rounding.
-
-### Audited finite-dimensional bridge
-
-The release explicitly audits:
-
-- the finite spectral inequality;
-- the pinching step;
-- shifted pressure accounting;
-- safe-direction numerical constants;
-- the final rational assembly.
-
-### Public reproducibility
-
-The repository releases the verifier source, frozen configuration, committed certificate logs, exact assembly checks, audit material, and reproduction commands required to inspect the finite-dimensional result.
-
-### Explicit provenance
-
-The Anthropic/Zeta23 analytic foundation is identified as the upstream starting point. The VeriLoop E2 contribution is presented as the finite-dimensional extension and strict certificate built on top of that public foundation.
-
----
-
-## 7. What is still in progress
-
-The finite-dimensional certificate is frozen. The remaining work is the **end-to-end formal bridge**.
-
-The team is actively working on the following items.
-
-### 7.1 End-to-end correspondence with the upstream analytic interface
-
-The remaining formal layer must connect the finite-dimensional certificate to the upstream theorem statements with all normalizations fixed explicitly, including:
-
-- zero heights;
-- gap normalization;
-- multiplicities;
-- matrix normalization;
-- the precise attachment of the strengthened `Δ(M)` estimate.
-
-### 7.2 Kernel-friendly certificate compression
-
-The current strict branch-and-bound computation is strong external evidence but is far too large to replay naively inside the Lean kernel.
-
-A major objective is therefore to replace the enormous search tree with a much smaller formal object.
-
-One candidate route is:
-
-1. derive rigorous polynomial lower bounds for the kernel `W` over the already reduced domain;
-2. reduce the required inequalities to polynomial nonnegativity;
-3. certify them using a Positivstellensatz / sum-of-squares object;
-4. replay the resulting bounded rational certificate in Lean.
-
-### 7.3 Lean formalization
-
-The team is developing an end-to-end Lean formalization compatible with the upstream theorem interface and the frozen finite-dimensional witness.
-
-The intended endpoint is not merely a successful external numerical replay, but a proof object that can survive independent kernel checking.
-
-### 7.4 Independent review and formal submission
-
-Independent mathematical review and formal submission remain in progress.
-
-The repository is being published now precisely so that the derivation and certificate can be challenged before that process is complete.
-
----
-
-## 8. What this repository does not claim
-
-For clarity, the following claims are **not** being made:
-
-- this is not a proof of the Riemann Hypothesis;
-- this is not a statement that “67.35% of RH” has been solved;
-- this is not yet a completed end-to-end Lean theorem;
-- this is not yet an accepted formal challenge or ledger entry;
-- this is not yet a claim of completed independent peer review;
-- this repository does not self-declare mathematical-community acceptance.
-
-The strongest intended wording at the present stage is:
-
-> **A strict, independently reproducible finite-dimensional computer-assisted certificate for the 67.350003708785593% witness, built on Anthropic's public analytic foundation and released for independent audit, formalization, and review.**
-
----
-
-## 9. Reproducing the frozen evidence
-
-### Quick committed-evidence audit
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python3 -m pip install -r requirements.txt
-
-./reproduce.sh
-```
-
-Expected evidence includes:
-
-```text
-PASS R lock is a valid rational lower bound of the complete kink minimum
-PASS exact C equals frozen fraction
-PASS exact C > 0.6735
-PASS 327/327 strict well boxes proved
-TOTAL_STRICT_BB_NODES=190375830
-RESULT: ALL STRICT 67.35 CHECKS PASS
-COMMITTED_EVIDENCE_AUDIT=PASS
-```
-
-### Full strict replay
-
-```bash
-FULL=1 ./reproduce.sh
-```
-
-The full mode rebuilds and replays the expensive strict verification path from source.
-
-Derived lookup caches are not treated as trusted evidence; they are reproducible artifacts.
-
----
-
-## 10. Repository structure
-
-| Path | Purpose |
+| Property | VeriLoop E2 |
 |---|---|
-| `README.md` | Result, derivation, boundaries, and reproduction |
-| `THEORY.md` | Finite-dimensional reduction and mathematical argument |
-| `NUMERICS.md` | Numerical search methodology and design decisions |
-| `CERTIFICATES.md` | Strict certificate summary |
-| `AUDIT.md` | Spectral, pinching, pressure-accounting, and numerical audit |
-| `STATUS.md` | Evidence-status ledger |
-| `SUBMISSION.md` | Comparison with the public baseline and remaining formal boundary |
-| `PROVENANCE.md` | Provenance of the frozen witness |
-| `REFUTATION.md` | Rejected provisional candidates and failure analysis |
-| `TIERS.md` | Short-tier and strict-tier certificate definitions |
-| `verify_exact.py` | Exact-rational final assembly |
-| `verify_strict.py` | Strict committed-certificate audit |
-| `audit_constants.py` | Constant/enclosure safety audit |
-| `arb_window.py` | Rigorous window evaluation |
-| `verifier/` | Strict interval verifier implementation |
-| `certificates/strict/` | Raw committed strict logs |
-| `config/strictlock.json` | Frozen strict witness configuration |
-| `lean/LEAN_ROADMAP.md` | Formalization roadmap |
-| `lean/Solution.skeleton.lean` | Lean theorem contract / proof skeleton |
-| `reproduce.sh` | One-command audit and optional full replay |
+| Model family | VeriLoop E2 |
+| Base model | Qwen3.8-27B |
+| Parameter class | 27B |
+| HF architecture class | `Qwen3_5ForConditionalGeneration` |
+| Training stage | Post-Training |
+| Primary domains | Code, software engineering, mathematics, physics |
+| Public post-training corpus accounting | 1,841,831 records |
+| Native context length | 262,144 tokens |
+| Validated vLLM serving length | 131,072 tokens |
+| Tokenizer class | `Qwen2Tokenizer` |
+| Weight format | `safetensors` |
+| Languages | English, Chinese |
+| Recommended serving engine | vLLM 0.17.0 |
+| Model-weight license | Apache License 2.0 |
+| Release year | 2026 |
+
+The post-training mix spans repository-level software engineering, terminal and tool use, mathematical reasoning, scientific reasoning, verifier-sensitive repair, and recurrence-oriented training. Exact data construction, filtering, and training methodology are documented in the technical report rather than duplicated here.
 
 ---
 
-## 11. Research transparency
+## Benchmark Results
 
-Computer-assisted mathematics is useful only if failed candidates are allowed to fail visibly.
+The README reports the **frozen release scores** for VeriLoop E2. Agentic benchmarks use the E2 checkpoint inside the frozen evaluation workflow, including the internal VeriLoop Harness where required by the task, benchmark-native tools, and the benchmark's official or designated evaluator. Exact per-benchmark protocols, task-level outputs, evaluator receipts, and integrity metadata are published separately in the **Evaluation Evidence** package.
 
-During development, higher provisional numerical candidates were rejected when explicit counterexamples exposed insufficiently converged local minima. Those candidates are not silently retained as achievements; their failure modes are documented in `REFUTATION.md`.
+> **Attribution boundary.** The reported results characterize the evaluated E2 system configuration. They should not be interpreted as evidence that an untouched Qwen3.8-27B base checkpoint, or the E2 checkpoint outside the evaluated runtime, reproduces the same numbers.
 
-The frozen 67.350003708785593% release was rebuilt around a stricter acceptance chain:
+<p align="center">
+  <img src="./veriloop_e2_benchmark_result.png" width="100%" alt="VeriLoop E2 benchmark comparison across nine public benchmarks">
+</p>
 
-1. separate discovery from proof;
-2. freeze exact rational coefficients;
-3. certify difficult wells independently;
-4. prove the global complement fail-closed;
-5. audit numerical constant directions and interval storage;
-6. assemble the final result exactly over the rationals.
+<p align="center">
+  <sub><strong>Figure 1.</strong> VeriLoop E2 release snapshot across nine public benchmarks. Higher is better. Provider colors are fixed across panels; exact public model variants are shown in the comparison tables below. Full protocol and source provenance: <a href="https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence">Evaluation Evidence</a>.</sub>
+</p>
 
-That evidence discipline is part of the result.
+### Code and agentic benchmarks
 
----
+| Benchmark | **VeriLoop E2** | OpenAI | Anthropic | Kimi | GLM | Qwen | DeepSeek |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **SWE-bench Pro** | **[76.2](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/swe-bench-pro)** | GPT-5.6 Sol 64.6 | Claude Fable 5.1 81.2 | — | GLM-5.2 Max 62.1 | Qwen3.8-Max 67.7 | DeepSeek V4 Pro Max 55.4 |
+| **Terminal-Bench 2.1** | **[88.8](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-2.1)** | GPT-5.6 Sol 88.8 | — | Kimi K3 88.3 | GLM-5.3 88.2 | Qwen3.8-Max 86.6 | DeepSeek V4 Pro 87.9 |
+| **DeepSWE v1.1** | **[64.6](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/deepswe-1.1)** | GPT-5.6 Sol 72.7 | Claude Fable 5 69.7 | Kimi K3 67.5 | GLM-5.3 66.9 | — | DeepSeek V4 Pro 62.7 |
+| **Terminal-Bench 3.0** | **[29.7](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-3.0)** | GPT-5.6 Sol 34.6 | Claude Fable 5 33.7 | Kimi K3 17.4 | GLM-5.3 28.3 | — | — |
+| **Terminal-Bench 4.0** | **[37.9](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-4.0)** | GPT-6 Astra 59.6 | Claude Fable 5.1 55.1 | — | GLM-5.3 41.8 | — | — |
+| **SWE-Marathon v1.1** | **[45.0](https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2)** | GPT-5.6 Sol 42.5 | Claude Opus 4.8 48.8 | Kimi K3 48.1 | GLM-5.3 42.5 | — | — |
 
-## 12. Invitation to reproduce, audit, and formalize
+### Mathematics and science benchmarks
 
-The full finite-dimensional calculation is being released because it should be independently tested.
+| Benchmark | **VeriLoop E2** | OpenAI | Anthropic | Kimi | GLM | DeepSeek | Gemini |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **AIME 2026** | **[98.3](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/aime-2026)** | GPT-5.5 100.0 | Claude Opus 4.8 100.0 | Kimi K3 97.0 | — | DeepSeek V4 Pro 97.0 | Gemini 3.1 Pro 98.0 |
+| **GPQA Diamond** | **[93.9](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/gpqa-diamond)** | GPT-5.6 Sol 94.1 | Claude Fable 5 92.6 | Kimi K3 93.5 | GLM-5.2 Max 91.2 | — | — |
+| **Apex 2025** | **[89.6](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/apex-2025)** | GPT-5.5 80.0 | Claude Opus 4.8 81.0 | Kimi K3 66.0 | — | DeepSeek V4 Pro 28.0 | Gemini 3.1 Pro 61.0 |
 
-Contributions are especially welcome from researchers working in:
+A dash means that the release figure does not include a public comparison point for that provider on that benchmark. Each linked VeriLoop E2 score above resolves directly to its benchmark-specific public evidence directory or release source. External reference values mirror the frozen comparison set used in Figure 1; harness notes and protocol caveats are retained in the evaluation ledger rather than duplicated here. **Seven results currently map to Hugging Face Native Benchmark leaderboards:** AIME 2026, DeepSWE v1.1, GPQA Diamond, SWE-bench Pro, Terminal-Bench 2.1, Terminal-Bench 3.0, and Terminal-Bench 4.0. **Apex 2025 (89.6)** and **SWE-Marathon v1.1 (45.0)** are presented here as **laboratory self-published release results** with public source links. Apex 2025 is retained as a structured model result with public evidence, but `MathArena/apex_2025` is not currently a Hugging Face Native Benchmark leaderboard; SWE-Marathon v1.1 is reported on the model page because a stable Hugging Face benchmark registration/task identifier is not currently available.
 
-- analytic number theory;
-- rigorous interval arithmetic;
-- Lean / Mathlib;
-- formalized mathematics;
-- exact computational proof systems;
-- SOS / Positivstellensatz certificates.
+### Evaluation evidence
 
-Useful contributions include:
+The public evidence package is intended to make the benchmark record inspectable rather than merely declarative. Where available, each task record binds:
 
-- independent reproduction of the frozen certificate;
-- attempts to falsify or tighten any local inequality;
-- verification of the block accounting;
-- independent reimplementation of the exact assembly;
-- compression of the large branch-and-bound certificate;
-- construction of a kernel-checkable algebraic certificate;
-- completion of the Lean bridge to the upstream analytic theorem.
+```text
+task identity
+    ↓
+model / system output
+    ↓
+benchmark-native execution or evaluator record
+    ↓
+score / pass-fail decision
+    ↓
+integrity metadata and provenance
+```
 
-VeriLoop E2 is deliberately used here as a research system willing to explore difficult directions, including directions that can fail.
+**Evidence repository:** [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence)
 
-The standard is not that every proposal succeeds.
+| Benchmark | Public evaluation source |
+|---|---|
+| SWE-bench Pro | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/swe-bench-pro](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/swe-bench-pro) |
+| Terminal-Bench 2.1 | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-2.1](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-2.1) |
+| DeepSWE v1.1 | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/deepswe-1.1](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/deepswe-1.1) |
+| Terminal-Bench 3.0 | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-3.0](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-3.0) |
+| Terminal-Bench 4.0 | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-4.0](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/terminal-bench-4.0) |
+| AIME 2026 | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/aime-2026](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/aime-2026) |
+| GPQA Diamond | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/gpqa-diamond](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/gpqa-diamond) |
+| Apex 2025 | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/apex-2025](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence/tree/main/apex-2025) |
+| SWE-Marathon v1.1 | [https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2](https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2) |
 
-The standard is that the final public claim is separated from rejected candidates and survives increasingly strict layers of evidence.
-
-We welcome independent formalization and hope the public release helps move the result toward a successful end-to-end formal submission.
-
----
-
-## 13. References and attribution
-
-### Anthropic foundation
-
-**Anthropic / Claude (2026)**  
-*More Than Two Thirds of the Zeros of the Riemann Zeta Function Lie on the Critical Line*
-
-https://www-cdn.anthropic.com/564f962e60643842f5fcb4a17c9dbc8f608f1c37.pdf
-
-**Zeta23 — Lean 4 formalization**
-
-https://github.com/anthropics/zeta-23-lean
-
-The present VeriLoop E2 work explicitly builds on this public analytic and formal foundation.
-
-### VeriLoop E2 release
-
-**VeriLoop E2 + Libo Wang**
-
-*Strict 67.350003708785593% finite-dimensional computer-assisted certificate for simple critical-line zeta zeros*
-
-Author / maintainer: **Libo Wang**
+The model repository publishes **eight structured evaluation descriptors** under [`/.eval_results/`](https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2/tree/main/.eval_results). Seven of them currently map to Hugging Face Native Benchmark leaderboards; the Apex 2025 descriptor is retained for structured reporting and provenance, but does not currently produce a Hugging Face leaderboard rank. SWE-Marathon v1.1 is published on the model page as a laboratory self-published release result and is therefore not included in `/.eval_results/`.
 
 ---
 
-## License
+## VeriLoop Harness
 
-See `LICENSE`.
+VeriLoop is not designed around the idea that a model should announce its own improvement. The Harness treats model output as a **candidate state** that must earn admission through external evidence.
+
+The current public abstraction is **VeriLoop-Governed Recurrence (VGR)**:
+
+```text
+Current request
+    ↓
+Contract compilation
+    ↓
+VeriLoop E2 proposes a candidate
+    ↓
+External / deterministic verification
+    ↓
+Protected evidence state comparison
+    ├── no protected regression + at least one strict improvement → COMMIT
+    ├── otherwise                                             → ROLLBACK
+    └── zero-rank certificate                                → STOP
+    ↓
+Verified evidence becomes the next recurrence state
+```
+
+The key boundary is deliberate:
+
+- **Model authority:** propose, reason, abstract, diagnose, synthesize, repair.
+- **Harness authority:** admit evidence, execute deterministic checks, verify, commit, roll back, stop, and persist verified state.
+- **Benchmark / domain authority:** define task truth through native evaluators, tests, formal checks, numerical certificates, or other domain-specific validators.
+
+This architecture is intended to preserve capability while preventing self-reported success from becoming system state. In software engineering, that means tests and execution receipts dominate plausible-looking patches. In mathematics and physics, it means a retained derivation must survive the relevant symbolic, numerical, or formal checks before it is promoted.
+
+The production implementation contains private orchestration, routing, thresholds, prompt compilation, evidence-state machinery, repair arbitration, and deployment controls. Those implementation details are not part of this open model release. The README exposes the **functional contract**, not the proprietary runtime.
+
+---
+
+## Public 14-Rule Engineering Contract
+
+The public Golden Rules are the model-visible execution discipline used to keep long-horizon work bounded, testable, and auditable.
+
+| # | Rule | Public meaning |
+|---:|---|---|
+| 1 | **Current Request Supremacy** | The current request and exact output contract override stale memory, templates, and unrelated context. |
+| 2 | **Evidence Before Escalation** | Search, tools, reverse analysis, or repair are triggered by concrete missing evidence or observed failure, not instinct. |
+| 3 | **Read Before Rewrite** | Inspect the relevant entry points, interfaces, tests, conventions, and failure signals before editing. |
+| 4 | **Minimal Sufficient Implementation** | Produce the smallest complete artifact that satisfies the task and preserves required interfaces. |
+| 5 | **Surgical Repair, Not Blind Regeneration** | Repair the broken invariant; broaden the rewrite only when evidence shows local repair is insufficient. |
+| 6 | **Intent Tests Beat Cosmetic Tests** | Syntax and formatting matter, but functional intent is the decisive acceptance criterion. |
+| 7 | **Fail Loud, Never Fake Success** | Unknowns, skipped checks, degraded states, and failures remain explicit; unexecuted validation is never reported as success. |
+| 8 | **Deterministic Logic Belongs in Code** | Parsing, scoring, structural checks, transformations, and reproducible validation should be deterministic whenever possible. |
+| 9 | **Budget Is a First-Class Contract** | Token, tool, time, and compute budgets are part of the task contract rather than afterthoughts. |
+| 10 | **Tool Use Must Be Typed and Accountable** | Every tool action has a trigger, expected output, and defined downstream consumer. |
+| 11 | **Checkpoint Long Tasks** | Persist useful candidate state, validation receipts, repair records, and progress across long-running work. |
+| 12 | **Follow Local Conventions** | Respect repository, benchmark, filename, API, language, and artifact conventions unless the request explicitly changes them. |
+| 13 | **One Final Deliverable, Full Evidence Bundle** | Select one deliverable while retaining the evidence needed to explain and reproduce why it was selected. |
+| 14 | **Separate Core Discipline from Domain Overlays** | Domain- or benchmark-specific rules apply only when relevant and cannot override the current request. |
+
+---
+
+## Scientific Demonstrations
+
+The scientific demonstrations are not presented as isolated chat transcripts. They are examples of how the E2 model and the internal Harness can divide a difficult research problem into candidate derivations, falsifiable subclaims, executable checks, and retained evidence.
+
+### Riemann ζ: 67.350003708785593% strict finite-dimensional certificate
+
+The released Riemann artifact reports a frozen assembly value of
+
+$$
+\kappa = 67.350003708785593\%.
+$$
+
+The current strict package closes **3/3 local inequalities**, resolves **327/327 difficult wells**, executes **190,375,830 strict branch-and-bound nodes**, and passes the final **exact rational assembly** check.
+
+What this result **does** establish within the released artifact is a strict finite-dimensional computer-assisted certificate under its stated analytic setup and imported assumptions. What it **does not** establish is equally important:
+
+- it is **not a proof of the Riemann Hypothesis**;
+- it is **not yet an end-to-end Lean/nanoda kernel proof** of the complete upstream analytic chain;
+- imported analytic normalization steps must remain clearly separated from the finite-dimensional certificate until the formal bridge and complete replay are closed.
+
+The public package therefore emphasizes claim discipline, reproducibility, and certificate structure rather than treating a numerical percentage as a substitute for mathematical provenance.
+
+**Artifact:** [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis) · **Technical note:** `xxxx` · **Zenodo:** `xxxx`
+
+### Black-hole information problem: Asymptotic Graviton Tomography
+
+**Asymptotic Graviton Tomography** is the second scientific reasoning demonstration. It studies an information-reconstruction route through asymptotic gravitational observables, using the Harness to separate retained derivations from rejected or insufficiently supported branches.
+
+The public claim is intentionally bounded: this is a **research demonstration of a verifier-governed theoretical-physics derivation**, not a declaration that the black-hole information paradox has been solved. The artifact is intended to expose the derivation structure, assumptions, checks, and remaining theoretical boundaries clearly enough for external scientific criticism.
+
+**Artifact:** `xxxx` · **Technical note:** `xxxx`
+
+> The Riemann and black-hole demo artifacts are released separately under **research-only, non-commercial terms**. They are not covered by the Apache-2.0 grant for the model weights and public inference utilities unless a specific file explicitly says otherwise.
+
+---
+
+## Inference
+
+### Recommended environment
+
+The following stack is the validated reference environment for the public serving path:
+
+| Component | Version / setting |
+|---|---|
+| Python | 3.12.x |
+| vLLM | 0.17.0 |
+| PyTorch | 2.10.0 + CUDA 12.9 build |
+| CUDA runtime | 12.9 |
+| Transformers | 4.57.6 |
+| Triton | 3.6.0 |
+| Dtype | `bfloat16` |
+| Validated serving context | 131,072 tokens |
+
+The released tokenizer advertises a native maximum length of **262,144 tokens**. The 131,072-token value above is the **validated public serving configuration**, not a redefinition of the model's native context length. Longer serving windows require appropriate accelerator memory and KV-cache planning.
+
+### vLLM server
+
+Use the tokenizer and chat template shipped with the model repository.
+
+```bash
+python -m pip install "vllm==0.17.0"
+
+MODEL="<MODEL_PATH_OR_HF_ID>"
+
+vllm serve "${MODEL}" \
+  --served-model-name veriloop-e2 \
+  --dtype bfloat16 \
+  --model-impl vllm \
+  --language-model-only \
+  --max-model-len 131072 \
+  --max-num-seqs 16 \
+  --gpu-memory-utilization 0.92 \
+  --generation-config vllm \
+  --disable-uvicorn-access-log \
+  --host 127.0.0.1 \
+  --port 8001
+```
+
+### OpenAI-compatible request
+
+```bash
+curl http://127.0.0.1:8001/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "veriloop-e2",
+    "messages": [
+      {"role": "user", "content": "Reply exactly: 8001_OK"}
+    ],
+    "temperature": 0,
+    "max_tokens": 16,
+    "stream": false
+  }'
+```
+
+A validated smoke test returns:
+
+```text
+8001_OK
+```
+
+### Python client
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://127.0.0.1:8001/v1",
+    api_key="EMPTY",
+)
+
+response = client.chat.completions.create(
+    model="veriloop-e2",
+    messages=[
+        {"role": "user", "content": "Explain why rollback matters in verifier-governed reasoning."}
+    ],
+    temperature=0.2,
+    max_tokens=1024,
+)
+
+print(response.choices[0].message.content)
+```
+
+### Protocol note
+
+For tool use or long multi-turn reasoning, treat the repository-shipped tokenizer and chat template as part of the model protocol. Replacing role delimiters, tool-call syntax, stop semantics, or reasoning-history behavior can change observed system behavior even when the weights are unchanged.
+
+---
+
+## Release Boundary and Artifact Terms
+
+Different artifacts intentionally carry different permissions. Do not infer that the model-weight license automatically applies to separately published scientific artifacts or private system components.
+
+| Artifact | Public status | Terms |
+|---|---|---|
+| **VeriLoop E2 model weights, tokenizer, configuration** | Public | **Apache License 2.0** |
+| **Public vLLM launch / inference utilities** | Public | **Apache License 2.0** |
+| **Benchmark results and evaluation evidence** | Public / separately published | Reuse permitted with attribution to **VeriLoop E2 / Libo Wang**; upstream benchmark assets retain their original terms |
+| **Riemann ζ scientific artifact** | Public / separately published | **Research-only, non-commercial**; see artifact-specific terms |
+| **Asymptotic Graviton Tomography artifact** | Public / separately published | **Research-only, non-commercial**; see artifact-specific terms |
+| **Production VeriLoop Harness implementation** | Not included | Not licensed by this release |
+
+The open model license does not disclose or license unpublished Harness orchestration, prompt compilation, verifier routing, private evidence-state schemas, repair arbitration, deployment infrastructure, private training data, or other non-distributed internal systems.
+
+---
+
+## Limitations
+
+- VeriLoop E2 is a post-trained model component; the complete production VeriLoop Harness is not part of this release.
+- Reported system benchmarks may depend on benchmark-native tools, sandbox behavior, evaluator versions, and the frozen Harness configuration described in the evidence package.
+- The model can still produce incorrect code, invalid proofs, physically unsupported arguments, insecure commands, or incomplete analyses.
+- A plausible-looking derivation is not equivalent to a verified result; domain-native verification remains necessary.
+- Long-context performance depends on serving configuration, accelerator memory, KV-cache budget, and workload shape.
+- Community-modified templates, stop rules, parsers, or client logic can materially change observed tool-use and reasoning behavior.
+- Scientific demonstration artifacts have explicit scope boundaries and should not be generalized beyond the claims actually certified by their released evidence.
+
+---
+
+## Links
+
+| Resource | Link |
+|---|---|
+| Hugging Face model | [https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2](https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2) |
+| Technical report | `xxxx` |
+| Evaluation evidence | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence) |
+| GitHub | `xxxx` |
+| Riemann ζ artifact | [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis) |
+| Black-hole / Asymptotic Graviton Tomography artifact | `xxxx` |
+| Zenodo DOI | `xxxx` |
+
+Unresolved links in this table remain placeholders until their corresponding public artifacts are released. The Hugging Face model and evaluation-evidence links above are final public identifiers.
 
 ---
 
 ## Citation
 
-If you use this artifact, verifier, configuration, or certificate chain, please distinguish clearly between:
+If you use VeriLoop E2 in research, please cite the model release and the relevant evaluation or scientific artifact separately.
 
-1. the Anthropic/Zeta23 analytic foundation;
-2. the VeriLoop E2 finite-dimensional extension and strict certificate;
-3. any subsequent independent formalization, modification, or verification.
+```bibtex
+@misc{wang2026veriloope2,
+  title        = {VeriLoop E2: A 27B Post-Trained Model for Code, Mathematics, and Scientific Reasoning},
+  author       = {Wang, Libo},
+  year         = {2026},
+  note         = {Tsinghua Shenzhen International Graduate School (SIGS)},
+  howpublished = {Open model release},
+  url          = {https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2}
+}
+```
+
+For benchmark figures or evaluation records, attribution should identify **VeriLoop E2 / Libo Wang** and link to the public evaluation evidence package: [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence).
+
+---
+
+## Acknowledgements
+
+VeriLoop E2 builds on **Qwen3.8-27B** and the broader open-source model-serving, evaluation, and scientific-computing ecosystem. We thank the communities behind Qwen, Transformers, vLLM, Safetensors, software-engineering benchmarks, mathematical evaluation suites, and reproducible scientific computation.
+
+The model, benchmark evidence, and scientific artifacts are published with explicit boundaries so that capability claims can be inspected at the level at which they were actually produced and verified.
