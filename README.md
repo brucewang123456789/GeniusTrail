@@ -21,7 +21,7 @@
 
 <p align="center">
   <a href="https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>Model</strong></a> ·
-  <a href="xxxx"><strong>Technical Report</strong></a> ·
+  <a href="https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX"><strong>Technical Report</strong></a> ·
   <a href="https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence"><strong>Evaluation Evidence</strong></a> ·
   <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis"><strong>Riemann ζ Artifact</strong></a> ·
   <a href="xxxx"><strong>GitHub</strong></a> ·
@@ -362,7 +362,7 @@ The open model license does not disclose or license unpublished Harness orchestr
 | Resource | Link |
 |---|---|
 | Hugging Face model | [https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2](https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2) |
-| Technical report | `xxxx` |
+| Technical report | [https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX](https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX) |
 | Evaluation evidence | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence) |
 | GitHub | `xxxx` |
 | Riemann ζ artifact | [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis) |
