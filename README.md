@@ -23,7 +23,8 @@
   <a href="https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>Model</strong></a> ·
   <a href="https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX"><strong>Technical Report</strong></a> ·
   <a href="https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence"><strong>Evaluation Evidence</strong></a> ·
-  <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis"><strong>Riemann ζ Artifact</strong></a>
+  <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis"><strong>Riemann ζ Artifact</strong></a> ·
+  <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/black%20hole%20information%20paradox"><strong>Black-Hole Artifact</strong></a>
 </p>
 
 ---
@@ -42,7 +43,7 @@ This release focuses on the model weights, public inference path, evaluation rec
 - **262,144-token native context window** in the released tokenizer configuration.
 - Strong release results across nine code-agent, mathematics, and science benchmarks, including **76.2% SWE-bench Pro**, **88.8% Terminal-Bench 2.1**, **98.3% AIME 2026**, **93.9% GPQA Diamond**, and **89.6% Apex 2025**.
 - A reproducible scientific-reasoning program built around verifier-governed recurrence rather than unconstrained retry.
-- Two public-facing scientific demonstrations: a strict finite-dimensional **Riemann ζ zero-proportion certificate at 67.350003708785593%**, and **Asymptotic Graviton Tomography** for the black-hole information problem.
+- Two public scientific demonstrations with released evidence artifacts: a strict finite-dimensional **Riemann ζ zero-proportion certificate at 67.350003708785593%**, and **Asymptotic Graviton Tomography**, which establishes an exact-and-quantitative completeness framework for free asymptotic radiative graviton data.
 - OpenAI-compatible serving through **vLLM 0.17.0** with a validated 131,072-token serving configuration.
 
 ---
@@ -200,7 +201,7 @@ The public Golden Rules are the model-visible execution discipline used to keep 
 
 ## Scientific Demonstrations
 
-The scientific demonstrations are not presented as isolated chat transcripts. They are examples of how the E2 model and the internal Harness can divide a difficult research problem into candidate derivations, falsifiable subclaims, executable checks, and retained evidence.
+The scientific demonstrations are not presented as isolated chat transcripts. They are examples of how the E2 model and the internal Harness can divide a difficult research problem into candidate derivations, falsifiable subclaims, executable checks, retained evidence, and explicit claim boundaries.
 
 ### Riemann ζ: 67.350003708785593% strict finite-dimensional certificate
 
@@ -212,23 +213,35 @@ $$
 
 The current strict package closes **3/3 local inequalities**, resolves **327/327 difficult wells**, executes **190,375,830 strict branch-and-bound nodes**, and passes the final **exact rational assembly** check.
 
-What this result **does** establish within the released artifact is a strict finite-dimensional computer-assisted certificate under its stated analytic setup and imported assumptions. What it **does not** establish is equally important:
+**Established result.** Within the released analytic setup and its explicitly imported assumptions, the artifact establishes a strict finite-dimensional computer-assisted certificate at the stated zero-proportion value. The claim is therefore the certificate itself, together with its reproducible derivation, computation, and assembly evidence.
 
-- it is **not a proof of the Riemann Hypothesis**;
-- it is **not yet an end-to-end Lean/nanoda kernel proof** of the complete upstream analytic chain;
-- imported analytic normalization steps must remain clearly separated from the finite-dimensional certificate until the formal bridge and complete replay are closed.
-
-The public package therefore emphasizes claim discipline, reproducibility, and certificate structure rather than treating a numerical percentage as a substitute for mathematical provenance.
+**Boundary and current work.** This result is **not a proof of the Riemann Hypothesis**, and it is **not yet an end-to-end Lean/nanoda kernel proof of the complete upstream analytic chain**. The remaining work is being directed at that exact boundary: formalizing the imported analytic normalization steps, binding them to the finite-dimensional certificate, and closing a complete kernel-replay path from the upstream analytic assumptions through the final assembly. Until that bridge is closed, the public claim remains the strict finite-dimensional certificate under the stated framework rather than a formal proof of the full analytic chain.
 
 **Artifact:** [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis)
 
 ### Black-hole information problem: Asymptotic Graviton Tomography
 
-**Asymptotic Graviton Tomography** is the second scientific reasoning demonstration. It studies an information-reconstruction route through asymptotic gravitational observables, using the Harness to separate retained derivations from rejected or insufficiently supported branches.
+The second scientific demonstration is **Asymptotic Graviton Tomography**, a verifier-governed theoretical-physics research artifact focused on information reconstruction from **free asymptotic radiative graviton data at future null infinity**.
 
-The public claim is intentionally bounded: this is a **research demonstration of a verifier-governed theoretical-physics derivation**, not a declaration that the black-hole information paradox has been solved. The artifact is intended to expose the derivation structure, assumptions, checks, and remaining theoretical boundaries clearly enough for external scientific criticism.
+**Established result.** The released artifact establishes an exact-and-quantitative tomography framework with nine stated results, T1–T9. The exact layer includes the **Sector Connectivity Theorem**, the hard-Fock commutant
 
-> The Riemann and black-hole demo artifacts are released separately under **research-only, non-commercial terms**. They are not covered by the Apache-2.0 grant for the model weights and public inference utilities unless a specific file explicitly says otherwise.
+$$
+\mathcal{A}_F' = W^*(\hat N),
+$$
+
+a linear-connector completion theorem, and a two-branch classification of the infrared-memory layer. The quantitative layer identifies the algebraic connectivity \(\lambda_2\) of the coherence-transfer Laplacian as the modulus of informational completeness; in the stated two-mode \(su(2)\) reduction it obtains
+
+$$
+\operatorname{spec}(L)=\lambda^2 k(k+1), \qquad \lambda_2 = 2\lambda^2,
+$$
+
+with the gap independent of graviton number \(N\) and extremal operator \(N_R\). The repository contains the analytic derivations, a derivation walkthrough, theorem-status metadata, the reference computation transcript, and six executable numerical/structural certificates; the released reference suite reports **6/6 PASS**.
+
+**Boundary and current work.** This artifact **does not solve the black-hole information paradox**. It does not yet provide interacting or evaporating black-hole dynamics, initial-to-out faithfulness, a Hawking-radiation derivation, or a proof of evaporation unitarity. Those missing dynamical layers define the active research frontier rather than being hidden behind the present result. Current work is focused on deriving the infrared exponent from first principles for specified dressing geometries, extending the spectral-gap analysis to genuinely multi-mode connectors, replacing the discrete memory label with the physical direct-integral continuum formulation, extending the Laplacian framework beyond exactly block-diagonal base algebras, and developing a dynamical completeness modulus capable of connecting initial data to outgoing radiation. Until that bridge is closed, the claim remains deliberately restricted to the free-asymptotic radiative setting.
+
+**Artifact:** [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/black%20hole%20information%20paradox](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/black%20hole%20information%20paradox)
+
+> The scientific artifacts are released separately from the model weights and retain their own artifact-specific terms. The Riemann ζ artifact follows its own research-use terms; **Asymptotic Graviton Tomography is released under CC BY 4.0** as stated in its repository. Neither artifact should be assumed to inherit the Apache-2.0 grant that applies to the model weights and public inference utilities.
 
 ---
 
@@ -334,7 +347,7 @@ Different artifacts intentionally carry different permissions. Do not infer that
 | **Public vLLM launch / inference utilities** | Public | **Apache License 2.0** |
 | **Benchmark results and evaluation evidence** | Public / separately published | Reuse permitted with attribution to **VeriLoop E2 / Libo Wang**; upstream benchmark assets retain their original terms |
 | **Riemann ζ scientific artifact** | Public / separately published | **Research-only, non-commercial**; see artifact-specific terms |
-| **Asymptotic Graviton Tomography artifact** | Public / separately published | **Research-only, non-commercial**; see artifact-specific terms |
+| **Asymptotic Graviton Tomography artifact** | Public / separately published | **CC BY 4.0**; see artifact-specific terms |
 | **Production VeriLoop Harness implementation** | Not included | Not licensed by this release |
 
 The open model license does not disclose or license unpublished Harness orchestration, prompt compilation, verifier routing, private evidence-state schemas, repair arbitration, deployment infrastructure, private training data, or other non-distributed internal systems.
@@ -361,6 +374,7 @@ The open model license does not disclose or license unpublished Harness orchestr
 | Technical report | [https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX](https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX) |
 | Evaluation evidence | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence) |
 | Riemann ζ artifact | [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis) |
+| Black-hole information artifact | [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/black%20hole%20information%20paradox](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/black%20hole%20information%20paradox) |
 
 ---
 
