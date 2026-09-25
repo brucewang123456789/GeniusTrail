@@ -1,0 +1,110 @@
+
+========================================================================
+ RUN cert_01_sector_connectivity.py
+========================================================================
+=== CERT-1 Sector Connectivity Theorem: exact commutant dimension ===
+dims=[2, 3, 2] edges=[(0, 1), (1, 2)]: dim(commutant)=1  #components=1  OK
+dims=[2, 3, 2] edges=[(0, 2)]: dim(commutant)=2  #components=2  OK
+dims=[2, 2, 2, 2] edges=[(0, 1), (2, 3)]: dim(commutant)=2  #components=2  OK
+dims=[2, 2, 2, 2] edges=[(0, 3), (1, 2)]: dim(commutant)=2  #components=2  OK
+dims=[2, 2, 2, 2] edges=[(0, 3), (1, 2), (0, 1)]: dim(commutant)=1  #components=1  OK
+dims=[3, 2, 2, 3, 2] edges=[]: dim(commutant)=5  #components=5  OK
+dims=[2, 4, 2, 3] edges=[(0, 1), (1, 2), (2, 3)]: dim(commutant)=1  #components=1  OK
+dims=[2, 2, 2, 2, 2] edges=[(0, 2), (2, 4), (1, 3)]: dim(commutant)=2  #components=2  OK
+--- multi-operator families ---
+dims=[2, 2, 2, 2] edgesets=[[(0, 1)], [(1, 2)], [(2, 3)]]: dim=1 comps=1 OK
+dims=[2, 3, 2, 2] edgesets=[[(0, 1)], [(2, 3)]]: dim=2 comps=2 OK
+dims=[2, 2, 2] edgesets=[[(0, 1)], [(0, 1)]]: dim=2 comps=2 OK
+RESULT: PASS
+
+========================================================================
+ RUN cert_02_spanning_tree_bound.py
+========================================================================
+=== CERT-2 spanning-tree lower bound ===
+  0 nonzero blocks -> completion IMPOSSIBLE (expected IMPOSSIBLE) OK
+  1 nonzero blocks -> completion IMPOSSIBLE (expected IMPOSSIBLE) OK
+  2 nonzero blocks -> completion IMPOSSIBLE (expected IMPOSSIBLE) OK
+  3 nonzero blocks -> completion possible  (expected possible ) OK
+  4 nonzero blocks -> completion possible  (expected possible ) OK
+  adjacent chain of Proposition 2: 3 = N blocks, dim(commutant)=1 OK -> EDGE-OPTIMAL
+RESULT: PASS
+
+========================================================================
+ RUN cert_03_fock_commutant.py
+========================================================================
+truncated Fock dim = 21, sectors N=0..5
+[Thm 2] dim (A_Fock)'        = 6   expected 6 (= W*(Nhat))   OK
+[Thm 3] f=(1,0) pure R  : dim (A_Fock, Phi(f))' = 1  OK
+[Thm 3] f=(0,1) pure L  : dim (A_Fock, Phi(f))' = 1  OK
+[Thm 3] f generic       : dim (A_Fock, Phi(f))' = 1  OK
+[Thm 3] f tiny          : dim (A_Fock, Phi(f))' = 1  OK
+[control] f=0: dim = 6 expected 6 OK
+[injectivity] min singular value of a^dag on N->N+1 blocks = 1.352775 > 0  OK
+[contrast] Weyl adjacent-block max-abs per N: ['0.448', '0.303', '0.288', '0.490', '0.505']
+RESULT: PASS
+
+========================================================================
+ RUN cert_04_memory_dichotomy.py
+========================================================================
+=== CERT-4 memory disjointness no-go ===
+  dim pi(A)' = 3  expected 3 (= number of memory sectors)  OK
+  max deviation from block-scalar form = 1.33e-15  OK -> commutant = span{P_m}, P_m central
+  [contrast] 3 EQUIVALENT copies: dim commutant = 9 (= 9 = M_3, off-diagonal intertwiners exist) OK
+  dim pi(A)'' = 29 (= 4+9+16 = 29) ; residual of P_m in algebra = 8.88e-16  OK -> memory IS measurable
+  max phase-dependence of <psi_alpha|A|psi_alpha> over algebra = 2.83e-16  OK -> cross-memory coherence strictly invisible
+RESULT: PASS
+
+========================================================================
+ RUN cert_05_spectral_gap.py
+========================================================================
+=== CERT-5 (A) exact spectrum of the Proposition 2 coherence-transfer Laplacian ===
+  N=  3: max|spec(L) - lam^2*k(k+1)| = 4.44e-15   lambda_2 = 2.0000000000  (2*lam^2 = 2.0)  OK
+  N=  5: max|spec(L) - lam^2*k(k+1)| = 3.55e-15   lambda_2 = 2.0000000000  (2*lam^2 = 2.0)  OK
+  N=  8: max|spec(L) - lam^2*k(k+1)| = 1.42e-14   lambda_2 = 2.0000000000  (2*lam^2 = 2.0)  OK
+  N= 12: max|spec(L) - lam^2*k(k+1)| = 5.68e-14   lambda_2 = 2.0000000000  (2*lam^2 = 2.0)  OK
+  N= 20: max|spec(L) - lam^2*k(k+1)| = 1.71e-13   lambda_2 = 2.0000000000  (2*lam^2 = 2.0)  OK
+  N= 40: max|spec(L) - lam^2*k(k+1)| = 9.09e-13   lambda_2 = 2.0000000000  (2*lam^2 = 2.0)  OK
+
+=== CERT-5 (B) gap is INDEPENDENT of N; extremal operator is exactly N_R ===
+  N=   5: lambda_2=2.00000000  ||fiedler - (r-N/2)||_inf=5.55e-16  OK
+  N=  12: lambda_2=2.00000000  ||fiedler - (r-N/2)||_inf=5.22e-15  OK
+  N=  30: lambda_2=2.00000000  ||fiedler - (r-N/2)||_inf=1.12e-14  OK
+  N= 100: lambda_2=2.00000000  ||fiedler - (r-N/2)||_inf=1.32e-14  OK
+
+=== CERT-5 (C) su(2) adjoint-Casimir identity ===
+  connector offdiag == lam*sqrt((r+1)(N-r)): 0.00e+00
+  k=1: ||[X,S]||_HS^2=4.00000000  2*lam^2*k(k+1)*||X||^2=4.00000000  OK
+  k=2: ||[X,S]||_HS^2=12.00000000  2*lam^2*k(k+1)*||X||^2=12.00000000  OK
+  k=3: ||[X,S]||_HS^2=24.00000000  2*lam^2*k(k+1)*||X||^2=24.00000000  OK
+
+=== CERT-5 (D) uniform bound  ||c-cbar|| <= ||[X,P_kappa]||_HS/(2*lam)  for all N ===
+  N=  4: max(LHS-RHS) over 600 random X = -5.89e-01  OK
+  N= 10: max(LHS-RHS) over 600 random X = -8.01e+00  OK
+  N= 25: max(LHS-RHS) over 600 random X = -4.53e+01  OK
+  N= 60: max(LHS-RHS) over 600 random X = -1.97e+02  OK
+
+=== CERT-5 (E) general Theorem 6 on random multi-mode blocks (no su(2)) ===
+  trial0: lambda_2=  0.5523  bound holds (max slack -1.6e+00)  Fiedler saturation ratio=1.0000000000  OK
+  trial1: lambda_2=  2.1771  bound holds (max slack -1.2e+00)  Fiedler saturation ratio=1.0000000000  OK
+  trial2: lambda_2=  4.4178  bound holds (max slack -1.6e+00)  Fiedler saturation ratio=1.0000000000  OK
+  trial3: lambda_2=  1.1464  bound holds (max slack -1.4e+00)  Fiedler saturation ratio=1.0000000000  OK
+
+=== CERT-5 (F) dimension-free operator-norm version: resistance diameter ===
+  D_R = sum_r 1/||P_{r+1} P_kappa P_r||_op ,  bound dist(X,CI) <= (1/2) D_R ||[X,S]||_op
+  N=    4: D_R = 1.816497   (limit pi/lam = 3.141593)
+  N=   16: D_R = 2.430235   (limit pi/lam = 3.141593)
+  N=   64: D_R = 2.778926   (limit pi/lam = 3.141593)
+  N=  256: D_R = 2.959353   (limit pi/lam = 3.141593)
+  N= 1024: D_R = 3.050359   (limit pi/lam = 3.141593)
+  N= 4096: D_R = 3.095961   (limit pi/lam = 3.141593)
+  => D_R stays BOUNDED as N -> infinity  OK
+
+RESULT: PASS
+
+========================================================================
+ RUN cert_06_scope_guard.py
+========================================================================
+CERTIFICATE 6 : SCOPE GUARD PASS - all scope labels intact
+
+========================================================================
+SUITE: 6/6 PASS

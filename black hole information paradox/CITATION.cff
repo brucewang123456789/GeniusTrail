@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: "Sector Connectivity and the Quantitative Modulus of Asymptotic Graviton Tomography"
+message: "If you use this work, please cite it as below."
+type: software
+authors:
+  - family-names: Wang
+    given-names: Libo
+date-released: 2026-09-14
+license: CC-BY-4.0
+abstract: >-
+  An exact graph-theoretic classification of informational completeness for asymptotic
+  observable algebras at future null infinity, together with a sharp quantitative modulus.
+  The completeness modulus is identified with the algebraic connectivity of a
+  coherence-transfer Laplacian; for the spin-4 Stokes connector this Laplacian is half an
+  su(2) adjoint Casimir, giving spectrum lambda^2 k(k+1) and a spectral gap of exactly
+  2 lambda^2 independent of graviton number. The same gap reduces the contested question of
+  infrared memory superselection to an order-of-limits distinction. All results concern free
+  asymptotic radiative data; the black-hole information paradox is not solved.
+keywords:
+  - asymptotic symmetries
+  - null infinity
+  - operator algebras
+  - graviton tomography
+  - BMS
+  - infrared structure
