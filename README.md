@@ -205,11 +205,7 @@ The scientific demonstrations are not presented as isolated chat transcripts. Th
 
 ### Riemann ζ: 67.350003708785593% strict finite-dimensional certificate
 
-The released Riemann artifact reports a frozen assembly value of
-
-$$
-\kappa = 67.350003708785593\%.
-$$
+The released Riemann artifact reports a frozen assembly value of **κ = 67.350003708785593%**.
 
 The current strict package closes **3/3 local inequalities**, resolves **327/327 difficult wells**, executes **190,375,830 strict branch-and-bound nodes**, and passes the final **exact rational assembly** check.
 
@@ -223,19 +219,7 @@ The current strict package closes **3/3 local inequalities**, resolves **327/327
 
 The second scientific demonstration is **Asymptotic Graviton Tomography**, a verifier-governed theoretical-physics research artifact focused on information reconstruction from **free asymptotic radiative graviton data at future null infinity**.
 
-**Established result.** The released artifact establishes an exact-and-quantitative tomography framework with nine stated results, T1–T9. The exact layer includes the **Sector Connectivity Theorem**, the hard-Fock commutant
-
-$$
-\mathcal{A}_F' = W^*(\hat N),
-$$
-
-a linear-connector completion theorem, and a two-branch classification of the infrared-memory layer. The quantitative layer identifies the algebraic connectivity \(\lambda_2\) of the coherence-transfer Laplacian as the modulus of informational completeness; in the stated two-mode \(su(2)\) reduction it obtains
-
-$$
-\operatorname{spec}(L)=\lambda^2 k(k+1), \qquad \lambda_2 = 2\lambda^2,
-$$
-
-with the gap independent of graviton number \(N\) and extremal operator \(N_R\). The repository contains the analytic derivations, a derivation walkthrough, theorem-status metadata, the reference computation transcript, and six executable numerical/structural certificates; the released reference suite reports **6/6 PASS**.
+**Established result.** The released artifact establishes an exact-and-quantitative tomography framework with nine stated results, T1–T9. The exact layer includes the **Sector Connectivity Theorem**, the hard-Fock commutant **A_F′ = W*(N̂)**, a linear-connector completion theorem, and a two-branch classification of the infrared-memory layer. The quantitative layer identifies the algebraic connectivity **λ₂** of the coherence-transfer Laplacian as the modulus of informational completeness; in the stated two-mode **su(2)** reduction, the exact spectrum is **spec(L) = λ²k(k+1)** and the spectral gap is **λ₂ = 2λ²**, independent of graviton number **N**, with extremal operator **N_R**. The repository contains the analytic derivations, a derivation walkthrough, theorem-status metadata, the reference computation transcript, and six executable numerical/structural certificates; the released reference suite reports **6/6 PASS**.
 
 **Boundary and current work.** This artifact **does not solve the black-hole information paradox**. It does not yet provide interacting or evaporating black-hole dynamics, initial-to-out faithfulness, a Hawking-radiation derivation, or a proof of evaporation unitarity. Those missing dynamical layers define the active research frontier rather than being hidden behind the present result. Current work is focused on deriving the infrared exponent from first principles for specified dressing geometries, extending the spectral-gap analysis to genuinely multi-mode connectors, replacing the discrete memory label with the physical direct-integral continuum formulation, extending the Laplacian framework beyond exactly block-diagonal base algebras, and developing a dynamical completeness modulus capable of connecting initial data to outgoing radiation. Until that bridge is closed, the claim remains deliberately restricted to the free-asymptotic radiative setting.
 
