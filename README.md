@@ -20,7 +20,9 @@
 </p>
 
 <p align="center">
-  <a href="https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>Model</strong></a> ·
+  <a href="https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>Hugging Face</strong></a> ·
+  <a href="https://modelscope.ai/models/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>ModelScope (Global)</strong></a> ·
+  <a href="https://modelscope.cn/models/tsinghua-sigs-robot-lab/VeriLoop-E2"><strong>ModelScope (China)</strong></a> ·
   <a href="https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX"><strong>Technical Report</strong></a> ·
   <a href="https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence"><strong>Evaluation Evidence</strong></a> ·
   <a href="https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis"><strong>Riemann ζ Artifact</strong></a> ·
@@ -355,6 +357,8 @@ The open model license does not disclose or license unpublished Harness orchestr
 | Resource | Link |
 |---|---|
 | Hugging Face model | [https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2](https://huggingface.co/tsinghua-sigs-robot-lab/VeriLoop-E2) |
+| ModelScope (Global) model | [https://modelscope.ai/models/tsinghua-sigs-robot-lab/VeriLoop-E2](https://modelscope.ai/models/tsinghua-sigs-robot-lab/VeriLoop-E2) |
+| ModelScope (China) model | [https://modelscope.cn/models/tsinghua-sigs-robot-lab/VeriLoop-E2](https://modelscope.cn/models/tsinghua-sigs-robot-lab/VeriLoop-E2) |
 | Technical report | [https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX](https://openreview.net/forum?id=P6FIQILHwX&noteId=P6FIQILHwX) |
 | Evaluation evidence | [https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence](https://huggingface.co/datasets/tsinghua-sigs-robot-lab/VeriLoop-E2-Evaluation-Evidence) |
 | Riemann ζ artifact | [https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis](https://github.com/brucewang123456789/GeniusTrail/tree/VeriLoop-E2/riemann-hypothesis) |
