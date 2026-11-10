@@ -1,0 +1,38 @@
+
+name: Publish Voder to VS Code Marketplace
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Download Voder VSIX
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p dist
+          gh release download v0.1.45 \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "Voder.vsix" \
+            --dir dist
+          test -s dist/Voder.vsix
+
+      - name: Install publisher
+        run: npm install -g @vscode/vsce@latest
+
+      - name: Publish with OIDC
+        run: vsce publish --oidc --packagePath dist/Voder.vsix
