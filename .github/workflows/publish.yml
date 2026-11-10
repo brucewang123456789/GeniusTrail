@@ -20,19 +20,34 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Download Voder VSIX
+      - name: Download official Voder VSIX
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p dist
-          gh release download v0.1.45 \
-            --repo "$GITHUB_REPOSITORY" \
+          gh release download v0.1.0 \
+            --repo brucewang123456789/GeniusTrail \
             --pattern "Voder.vsix" \
             --dir dist
           test -s dist/Voder.vsix
 
-      - name: Install publisher
+      - name: Verify VSIX identity
+        run: |
+          python3 - <<'PY'
+          import json
+          import zipfile
+
+          path = "dist/Voder.vsix"
+          with zipfile.ZipFile(path) as z:
+              assert z.testzip() is None
+              manifest = json.loads(z.read("extension/package.json"))
+              assert manifest["publisher"] == "veriloop"
+              assert manifest["name"] == "voder-vscode"
+              print("VSIX_IDENTITY=PASS")
+          PY
+
+      - name: Install VS Code publisher
         run: npm install -g @vscode/vsce@latest
 
-      - name: Publish with OIDC
+      - name: Publish with Trusted Publishing
         run: vsce publish --oidc --packagePath dist/Voder.vsix
