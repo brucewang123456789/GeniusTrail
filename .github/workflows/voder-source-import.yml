@@ -1,0 +1,149 @@
+name: One-time Voder source import
+on:
+  push:
+    branches: [voder]
+    paths:
+      - '.github/workflows/voder-source-import.yml'
+permissions:
+  contents: write
+jobs:
+  publish:
+    if: github.event.head_commit.message == 'Prepare Voder source import'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: voder
+          persist-credentials: true
+      - name: Download source ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/voder-import"
+          gh release download voder-0147-temporary-source-import -R brucewang123456789/GeniusTrail -p Voder_v0.1.47.zip -D "$RUNNER_TEMP/voder-import"
+      - name: Publish source without overwriting files
+        run: |
+          python3 - <<'VODER_IMPORT_PY'
+          import os, stat, zipfile, shutil, subprocess
+          from pathlib import Path
+
+          root = Path.cwd()
+          archive = Path(os.environ["RUNNER_TEMP"]) / "voder-import" / "Voder_v0.1.47.zip"
+          workflow = ".github/workflows/voder-source-import.yml"
+          protected = {"demos", ".eval_results", "evidence", ".git"}
+
+          with zipfile.ZipFile(archive) as z:
+              items = []
+              for info in z.infolist():
+                  name = info.filename.rstrip("/")
+                  if not name:
+                      continue
+                  parts = name.split("/")
+                  mode = stat.S_IFMT(info.external_attr >> 16)
+                  if (name.startswith("/") or "\\" in name or ":" in name
+                      or any(p in ("", ".", "..") for p in parts)
+                      or mode not in (0, stat.S_IFREG, stat.S_IFDIR)):
+                      raise RuntimeError("Unsafe archive entry: " + name)
+                  if not info.is_dir():
+                      items.append((info, parts))
+
+              if not items:
+                  raise RuntimeError("No source files")
+
+              roots = {parts[0] for _, parts in items}
+              wrapped = len(roots) == 1 and all(len(p) > 1 for _, p in items)
+              planned = []
+              seen = set()
+              skipped = 0
+
+              for info, parts in items:
+                  parts = parts[1:] if wrapped else parts
+                  rel = "/".join(parts)
+                  if rel in seen:
+                      raise RuntimeError("Duplicate path: " + rel)
+                  seen.add(rel)
+
+                  if (parts[0] in protected or rel == workflow
+                      or rel.lower().endswith(".zip")):
+                      skipped += 1
+                      continue
+
+                  target = root.joinpath(*parts)
+                  if target.exists() or target.is_symlink():
+                      skipped += 1
+                      continue
+
+                  ancestor = target.parent
+                  conflict = False
+                  while ancestor != root:
+                      if ancestor.is_symlink() or (
+                          ancestor.exists() and not ancestor.is_dir()
+                      ):
+                          conflict = True
+                          break
+                      ancestor = ancestor.parent
+
+                  if conflict:
+                      skipped += 1
+                      continue
+
+                  planned.append((info, rel, target))
+
+              for info, rel, target in planned:
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  with z.open(info) as src, target.open("xb") as dst:
+                      shutil.copyfileobj(src, dst)
+
+          paths = [rel for _, rel, _ in planned]
+
+          for i in range(0, len(paths), 100):
+              subprocess.run(
+                  ["git", "add", "-f", "--"] + paths[i:i+100],
+                  check=True
+              )
+
+          # 本次提交同时移除临时工作流本身。
+          subprocess.run(
+              ["git", "rm", "--", workflow],
+              check=True
+          )
+
+          raw = subprocess.check_output([
+              "git", "diff", "--cached",
+              "--name-status", "-z", "--no-renames"
+          ])
+          parts = [x.decode() for x in raw.split(b"\0") if x]
+
+          if len(parts) % 2:
+              raise RuntimeError("Invalid Git diff")
+
+          for i in range(0, len(parts), 2):
+              status, path = parts[i:i+2]
+              if status == "D" and path == workflow:
+                  continue
+              if status != "A" or path not in paths:
+                  raise RuntimeError("Unexpected change: " + status + " " + path)
+
+          print("SOURCE_FILES_ADDED=", len(paths), flush=True)
+          print("EXISTING_FILES_SKIPPED=", skipped, flush=True)
+          print("EXISTING_FILES_OVERWRITTEN=0", flush=True)
+
+          subprocess.run(
+              ["git", "config", "user.name", "github-actions[bot]"],
+              check=True
+          )
+          subprocess.run([
+              "git", "config", "user.email",
+              "41898282+github-actions[bot]@users.noreply.github.com"
+          ], check=True)
+
+          subprocess.run([
+              "git", "commit", "-m", "Publish Voder v0.1.47 source"
+          ], check=True)
+
+          subprocess.run([
+              "git", "push", "origin", "HEAD:refs/heads/voder"
+          ], check=True)
+
+          print("RESULT=VODER_GITHUB_ACTIONS_PUBLISH_SUCCESS", flush=True)
+          VODER_IMPORT_PY
