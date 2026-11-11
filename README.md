@@ -157,9 +157,9 @@ flowchart TD
 
 For a single-file proposal $p=(r,o,x)$, where $r$ is the relative target path, $o$ is the expected original SHA-256 digest, and $x$ is the replacement text, Voder computes the candidate identity as follows.
 
-$$
+```math
 d(p)=H(\mathrm{UTF8}(\mathrm{JS}([r,o,x]))).
-$$
+```
 
 Here $H$ is SHA-256, $\mathrm{JS}$ is JavaScript JSON serialization and $\mathrm{UTF8}$ encodes the resulting text as bytes.
 
@@ -171,11 +171,11 @@ This prevents a verification result for one file, one starting state or one cand
 
 VGR represents remaining capacity as a vector.
 
-$$
+```math
 \boldsymbol a=\boldsymbol t-\boldsymbol s-\boldsymbol r,
 \qquad
 \boldsymbol s+\boldsymbol r\preceq\boldsymbol t.
-$$
+```
 
 Here $\boldsymbol t$ is total capacity, $\boldsymbol s$ is settled usage, $\boldsymbol r$ is reserved capacity and $\boldsymbol a$ is available capacity. The ledger tracks steps, tokens, model calls, tool calls, wall time, policy-risk microunits, active-context tokens and API cost in millionths of a US dollar. The gateway meters the dimensions its adapter can measure. It reserves capacity before dispatch, settles against measured usage and releases a reservation on cancellation only for work that has yet to dispatch.
 
@@ -183,11 +183,11 @@ Here $\boldsymbol t$ is total capacity, $\boldsymbol s$ is settled usage, $\bold
 
 The native journal is append-only and hash-chained. For event sequence $j$, event body $b_j$, predecessor hash $h_{j-1}$, and SHA-256 function $H$, the journal computes the next hash as follows.
 
-$$
+```math
 h_j =
 H(L\Vert N\Vert \mathrm{dec}(j)\Vert N\Vert
 h_{j-1}\Vert N\Vert \mathrm{UTF8}(\mathrm{RustJSON}(b_j))).
-$$
+```
 
 Here $L$ is the byte string `voder-ledger-v1`, $N$ is one line feed byte (`0x0A`), and $\Vert$ denotes byte concatenation. The sequence number uses decimal text, the predecessor hash uses its recorded text representation, and the event body uses the journal's Rust JSON serialization.
 
@@ -199,11 +199,11 @@ The integrity and replay checks assume a trusted host and a journal protected fr
 
 A trusted evidence receipt is admitted only when its identities, frozen contract, workspace, trusted observation, validator binding and evidence-use constraints all match.
 
-$$
+```math
 G_{\mathrm{admit}}(e)
 =
 I_e\land C_e\land S_e\land T_e\land V_e\land D_e.
-$$
+```
 
 The six predicates cover identity, contract, workspace state, trusted observation, validator binding and evidence reuse, respectively. The native bridge independently executes the pinned validator through the configured sandbox, verifies the output and workspace, and then asks Core to admit the typed receipt.
 
@@ -213,7 +213,7 @@ Evidence admission is applied to private trial state. The journal append and req
 
 Before final commitment, VGR rechecks the current context and hard obligations, runs fresh pinned validators, and requires the measured workspace to remain unchanged.
 
-$$
+```math
 G_{\mathrm{audit}}
 =
 G_{\mathrm{context}}
@@ -224,13 +224,13 @@ G_{\mathrm{context}}
 \mathrm{FreshPass}(v)
 \land
 [W_{\mathrm{after}}=W_{\mathrm{before}}].
-$$
+```
 
 The final native commit is persisted separately and independently observed after the writer releases its lock. The SDK then performs destination-specific delivery checks.
 
 For an ordinary evidence-mode delivery request $K$ and candidate $P$, the implemented normal path enforces the following implication under its trusted execution and persistence assumptions.
 
-$$
+```math
 \mathrm{DurableDelivery}(K)
 \Longrightarrow
 \mathrm{CPass}(P)
@@ -240,7 +240,7 @@ $$
 G_{\mathrm{confirm}}
 \land
 \mathrm{Bytes}(K).
-$$
+```
 
 $\mathrm{CPass}$ denotes the exact-candidate verification result, $\mathrm{Pinned}$ the delivery binding, $G_{\mathrm{confirm}}$ independent native confirmation and $\mathrm{Bytes}$ the destination byte check. The scope depends on what the configured obligations measure.
 
