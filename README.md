@@ -321,7 +321,7 @@ Voder and VGR are developed by the **VeriLoop Team** at the **Intelligent Roboti
 
 Voder uses a Pi-derived engine for model sessions. Its upstream attribution identifies Pi 1.1.0 and commit `abe508e1b89912adde45528136c3221eb69acdd7` as the initial baseline. The VGR governance and writeback integration are VeriLoop work. [Pi upstream](https://github.com/earendil-works/pi).
 
-Related engineering projects include [Codex](https://github.com/openai/codex), [Claude Code](https://github.com/anthropics/claude-code), [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) and [ZCode](https://github.com/zai-org/ZCode).
+Related engineering projects include [Codex](https://github.com/openai/codex), [Claude Code](https://github.com/anthropics/claude-code), and [ZCode](https://github.com/zai-org/ZCode).
 
 ### License status
 
