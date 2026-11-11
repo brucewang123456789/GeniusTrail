@@ -63,7 +63,7 @@ jobs:
                       raise RuntimeError("Duplicate path: " + rel)
                   seen.add(rel)
 
-                  if (parts[0] in protected or rel == workflow
+                  if (parts[0] in protected or rel.startswith(".github/workflows/")
                       or rel.lower().endswith(".zip")):
                       skipped += 1
                       continue
@@ -104,7 +104,7 @@ jobs:
 
           # 本次提交同时移除临时工作流本身。
           subprocess.run(
-              ["git", "rm", "--", workflow],
+              ["git", "status", "--short"],
               check=True
           )
 
