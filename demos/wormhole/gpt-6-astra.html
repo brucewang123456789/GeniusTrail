@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070d19">
+<title>WORMHOLE — Geometry of a Passage</title>
+<style>
+:root{color-scheme:dark;--ink:#eaf4ff;--dim:#a0b3c7;--hair:rgba(169,208,240,.17);--accent:#90e3e9;--panel:rgba(8,15,29,.84)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#040814;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}
+#scene{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab;outline:none}
+#scene:active{cursor:grabbing}
+#scene:focus-visible{outline:2px solid #9bd9ec;outline-offset:-3px}
+.atmosphere{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 48% 38% at 59% 47%,transparent 60%,rgba(0,3,9,.1) 100%);z-index:1}
+.shell{position:fixed;z-index:2;top:clamp(14px,3.4vh,35px);left:clamp(14px,3.4vw,48px);width:min(342px,calc(100vw - 28px));max-height:calc(100dvh - 30px);overflow-y:auto;overscroll-behavior:contain;padding:26px 27px 22px;background:linear-gradient(145deg,rgba(12,22,39,.91),var(--panel) 64%);border:1px solid rgba(174,214,242,.15);border-radius:15px;box-shadow:0 20px 80px rgba(0,0,0,.27),inset 0 1px rgba(237,250,255,.065);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);scrollbar-color:#425569 transparent;scrollbar-width:thin}
+.kicker{font-size:10px;font-weight:650;letter-spacing:.22em;color:#9cd9e3;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.kicker:before{content:"";width:19px;height:1px;background:#95dfe8}
+h1{font-size:clamp(23px,2.4vw,29px);line-height:1.1;letter-spacing:.17em;font-weight:500;margin:0 0 6px}
+.subhead{font-size:13px;font-weight:400;letter-spacing:.055em;color:#bfd0e1;margin:0 0 14px}
+.intro{font-size:12px;line-height:1.65;color:var(--dim);margin:0 0 23px;max-width:290px}
+.action-stack{display:grid;gap:8px;margin-bottom:20px}
+.btn{border:1px solid rgba(184,220,244,.19);background:rgba(202,230,247,.04);color:#dceaf5;border-radius:8px;min-height:38px;padding:8px 13px;cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .15s ease;text-align:center;font-size:12px;font-weight:600;letter-spacing:.02em}
+.btn:hover{background:rgba(194,234,254,.1);border-color:rgba(177,226,249,.4)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{min-height:43px;background:linear-gradient(100deg,#b1edf1,#9bc9e6);border:1px solid #b1e8ed;color:#082034;font-weight:750;letter-spacing:.04em;box-shadow:0 5px 25px rgba(111,222,236,.085)}
+.btn.primary:hover{background:linear-gradient(100deg,#d0f5f7,#b6def2)}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn:focus-visible,input:focus-visible{outline:2px solid #b4f2f5;outline-offset:3px}
+.control-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;font-weight:700;color:#718ca2;margin:22px 0 14px;display:flex;align-items:center;gap:10px}
+.control-title:after{content:"";height:1px;flex:1;background:var(--hair)}
+.label-row{display:flex;align-items:center;justify-content:space-between;color:#c6d8e7;font-size:12px;margin-bottom:11px}
+.value{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:600;color:#e2f0fa;font-size:12px;font-variant-numeric:tabular-nums}
+input[type="range"]{width:100%;margin:0 0 7px;accent-color:#a4e1eb;cursor:pointer;height:17px}
+.range-labels{display:flex;justify-content:space-between;color:#7791a6;font-size:10px;font-variant-numeric:tabular-nums}
+.switches{margin-top:20px;padding-top:16px;border-top:1px solid var(--hair);display:flex;flex-wrap:wrap;gap:10px 22px}
+.toggle{display:flex;align-items:center;gap:9px;font-size:12px;color:#d2e2ed;cursor:pointer;white-space:nowrap}
+.toggle input{appearance:none;-webkit-appearance:none;width:30px;height:17px;border:1px solid #466073;border-radius:999px;background:#1c2d40;position:relative;margin:0;cursor:pointer;transition:background .15s}
+.toggle input:before{content:"";width:11px;height:11px;border-radius:50%;background:#91a2b2;position:absolute;top:2px;left:2px;transition:transform .15s,background .15s}
+.toggle input:checked{background:#284b5c;border-color:#6baab8}
+.toggle input:checked:before{transform:translateX(13px);background:#a6eced}
+.toggle input:disabled{opacity:.46;cursor:not-allowed}
+.toggle:has(input:disabled){opacity:.55;cursor:not-allowed}
+.footnote{border-top:1px solid var(--hair);padding-top:16px;margin-top:20px;font-size:10px;line-height:1.6;letter-spacing:.025em;color:#829ab0}
+#journeyStatus{display:none;margin:0 0 17px}
+#journeyStatus[aria-hidden="false"]{display:block}
+.journey-label{font-size:11px;letter-spacing:.03em;color:#c5d8e9;margin-bottom:11px}
+.progress-track{height:3px;border-radius:5px;background:rgba(166,204,228,.17);overflow:hidden}
+.progress-fill{width:0;height:100%;background:linear-gradient(90deg,#a2dce6,#ccbbf8);transition:none}
+.orbit-hint{position:fixed;z-index:2;bottom:clamp(16px,3vh,30px);right:clamp(14px,3vw,44px);pointer-events:none;color:rgba(195,216,235,.52);font-size:11px;letter-spacing:.06em;text-align:right;text-shadow:0 1px 14px #020810}
+.orbit-hint strong{color:rgba(227,246,255,.75);font-weight:600}
+.orbit-hint span{margin:0 7px;color:#7d97aa}
+#errorPanel{display:none;position:fixed;z-index:10;inset:0;align-items:center;justify-content:center;background:rgba(2,6,15,.94);padding:22px}
+#errorPanel.active{display:flex}
+.error-card{max-width:630px;width:100%;background:#111d30;border:1px solid #54758d;border-radius:12px;padding:26px;color:#f0f6fc}
+.error-card h2{margin:0 0 12px;font-size:20px}
+.error-card p{color:#b9cbd8;line-height:1.6;font-size:13px}
+#errorDetail{background:#06101d;border-radius:6px;padding:12px;white-space:pre-wrap;word-break:break-word;font:12px/1.5 ui-monospace,Consolas,monospace;color:#f7d1c6;max-height:30vh;overflow:auto}
+@media(max-width:650px){.shell{top:12px;left:12px;width:min(305px,calc(100vw - 24px));padding:17px 19px 15px;max-height:min(64dvh,540px)}.kicker{margin-bottom:8px;font-size:9px}h1{font-size:23px}.subhead{font-size:12px;margin-bottom:8px}.intro{font-size:11px;line-height:1.4;margin-bottom:14px}.action-stack{margin-bottom:11px}.btn{min-height:35px}.btn.primary{min-height:39px}.control-title{margin:13px 0 9px}.switches{margin-top:11px;padding-top:11px}.footnote{margin-top:11px;padding-top:11px}.orbit-hint{bottom:13px;right:13px;font-size:9px}}
+@media(max-height:600px) and (min-width:651px){.shell{padding:15px 20px;max-height:calc(100dvh - 22px)}.intro{margin-bottom:12px}.control-title{margin:12px 0 8px}.switches{margin-top:10px;padding-top:10px}.footnote{margin-top:10px;padding-top:10px}}
+@media(prefers-reduced-motion:reduce){.btn,.toggle input,.toggle input:before{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="scene" tabindex="0" aria-label="Interactive three-dimensional Ellis wormhole. Drag to orbit, use the wheel or two-finger pinch to zoom."></canvas>
+<div class="atmosphere" aria-hidden="true"></div>
+<section class="shell" aria-label="Wormhole controls">
+  <div class="kicker">Scientific visualization / 01</div>
+  <h1>WORMHOLE</h1>
+  <p class="subhead">Geometry of a Passage</p>
+  <p class="intro">An interactive spatial embedding of an Ellis wormhole. Explore the geometry, then follow its axis from one mouth to the other.</p>
+  <div id="journeyStatus" aria-hidden="true" role="status" aria-label="Journey progress">
+    <div class="journey-label">Illustrative camera tour <span id="progressPercent" class="value" style="float:right">0%</span></div>
+    <div class="progress-track" role="progressbar" aria-label="Camera tour progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack"><div id="progressFill" class="progress-fill"></div></div>
+  </div>
+  <div class="action-stack">
+    <button class="btn primary" id="journeyButton" type="button">Begin Journey</button>
+    <div class="action-row">
+      <button class="btn" id="pauseButton" type="button">Pause</button>
+      <button class="btn" id="resetButton" type="button" title="Restore the fitted initial exterior pose without changing visualization controls or pause state">Reset View</button>
+    </div>
+  </div>
+  <div class="control-title">Geometry</div>
+  <div class="label-row"><label for="radius">Throat Radius</label><output for="radius" id="radiusValue" class="value">1.00</output></div>
+  <input type="range" id="radius" min="0.65" max="1.50" step="0.01" value="1.00" aria-label="Throat radius">
+  <div class="range-labels"><span>0.65</span><span>1.50</span></div>
+  <div class="switches">
+    <label class="toggle"><input id="cutaway" type="checkbox" checked><span>Cutaway</span></label>
+    <label class="toggle"><input id="grid" type="checkbox" checked><span>Grid</span></label>
+  </div>
+  <div class="footnote">Ellis spatial embedding • Illustrative traversal.</div>
+</section>
+<div class="orbit-hint" id="orbitHint"><strong>DRAG</strong> to orbit <span>·</span> <strong>SCROLL</strong> to zoom</div>
+<div id="errorPanel" role="alertdialog" aria-modal="true" aria-labelledby="errorTitle">
+ <div class="error-card"><h2 id="errorTitle">3D renderer unavailable</h2><p id="errorMessage">This experience requires a WebGL2-enabled browser.</p><pre id="errorDetail"></pre><button id="reloadButton" type="button" class="btn primary">Reload experience</button></div>
+</div>
+<script>
+'use strict';
+(() => {
+  const canvas = document.getElementById('scene');
+  const $ = id => document.getElementById(id);
+  const nodes = {
+    journey: $('journeyButton'), pause: $('pauseButton'), reset: $('resetButton'),
+    radius: $('radius'), radiusValue: $('radiusValue'), cutaway: $('cutaway'), grid: $('grid'),
+    status: $('journeyStatus'), percent: $('progressPercent'), fill: $('progressFill'),
+    track: $('progressTrack'), hint: $('orbitHint')
+  };
+  const TWO_PI = 2*Math.PI;
+  const FOV = Math.PI/4;
+  const MIN_DIST = 7, MAX_DIST = 40;
+  const RADIAL_SEGMENTS = 160, ANGULAR_SEGMENTS = 128;
+  const originalDirection = normalize3([11,7,12]);
+  const state = {
+    gl: null, stopped: false, frame: 0, mode: 'exterior', paused: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    radius: 1, grid: true, cutaway: true, simTime: 0, transitionElapsed: 0, travelElapsed: 0,
+    savedExterior: null, transitionFrom: null,
+    orbit: {yaw: Math.atan2(11,12),polar: Math.acos(7/Math.hypot(11,7,12)),distance: Math.hypot(11,7,12)},
+    target: {yaw: Math.atan2(11,12),polar: Math.acos(7/Math.hypot(11,7,12)),distance: Math.hypot(11,7,12)},
+    pointers: new Map(), width: 1, height: 1, lastNow: null, projection: new Float32Array(16)
+  };
+  const vsMesh = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPosition;
+layout(location=1) in vec3 aNormal;
+layout(location=2) in vec2 aParam;
+uniform mat4 uView; uniform mat4 uProjection;
+out vec3 vPosition; out vec3 vNormal; out vec2 vParam;
+void main(){vPosition=aPosition;vNormal=aNormal;vParam=aParam;gl_Position=uProjection*uView*vec4(aPosition,1.0);}`;
+  const fsMesh = `#version 300 es
+precision highp float;
+in vec3 vPosition; in vec3 vNormal; in vec2 vParam;
+out vec4 oColor;
+uniform vec3 uEye; uniform float uTime; uniform float uAlpha;
+uniform bool uCutaway; uniform bool uGrid;
+const float PI=3.141592653589793;
+float gridLine(float coord,float period,float halfWidth){
+  float phase=coord/period;
+  float d=abs(fract(phase+0.5)-0.5);
+  float w=max(fwidth(phase)*halfWidth,0.00005);
+  return 1.0-smoothstep(0.0,w,d);
+}
+vec3 filmic(vec3 c){return 1.0-exp(-c*1.13);}
+void main(){
+  float l=vParam.x; float phi=vParam.y;
+  if(uCutaway && cos(phi-uAlpha)>0.8660254037844386) discard;
+  vec3 N=normalize(vNormal)*(gl_FrontFacing?1.0:-1.0);
+  vec3 V=normalize(uEye-vPosition);
+  vec3 L1=normalize(vec3(0.38,0.72,0.55));
+  vec3 L2=normalize(vec3(-0.70,0.22,-0.52));
+  float k=max(dot(N,L1),0.0);
+  float f=max(dot(N,L2),0.0);
+  float side=smoothstep(-1.8,1.8,l);
+  vec3 violet=vec3(0.26,0.19,0.43);
+  vec3 cyan=vec3(0.13,0.35,0.40);
+  vec3 base=mix(violet,cyan,side);
+  float light=0.32+0.75*k+0.34*f;
+  vec3 col=base*light;
+  float fresnel=pow(1.0-max(dot(N,V),0.0),3.4);
+  col+=mix(vec3(0.14,0.12,0.30),vec3(0.17,0.49,0.54),side)*fresnel*0.82;
+  vec3 H1=normalize(L1+V); vec3 H2=normalize(L2+V);
+  float spec=pow(max(dot(N,H1),0.0),53.0)*0.24 +pow(max(dot(N,H2),0.0),52.0)*0.09;
+  col+=vec3(0.57,0.82,0.88)*spec;
+  if(uGrid){
+    float lon=gridLine(l,0.60,0.80);
+    float azi=gridLine(phi,PI/12.0,0.74);
+    float g=max(lon,azi);
+    float wave=0.5+0.5*sin(2.0*PI*(l/2.4+0.18*uTime));
+    vec3 ink=mix(vec3(0.49,0.39,0.76),vec3(0.40,0.83,0.91),side);
+    col+=ink*g*(0.095+0.065*wave);
+  }
+  // l=0 is the actual minimum-radius cross section. No extra geometry/depth offset.
+  float d=abs(l);
+  float aa=max(fwidth(l)*1.12,0.008);
+  float throat=1.0-smoothstep(0.0,aa,d);
+  col=mix(col,vec3(0.88,0.79,0.63),throat*0.72);
+  col+=vec3(0.10,0.085,0.063)*throat;
+  oColor=vec4(filmic(col),1.0);
+}`;
+  const vsSky = `#version 300 es
+precision highp float;
+out vec2 vCoord;
+void main(){
+  vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);
+  vCoord=p;
+  gl_Position=vec4(p*2.0-1.0,0.99999,1.0);
+}`;
+  const fsSky = `#version 300 es
+precision highp float;
+in vec2 vCoord;out vec4 oColor;
+uniform mat3 uCameraRotation;uniform vec2 uResolution;uniform float uTanHalfFov;
+const float PI=3.141592653589793;
+float hash21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
+float hash31(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453123);}
+float noise3(vec3 p){
+  vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+  float a=hash31(i),b=hash31(i+vec3(1,0,0)),c=hash31(i+vec3(0,1,0)),d=hash31(i+vec3(1,1,0));
+  float e=hash31(i+vec3(0,0,1)),g=hash31(i+vec3(1,0,1)),h=hash31(i+vec3(0,1,1)),j=hash31(i+vec3(1,1,1));
+  return mix(mix(mix(a,b,f.x),mix(c,d,f.x),f.y),mix(mix(e,g,f.x),mix(h,j,f.x),f.y),f.z);
+}
+void main(){
+  vec2 ndc=(gl_FragCoord.xy-0.5*uResolution)/(0.5*uResolution.y);
+  vec3 dir=normalize(uCameraRotation*normalize(vec3(ndc*uTanHalfFov,-1.0)));
+  vec3 navy=vec3(0.0040,0.0080,0.019);
+  float haze1=pow(max(dot(dir,normalize(vec3(-0.65,0.25,-0.72))),0.0),6.0);
+  float haze2=pow(max(dot(dir,normalize(vec3(0.54,-0.42,0.72))),0.0),13.0);
+  float n=noise3(dir*4.3)*0.58+noise3(dir*10.2)*0.25;
+  vec3 color=navy+vec3(0.010,0.016,0.035)*haze1*(0.45+n)
+            +vec3(0.014,0.007,0.034)*haze2*(0.40+n);
+  vec2 sky=vec2(atan(dir.z,dir.x)/ (2.0*PI)+0.5, asin(clamp(dir.y,-1.0,1.0))/PI+0.5);
+  vec2 tile=sky*vec2(360.0,180.0);
+  vec2 id=floor(tile),uv=fract(tile);
+  float seed=hash21(id);
+  vec2 starUV=vec2(hash21(id+vec2(17.0,43.0)),hash21(id+vec2(79.0,11.0)))*0.76+0.12;
+  float dist=length((uv-starUV)*vec2(max(cos(asin(dir.y)),0.22),1.0));
+  float size=mix(0.060,0.145,pow(hash21(id+vec2(9.0,51.0)),4.0));
+  float core=1.0-smoothstep(size*0.23,size,dist);
+  float halo=(1.0-smoothstep(size,size*3.2,dist))*0.12;
+  float exists=step(0.962,seed);
+  float intensity=mix(0.14,0.75,pow(hash21(id+vec2(6.0,7.0)),3.0));
+  vec3 tint=mix(vec3(0.63,0.78,1.0),vec3(1.0,0.86,0.80),hash21(id+vec2(31.0,3.0)));
+  color+=exists*(core+halo)*intensity*tint;
+  oColor=vec4(1.0-exp(-color*1.08),1.0);
+}`;
+
+  function normalize3(v){let l=Math.hypot(...v);return v.map(x=>x/l);}
+  function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function smootherstep(x){x=clamp(x,0,1);return x*x*x*(x*(x*6-15)+10);}
+  function vecCross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+  function vecDot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+  function basisForLookAt(eye,target,up=[0,1,0]){
+    let back=normalize3(eye.map((x,i)=>x-target[i]));
+    let right=normalize3(vecCross(up,back));
+    let realUp=vecCross(back,right);
+    return {right,up:realUp,back};
+  }
+  function quatFromBasis(b){
+    const m00=b.right[0],m01=b.up[0],m02=b.back[0],m10=b.right[1],m11=b.up[1],m12=b.back[1],m20=b.right[2],m21=b.up[2],m22=b.back[2];
+    const trace=m00+m11+m22;let x,y,z,w,s;
+    if(trace>0){s=Math.sqrt(trace+1)*2;w=.25*s;x=(m21-m12)/s;y=(m02-m20)/s;z=(m10-m01)/s;}
+    else if(m00>m11&&m00>m22){s=Math.sqrt(1+m00-m11-m22)*2;w=(m21-m12)/s;x=.25*s;y=(m01+m10)/s;z=(m02+m20)/s;}
+    else if(m11>m22){s=Math.sqrt(1+m11-m00-m22)*2;w=(m02-m20)/s;x=(m01+m10)/s;y=.25*s;z=(m12+m21)/s;}
+    else{s=Math.sqrt(1+m22-m00-m11)*2;w=(m10-m01)/s;x=(m02+m20)/s;y=(m12+m21)/s;z=.25*s;}
+    let length=Math.hypot(x,y,z,w);return [x/length,y/length,z/length,w/length];
+  }
+  function quatSlerp(a,b,t){
+    let cos=a.reduce((sum,v,i)=>sum+v*b[i],0),end=b;
+    if(cos<0){cos=-cos;end=b.map(x=>-x);}
+    if(cos>.9995){let v=a.map((x,i)=>lerp(x,end[i],t));let s=Math.hypot(...v);return v.map(x=>x/s);}
+    const theta=Math.acos(clamp(cos,-1,1)),sin=Math.sin(theta);
+    const w1=Math.sin((1-t)*theta)/sin,w2=Math.sin(t*theta)/sin;
+    return a.map((x,i)=>x*w1+end[i]*w2);
+  }
+  function basisFromQuat(q){
+    const [x,y,z,w]=q,xx=x*x,yy=y*y,zz=z*z,xy=x*y,xz=x*z,yz=y*z,wx=w*x,wy=w*y,wz=w*z;
+    return {
+      right:[1-2*(yy+zz),2*(xy+wz),2*(xz-wy)],
+      up:[2*(xy-wz),1-2*(xx+zz),2*(yz+wx)],
+      back:[2*(xz+wy),2*(yz-wx),1-2*(xx+yy)]
+    };
+  }
+  function viewFromBasis(eye,b){
+    const r=b.right,u=b.up,z=b.back;
+    return new Float32Array([
+      r[0],u[0],z[0],0,r[1],u[1],z[1],0,r[2],u[2],z[2],0,
+      -vecDot(r,eye),-vecDot(u,eye),-vecDot(z,eye),1
+    ]);
+  }
+  function cameraRotation(b){return new Float32Array([...b.right,...b.up,...b.back]);}
+  function orbitEye(o){const p=o.polar,y=o.yaw,d=o.distance;return [d*Math.sin(p)*Math.sin(y),d*Math.cos(p),d*Math.sin(p)*Math.cos(y)];}
+  function throatZ(l,a=state.radius){return a*Math.asinh(l/a);}
+  function boundingRadius(a){const r=Math.hypot(6,a),z=throatZ(6,a);return Math.hypot(r,z);}
+  function fittedDistance(){
+    const aspect=state.width/state.height;
+    const hFov=2*Math.atan(Math.tan(FOV/2)*aspect);
+    const maxAngularRadius=Math.min(FOV,hFov)*0.5*0.88;
+    return clamp(Math.max(Math.hypot(11,7,12),boundingRadius(state.radius)/Math.sin(maxAngularRadius)),MIN_DIST,MAX_DIST);
+  }
+  function resetOrbit(){
+    let distance=fittedDistance(),yaw=Math.atan2(originalDirection[0],originalDirection[2]),polar=Math.acos(originalDirection[1]);
+    state.orbit={yaw,polar,distance};state.target={...state.orbit};
+  }
+  function projectionMatrix(aspect){
+    const f=1/Math.tan(FOV/2),near=.03,far=120;
+    return new Float32Array([f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)/(near-far),-1, 0,0,2*far*near/(near-far),0]);
+  }
+  function compile(gl,type,source,label){
+    const shader=gl.createShader(type);gl.shaderSource(shader,source);gl.compileShader(shader);
+    if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS)){
+      const log=gl.getShaderInfoLog(shader)||'Unknown compile error';gl.deleteShader(shader);throw Error(label+' shader compilation failed:\n'+log);
+    }return shader;
+  }
+  function program(gl,vertex,fragment,label){
+    let v=compile(gl,gl.VERTEX_SHADER,vertex,label+' vertex'),f=compile(gl,gl.FRAGMENT_SHADER,fragment,label+' fragment');
+    const p=gl.createProgram();gl.attachShader(p,v);gl.attachShader(p,f);gl.linkProgram(p);gl.deleteShader(v);gl.deleteShader(f);
+    if(!gl.getProgramParameter(p,gl.LINK_STATUS)){let log=gl.getProgramInfoLog(p);gl.deleteProgram(p);throw Error(label+' link failed:\n'+log);}
+    return p;
+  }
+  function uniformLocations(gl,p,names){const o={};for(const n of names)o[n]=gl.getUniformLocation(p,n);return o;}
+  function makeIndices(){
+    let out=new Uint16Array(RADIAL_SEGMENTS*ANGULAR_SEGMENTS*6),k=0,stride=ANGULAR_SEGMENTS+1;
+    for(let i=0;i<RADIAL_SEGMENTS;i++)for(let j=0;j<ANGULAR_SEGMENTS;j++){
+      let a=i*stride+j,b=(i+1)*stride+j;
+      // The analytic normal points opposite P_l x P_phi, so use phi-then-l winding.
+      out[k++]=a;out[k++]=a+1;out[k++]=b;
+      out[k++]=a+1;out[k++]=b+1;out[k++]=b;
+    }return out;
+  }
+  function makeVertices(a){
+    const stride=ANGULAR_SEGMENTS+1,out=new Float32Array((RADIAL_SEGMENTS+1)*stride*8);
+    for(let i=0;i<=RADIAL_SEGMENTS;i++){
+      const l=-6+12*i/RADIAL_SEGMENTS;
+      const r=Math.hypot(l,a),z=throatZ(l,a),inv=1/Math.hypot(l,a);
+      for(let j=0;j<=ANGULAR_SEGMENTS;j++){
+        const phi=TWO_PI*j/ANGULAR_SEGMENTS,c=Math.cos(phi),s=Math.sin(phi),p=(i*stride+j)*8;
+        out[p]=r*c;out[p+1]=r*s;out[p+2]=z;
+        out[p+3]=a*c*inv;out[p+4]=a*s*inv;out[p+5]=-l*inv;
+        out[p+6]=l;out[p+7]=phi;
+      }
+    }return out;
+  }
+  function initGPU(gl){
+    const mesh=program(gl,vsMesh,fsMesh,'Surface'),sky=program(gl,vsSky,fsSky,'Environment');
+    const meshU=uniformLocations(gl,mesh,['uView','uProjection','uEye','uTime','uAlpha','uCutaway','uGrid']);
+    const skyU=uniformLocations(gl,sky,['uCameraRotation','uResolution','uTanHalfFov']);
+    let vao=gl.createVertexArray(),vertexBuffer=gl.createBuffer(),indexBuffer=gl.createBuffer();
+    gl.bindVertexArray(vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER,vertexBuffer);gl.bufferData(gl.ARRAY_BUFFER,makeVertices(state.radius),gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indexBuffer);let indices=makeIndices();gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,indices,gl.STATIC_DRAW);
+    for(let i=0;i<3;i++){const size=i===2?2:3,offset=(i===0?0:i===1?3:6)*4;
+      gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,size,gl.FLOAT,false,8*4,offset);}
+    gl.bindVertexArray(null);
+    let skyVao=gl.createVertexArray();
+    gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LESS);gl.disable(gl.CULL_FACE);
+    return {mesh,sky,meshU,skyU,vao,skyVao,vertexBuffer,indexBuffer,indexCount:indices.length};
+  }
+  function rebuildGeometry(){
+    const {gl,gpu}=state;if(!gl||!gpu)return;
+    gl.bindBuffer(gl.ARRAY_BUFFER,gpu.vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,makeVertices(state.radius),gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER,null);
+  }
+  function resize(){
+    if(!state.gl||state.stopped)return;
+    const width=Math.max(1,canvas.clientWidth),height=Math.max(1,canvas.clientHeight);
+    const pixelRatio=Math.min(window.devicePixelRatio||1,1.5,Math.sqrt(2500000/(width*height)));
+    canvas.width=Math.max(1,Math.round(width*pixelRatio));canvas.height=Math.max(1,Math.round(height*pixelRatio));
+    state.width=width;state.height=height;
+    state.gl.viewport(0,0,canvas.width,canvas.height);
+    state.projection=projectionMatrix(canvas.width/canvas.height);
+  }
+  function getCamera(){
+    if(state.mode==='exterior'){
+      const eye=orbitEye(state.orbit);return {eye,basis:basisForLookAt(eye,[0,0,0])};
+    }
+    const entrance=throatZ(6)+2,exit=throatZ(-6)-2;
+    if(state.mode==='transition'){
+      const f=smootherstep(state.transitionElapsed/.6),from=state.transitionFrom;
+      return {eye:from.eye.map((v,i)=>lerp(v,[0,0,entrance][i],f)),basis:basisFromQuat(quatSlerp(from.q,[0,0,0,1],f))};
+    }
+    const z=(state.mode==='exit')?exit:lerp(entrance,exit,smootherstep(state.travelElapsed/10));
+    return {eye:[0,0,z],basis:basisFromQuat([0,0,0,1])};
+  }
+  function draw(){
+    const {gl,gpu}=state;if(!gl||state.stopped)return;
+    const {eye,basis}=getCamera();
+    const view=viewFromBasis(eye,basis);
+    gl.clearColor(0.003,0.006,0.012,1);gl.clearDepth(1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+    gl.disable(gl.DEPTH_TEST);gl.depthMask(false);
+    gl.useProgram(gpu.sky);gl.bindVertexArray(gpu.skyVao);
+    gl.uniformMatrix3fv(gpu.skyU.uCameraRotation,false,cameraRotation(basis));
+    gl.uniform2f(gpu.skyU.uResolution,canvas.width,canvas.height);
+    gl.uniform1f(gpu.skyU.uTanHalfFov,Math.tan(FOV/2));
+    gl.drawArrays(gl.TRIANGLES,0,3);
+    gl.depthMask(true);gl.enable(gl.DEPTH_TEST);
+    gl.useProgram(gpu.mesh);gl.bindVertexArray(gpu.vao);
+    gl.uniformMatrix4fv(gpu.meshU.uProjection,false,state.projection);
+    gl.uniformMatrix4fv(gpu.meshU.uView,false,view);
+    gl.uniform3fv(gpu.meshU.uEye,eye);
+    gl.uniform1f(gpu.meshU.uTime,state.simTime);
+    gl.uniform1f(gpu.meshU.uAlpha,Math.atan2(eye[1],eye[0]));
+    gl.uniform1i(gpu.meshU.uCutaway,Number(state.mode==='exterior'&&state.cutaway));
+    gl.uniform1i(gpu.meshU.uGrid,Number(state.grid));
+    gl.drawElements(gl.TRIANGLES,gpu.indexCount,gl.UNSIGNED_SHORT,0);
+    gl.bindVertexArray(null);
+  }
+  function updateProgress(v){
+    const n=Math.round(clamp(v,0,1)*100);
+    nodes.fill.style.width=(v*100).toFixed(2)+'%';nodes.percent.textContent=n+'%';nodes.track.setAttribute('aria-valuenow',String(n));
+  }
+  function syncUI(){
+    const exterior=state.mode==='exterior';
+    nodes.journey.textContent=exterior?'Begin Journey':'Return to Exterior';
+    nodes.pause.textContent=state.paused?'Resume':'Pause';
+    nodes.radius.disabled=!exterior;nodes.cutaway.disabled=!exterior;
+    nodes.status.setAttribute('aria-hidden',String(exterior));
+    nodes.hint.style.display=exterior?'block':'none';
+  }
+  function setExterior(restore=true){
+    state.mode='exterior';state.transitionElapsed=0;state.travelElapsed=0;
+    if(restore&&state.savedExterior){state.orbit={...state.savedExterior};state.target={...state.savedExterior};}
+    state.savedExterior=null;state.transitionFrom=null;state.pointers.clear();syncUI();
+  }
+  function beginJourney(){
+    if(state.mode!=='exterior'){setExterior(true);return;}
+    state.savedExterior={...state.orbit};
+    const eye=orbitEye(state.orbit),basis=basisForLookAt(eye,[0,0,0]);
+    state.transitionFrom={eye,q:quatFromBasis(basis)};
+    state.transitionElapsed=0;state.travelElapsed=0;state.mode='transition';state.pointers.clear();updateProgress(0);syncUI();
+  }
+  function resetView(){
+    state.mode='exterior';state.savedExterior=null;state.transitionFrom=null;
+    state.transitionElapsed=0;state.travelElapsed=0;state.pointers.clear();resetOrbit();syncUI();
+  }
+  function tick(now){
+    if(state.stopped)return;
+    let elapsed=state.lastNow===null?0:Math.min(Math.max((now-state.lastNow)/1000,0),0.05);
+    state.lastNow=now;
+    if(!document.hidden){
+      if(!state.paused){
+        state.simTime+=elapsed;
+        if(state.mode==='transition'){
+          state.transitionElapsed=Math.min(.6,state.transitionElapsed+elapsed);
+          if(state.transitionElapsed>=.6)state.mode='journey';
+        }else if(state.mode==='journey'){
+          state.travelElapsed=Math.min(10,state.travelElapsed+elapsed);
+          updateProgress(state.travelElapsed/10);
+          if(state.travelElapsed>=10)state.mode='exit';
+        }
+      }
+      if(state.mode==='exterior'){
+        // Manual orbit remains damped and usable while simulation is paused.
+        const f=1-Math.exp(-Math.min(elapsed,.05)*13);
+        for(let name of ['yaw','polar','distance'])state.orbit[name]=lerp(state.orbit[name],state.target[name],f);
+      }
+      draw();
+    }
+    state.frame=requestAnimationFrame(tick);
+  }
+  function pointerSeparation(){let p=[...state.pointers.values()];return Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);}
+  function pointerDown(e){
+    if(state.mode!=='exterior'||state.stopped)return;
+    e.preventDefault();canvas.setPointerCapture(e.pointerId);
+    if(state.pointers.size<2)state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  }
+  function pointerMove(e){
+    if(state.mode!=='exterior'||!state.pointers.has(e.pointerId))return;
+    e.preventDefault();
+    const old=state.pointers.get(e.pointerId),count=state.pointers.size;
+    const before=count===2?pointerSeparation():0;
+    state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(count===1){
+      const speed=2.8/Math.max(360,state.height);
+      state.target.yaw+=(e.clientX-old.x)*speed;
+      state.target.polar=clamp(state.target.polar+(e.clientY-old.y)*speed,.15,Math.PI-.15);
+    }else if(count===2){
+      const after=pointerSeparation();
+      if(before>2&&after>2)state.target.distance=clamp(state.target.distance*Math.exp(Math.log(before/after)*.88),MIN_DIST,MAX_DIST);
+    }
+  }
+  function pointerEnd(e){
+    if(state.pointers.has(e.pointerId)){state.pointers.delete(e.pointerId);if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);}
+  }
+  function showError(message,detail){
+    state.stopped=true;if(state.frame)cancelAnimationFrame(state.frame);
+    console.error('[Wormhole]',message,detail);
+    $('errorMessage').textContent=message;$('errorDetail').textContent=detail||'';
+    $('errorPanel').classList.add('active');
+  }
+  function bindControls(){
+    nodes.journey.addEventListener('click',beginJourney);
+    nodes.pause.addEventListener('click',()=>{state.paused=!state.paused;state.lastNow=null;syncUI();});
+    nodes.reset.addEventListener('click',resetView);
+    nodes.radius.addEventListener('input',e=>{
+      if(state.mode!=='exterior')return;
+      state.radius=Number(e.target.value);nodes.radiusValue.textContent=state.radius.toFixed(2);rebuildGeometry();
+    });
+    nodes.cutaway.addEventListener('change',e=>state.cutaway=e.target.checked);
+    nodes.grid.addEventListener('change',e=>state.grid=e.target.checked);
+    canvas.addEventListener('pointerdown',pointerDown);
+    canvas.addEventListener('pointermove',pointerMove);
+    canvas.addEventListener('pointerup',pointerEnd);
+    canvas.addEventListener('pointercancel',pointerEnd);
+    canvas.addEventListener('lostpointercapture',e=>state.pointers.delete(e.pointerId));
+    canvas.addEventListener('wheel',e=>{
+      if(state.mode!=='exterior')return;
+      e.preventDefault();
+      let delta=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?state.height:1);
+      state.target.distance=clamp(state.target.distance*Math.exp(clamp(delta,-1000,1000)*.001),MIN_DIST,MAX_DIST);
+    },{passive:false});
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape'&&state.mode!=='exterior'){e.preventDefault();setExterior(true);return;}
+      const target=e.target;
+      const input=target&&target.closest&&target.closest('button,input,select,textarea,a,[role="button"],[contenteditable="true"]');
+      if(e.code==='Space'&&!e.repeat&&!input){e.preventDefault();state.paused=!state.paused;state.lastNow=null;syncUI();}
+    });
+    document.addEventListener('visibilitychange',()=>{state.lastNow=null;});
+    window.addEventListener('resize',resize,{passive:true});
+    $('reloadButton').addEventListener('click',()=>location.reload());
+    canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();showError('The WebGL context was lost. Reload to restore the scene.','WebGL context lost; rendering was stopped to avoid showing a frozen simulation.');});
+  }
+  try{
+    const gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,stencil:false,preserveDrawingBuffer:false,powerPreference:'high-performance'});
+    if(!gl)throw Error('WebGL2 context creation failed. Verify browser version, hardware acceleration, and graphics drivers.');
+    state.gl=gl;state.gpu=initGPU(gl);resize();resetOrbit();bindControls();syncUI();
+    state.frame=requestAnimationFrame(tick);
+    window.__wormholeDiagnostic=()=>({mode:state.mode,paused:state.paused,radius:state.radius,grid:state.grid,cutaway:state.cutaway,
+      simTime:state.simTime,transitionElapsed:state.transitionElapsed,travelElapsed:state.travelElapsed,
+      eye:getCamera().eye,canvas:[canvas.width,canvas.height],indexCount:state.gpu.indexCount,
+      geometrySamples:[-6,-3,0,3,6].map(l=>({l,r:Math.hypot(l,state.radius),z:throatZ(l),normalDenom:Math.hypot(l,state.radius)}))});
+  }catch(error){showError('Unable to initialize the 3D scene.',error&&error.stack||String(error));}
+})();
+</script>
+</body>
+</html>

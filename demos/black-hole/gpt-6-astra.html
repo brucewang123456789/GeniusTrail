@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080a0f">
+<title>EVENT HORIZON — An Artistic Black-Hole Study</title>
+<style>
+:root {color-scheme:dark;--text:#e6dfd7;--muted:#9a9595;--hair:rgba(218,208,202,.14)}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#07090f;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input{font:inherit}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;outline:none}
+#scene:active{cursor:grabbing}
+#scene:focus-visible{outline:2px solid #edba8c;outline-offset:-3px}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 72% 78% at 50% 47%,transparent 56%,rgba(0,0,4,.21) 100%)}
+.brand{position:fixed;top:clamp(22px,3.5vh,39px);left:clamp(19px,2.8vw,38px);pointer-events:none;text-shadow:0 2px 16px #06080c}
+.brand h1{font-size:15px;font-weight:670;letter-spacing:.28em;margin:0 0 8px;line-height:1.2}
+.brand p{font-size:10px;font-weight:450;color:#a69e9e;letter-spacing:.18em;text-transform:uppercase;margin:0}
+.hint{position:fixed;bottom:clamp(20px,3.3vh,32px);left:clamp(19px,2.8vw,38px);pointer-events:none;color:#89838a;font-size:11px;letter-spacing:.035em;text-shadow:0 2px 9px #000}
+.dock{position:fixed;z-index:2;right:clamp(15px,2.5vw,35px);bottom:clamp(16px,3.0vh,30px);max-width:calc(100vw - 30px);display:flex;align-items:center;gap:9px;padding:8px 10px 8px 8px;border:1px solid rgba(204,194,198,.15);border-radius:40px;background:rgba(10,11,17,.78);box-shadow:0 10px 34px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.027);backdrop-filter:blur(17px);-webkit-backdrop-filter:blur(17px)}
+.dock button{min-height:31px;padding:0 14px;border:0;border-radius:24px;background:rgba(224,223,224,.08);color:#e2dbe0;font-weight:580;font-size:11px;white-space:nowrap;cursor:pointer;transition:background .16s}
+.dock button:hover{background:rgba(224,223,224,.17)}
+.dock button:focus-visible,.dock input:focus-visible{outline:2px solid #ffc48b;outline-offset:3px}
+.divider{width:1px;height:18px;background:var(--hair);flex:0 0 1px}
+.brightness{display:flex;gap:10px;align-items:center;padding:0 5px 0 3px;min-width:251px}
+.brightness label{font-size:10px;color:#aaa1a4;letter-spacing:.11em;white-space:nowrap;text-transform:uppercase}
+.brightness input{width:110px;min-width:55px;cursor:pointer;accent-color:#f3a56b;height:18px}
+#brightnessValue{font-size:11px;color:#c4bcc0;font-variant-numeric:tabular-nums;min-width:34px;text-align:right}
+#errorPanel{display:none;position:fixed;inset:0;z-index:10;align-items:center;justify-content:center;background:rgba(7,9,15,.97);padding:24px}
+#errorPanel.active{display:flex}
+.error-card{width:min(550px,100%);border-radius:15px;border:1px solid rgba(255,192,135,.3);padding:28px;background:#141720;color:#eee7e2}
+.error-card h2{margin:0 0 10px;font-size:20px}.error-card p{line-height:1.6;color:#bdb2aa;font-size:13px}
+#errorDetail{white-space:pre-wrap;word-break:break-word;font:12px/1.5 ui-monospace,Consolas,monospace;color:#e9b8a0;max-height:30vh;overflow:auto}
+@media(max-width:650px){.brand{top:18px;left:16px}.brand h1{font-size:13px}.brand p{font-size:9px}.dock{right:10px;left:10px;bottom:10px;max-width:none;justify-content:center;flex-wrap:wrap;border-radius:23px;gap:7px;padding:10px}.dock button{flex:1 1 auto;min-height:34px}.brightness{flex:1 1 100%;justify-content:space-between;min-width:0}.brightness input{flex:1;width:auto}.divider{display:none}.hint{bottom:104px;left:16px;font-size:9px}}
+@media(max-height:470px){.hint{display:none}}
+@media(prefers-reduced-motion:reduce){.dock button{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-label="Interactive three-dimensional artistic black hole and accretion disk. Drag to orbit. Scroll or pinch to zoom." tabindex="0"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<header class="brand"><h1>EVENT HORIZON</h1><p>An artistic black-hole study</p></header>
+<div class="hint">Drag to orbit · scroll or pinch to zoom</div>
+<section class="dock" aria-label="Visualization controls">
+ <button id="pauseButton" type="button">Pause</button>
+ <button id="resetButton" type="button" title="Restore initial orbit and zoom">Reset view</button>
+ <span class="divider" aria-hidden="true"></span>
+ <div class="brightness"><label for="brightness">Disk brightness</label><input id="brightness" aria-label="Disk brightness" type="range" min="40" max="160" step="1" value="100"><output id="brightnessValue" for="brightness">100%</output></div>
+</section>
+<div id="errorPanel" role="alertdialog" aria-modal="true" aria-labelledby="errorTitle"><div class="error-card"><h2 id="errorTitle">3D visualization unavailable</h2><p id="errorMessage">A browser with WebGL2 is needed to display this exhibit.</p><pre id="errorDetail"></pre><button id="reloadButton" type="button">Reload page</button></div></div>
+<script>
+'use strict';
+(() => {
+ const canvas=document.getElementById('scene');
+ const pauseButton=document.getElementById('pauseButton');
+ const resetButton=document.getElementById('resetButton');
+ const brightness=document.getElementById('brightness');
+ const brightnessValue=document.getElementById('brightnessValue');
+ const PI=Math.PI, TAU=2*Math.PI;
+ const INITIAL={yaw:0.12,polar:1.16,distance:14.8};
+ const state={gl:null,program:null,vao:null,u:null,paused:matchMedia('(prefers-reduced-motion: reduce)').matches,brightness:1,time:2.3,lastFrame:null,stopped:false,raf:0,
+   camera:{...INITIAL},target:{...INITIAL},pointers:new Map(),gesture:null,width:1,height:1};
+ const vertexSource=`#version 300 es
+ precision highp float;
+ void main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.0-1.0,0.0,1.0);}`;
+ const fragmentSource=`#version 300 es
+ precision highp float;
+ out vec4 outColor;
+ uniform vec2 uResolution;
+ uniform vec3 uEye;
+ uniform mat3 uFrame;
+ uniform float uTime;
+ uniform float uBrightness;
+ const float PI=3.141592653589793;
+ const float TAU=6.283185307179586;
+ float hash21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
+ float hash31(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453123);}
+ float noise2(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash21(i),hash21(i+vec2(1,0)),f.x),mix(hash21(i+vec2(0,1)),hash21(i+vec2(1,1)),f.x),f.y);}
+ float gaussian(float x,float center,float width){float z=(x-center)/width;return exp(-z*z);}
+ vec3 tone(vec3 linear){return 1.0-exp(-max(linear,vec3(0.0))*1.23);}
+ vec3 stars(vec3 direction){
+   vec3 base=vec3(0.0038,0.0051,0.0105);
+   float haze=pow(max(dot(direction,normalize(vec3(-0.47,0.26,-0.84))),0.0),7.0);
+   base+=vec3(.011,.010,.019)*haze*(.45+.55*noise2(direction.xz*10.0));
+   vec2 sky=vec2(atan(direction.z,direction.x)/TAU+.5,asin(clamp(direction.y,-1.0,1.0))/PI+.5);
+   vec2 cell=sky*vec2(420.0,210.0);vec2 id=floor(cell),f=fract(cell);
+   float seed=hash21(id);vec2 star=vec2(hash21(id+vec2(13,37)),hash21(id+vec2(71,17)))*.76+.12;
+   float d=length((f-star)*vec2(max(cos(asin(clamp(direction.y,-1.0,1.0))),.33),1.0));
+   float core=1.0-smoothstep(.012,.075,d);
+   float halo=(1.0-smoothstep(.04,.28,d))*.095;
+   float luminance=mix(.15,.8,pow(hash21(id+vec2(19,53)),3.0));
+   vec3 tint=mix(vec3(.65,.75,1.0),vec3(1.0,.88,.72),hash21(id+vec2(47,9)));
+   return base+step(.980,seed)*(core+halo)*luminance*tint;
+ }
+ vec4 diskColor(vec3 point,vec3 eye,float t){
+   float r=length(point.xz);
+   float angle=atan(point.z,point.x);
+   float phase=angle-uTime*(.19+.16/pow(max(r,1.0),1.4));
+   // Coherent animated streamlines: features advect azimuthally with elapsed time.
+   float winding=phase*7.0+log(max(r,1.0))*16.0;
+   float filament=sin(r*14.0+winding*.75+1.6*sin(phase*11.0+r*4.5));
+   float fine=sin(r*58.0+phase*23.0+1.6*sin(winding));
+   float turbulence=noise2(vec2(r*8.0+sin(winding)*.65,phase*14.0))-.5;
+   float textured=clamp(.83+.10*filament+.045*fine+.36*turbulence,.41,1.25);
+   vec3 hot=vec3(2.4,2.12,1.77);
+   vec3 amber=vec3(1.16,.68,.35);
+   vec3 rust=vec3(.36,.135,.070);
+   vec3 low=mix(hot,amber,smoothstep(1.63,2.78,r));
+   vec3 emission=mix(low,rust,smoothstep(2.7,5.15,r));
+   float innerPeak=2.0*gaussian(r,1.66,.21);
+   float body=.49*gaussian(r,2.55,1.36)+.16*gaussian(r,4.15,1.15);
+   float edge=(smoothstep(1.37,1.56,r))*(1.0-smoothstep(4.45,5.43,r));
+   // Brightness asymmetry mimics the direction of orbital flow, without claiming relativity.
+   vec3 tangential=normalize(vec3(-sin(angle),0.0,cos(angle)));
+   float ahead=dot(tangential,normalize(eye-point));
+   float asymmetric=clamp(1.0+.42*ahead,.65,1.46);
+   float thinBands=.75+.25*sin(phase*19.0+r*25.0+sin(winding))*.5+.125;
+   vec3 color=emission*(.37+innerPeak+body)*textured*asymmetric*thinBands*uBrightness;
+   float opacity=edge*clamp(.76+innerPeak*.20+.16*filament,.18,1.0);
+   return vec4(color,opacity);
+ }
+ // Illustrative apparent photon ring and far-side lensing arc in the camera's center plane.
+ vec3 lightRings(vec2 q,float diskIsInFront){
+   float r=length(q);
+   float ring=gaussian(r,1.265,.017);
+   float halo=.26*gaussian(r,1.30,.125)+.065*gaussian(r,1.57,.37);
+   vec3 col=vec3(1.3,1.12,.91)*ring*1.20+vec3(.83,.39,.14)*halo;
+   float x=q.x;
+   float archY=1.26+.42*pow(max(0.0,1.0-(x/3.10)*(x/3.10)),.72);
+   float inArc=(1.0-smoothstep(2.5,3.55,abs(x)))*smoothstep(.0,.52,q.y);
+   float arcCore=gaussian(q.y,archY,.070)*inArc;
+   float arcGlow=gaussian(q.y,archY,.48)*inArc;
+   float curtain=gaussian(q.y,archY-.30,.55)*inArc;
+   col+=vec3(.98,.68,.40)*arcCore*.30+vec3(.41,.22,.12)*arcGlow*.24+vec3(.24,.11,.065)*curtain*.46;
+   // The front half of the disk is rendered in front of the illustrative arc.
+   col*=mix(1.0,.38,diskIsInFront);
+   return col;
+ }
+ void main(){
+   vec2 p=(gl_FragCoord.xy-uResolution*.5)/uResolution.y;
+   float fov=tan(radians(43.0)*.5)*2.0;
+   vec3 ray=normalize(uFrame*vec3(p*fov,-1.0));
+   vec3 fwd=uFrame[2]*-1.0;
+   vec3 color=stars(ray);
+   float b=dot(uEye,ray);
+   float c=dot(uEye,uEye)-1.20*1.20;
+   float discriminant=b*b-c;
+   float sphereHit=1e9;
+   if(discriminant>=0.0){float hit=-b-sqrt(discriminant);if(hit>0.0)sphereHit=hit;}
+   // Ray-plane intersection in world space: the disk is an actual tilted perspective surface.
+   float diskHit=1e9;vec3 point=vec3(0.0);vec4 disk=vec4(0.0);
+   if(abs(ray.y)>.000001){
+     float hit=-uEye.y/ray.y;
+     if(hit>0.0){point=uEye+ray*hit;float r=length(point.xz);
+       if(r>=1.37&&r<=5.44){diskHit=hit;disk=diskColor(point,uEye,hit);}
+     }
+   }
+   float centerPlane=-dot(uEye,fwd)/dot(ray,fwd);
+   vec3 atCenter=uEye+ray*centerPlane;
+   vec2 q=vec2(dot(atCenter,uFrame[0]),dot(atCenter,uFrame[1]));
+   bool frontDisk=diskHit<centerPlane;
+   vec3 lens=lightRings(q,frontDisk?1.0:0.0)*uBrightness;
+   color+=lens;
+   if(diskHit<sphereHit){color=mix(color,disk.rgb,disk.a);}
+   if(sphereHit<diskHit){
+     // Opaque horizon silhouette; maintain a distinct circular dark center.
+     color=vec3(.00013,.00016,.00023);
+   }
+   // The narrow ring is composited outside the silhouette, never over the dark center.
+   if(sphereHit>=1e8){color+=vec3(1.35,1.19,1.03)*gaussian(length(q),1.253,.019)*uBrightness*.62;}
+   outColor=vec4(tone(color),1.0);
+ }`;
+ function fail(message,error){
+  state.stopped=true;cancelAnimationFrame(state.raf);
+  console.error('[EVENT HORIZON]',message,error||'');
+  document.getElementById('errorMessage').textContent=message;
+  document.getElementById('errorDetail').textContent=String(error||'');
+  document.getElementById('errorPanel').classList.add('active');
+ }
+ function shader(gl,stage,source){const s=gl.createShader(stage);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){const log=gl.getShaderInfoLog(s);gl.deleteShader(s);throw Error(log||'GLSL compilation failed');}return s;}
+ function init(){
+  let gl;
+  try{gl=canvas.getContext('webgl2',{alpha:false,antialias:false,depth:false,premultipliedAlpha:false,preserveDrawingBuffer:false});}
+  catch(e){fail('WebGL2 initialization failed.',e);return;}
+  if(!gl){fail('WebGL2 is unavailable or blocked. Please enable graphics acceleration in a modern browser.','canvas.getContext("webgl2") returned null');return;}
+  try{
+   const vs=shader(gl,gl.VERTEX_SHADER,vertexSource),fs=shader(gl,gl.FRAGMENT_SHADER,fragmentSource);
+   const prog=gl.createProgram();gl.attachShader(prog,vs);gl.attachShader(prog,fs);gl.linkProgram(prog);
+   gl.deleteShader(vs);gl.deleteShader(fs);
+   if(!gl.getProgramParameter(prog,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(prog)||'Program link failed');
+   const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+   state.gl=gl;state.program=prog;state.vao=vao;state.u={};
+   for(const k of ['uResolution','uEye','uFrame','uTime','uBrightness'])state.u[k]=gl.getUniformLocation(prog,k);
+   gl.useProgram(prog);resetCamera();resize();syncUI();state.raf=requestAnimationFrame(frame);
+  }catch(e){fail('Unable to compile or link the visualization shaders.',e&&e.message?e.message:e);}
+ }
+ function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+ function smooth(current,target,delta){return current+(target-current)*(1-Math.exp(-delta*12));}
+ function normalize(v){const m=Math.hypot(...v);return v.map(x=>x/m);}
+ function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+ function camera(){
+  const {yaw,polar,distance}=state.camera;
+  const eye=[distance*Math.sin(polar)*Math.sin(yaw),distance*Math.cos(polar),distance*Math.sin(polar)*Math.cos(yaw)];
+  const back=normalize(eye),right=normalize(cross([0,1,0],back)),up=cross(back,right);
+  return {eye,orientation:new Float32Array([...right,...up,...back])};
+ }
+ function resetCamera(){state.camera={...INITIAL};state.target={...INITIAL};state.pointers.clear();state.gesture=null;}
+ function syncUI(){pauseButton.textContent=state.paused?'Resume':'Pause';brightnessValue.textContent=Math.round(state.brightness*100)+'%';}
+ function resize(){
+  if(!state.gl)return;
+  const w=Math.max(1,canvas.clientWidth),h=Math.max(1,canvas.clientHeight);
+  let scale=Math.min(window.devicePixelRatio||1,1.5);
+  scale=Math.min(scale,Math.sqrt(2500000/(w*h)));
+  const actualW=Math.max(1,Math.round(w*scale)),actualH=Math.max(1,Math.round(h*scale));
+  if(canvas.width!==actualW||canvas.height!==actualH){canvas.width=actualW;canvas.height=actualH;state.gl.viewport(0,0,actualW,actualH);}
+  state.width=actualW;state.height=actualH;
+ }
+ function draw(){
+  const gl=state.gl;if(!gl||state.stopped)return;
+  const pose=camera();gl.useProgram(state.program);gl.bindVertexArray(state.vao);
+  gl.uniform2f(state.u.uResolution,state.width,state.height);
+  gl.uniform3fv(state.u.uEye,pose.eye);
+  gl.uniformMatrix3fv(state.u.uFrame,false,pose.orientation);
+  gl.uniform1f(state.u.uTime,state.time);
+  gl.uniform1f(state.u.uBrightness,state.brightness);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+ }
+ function frame(now){
+  if(state.stopped)return;
+  const dt=state.lastFrame==null?0:clamp((now-state.lastFrame)/1000,0,.05);state.lastFrame=now;
+  if(!document.hidden){
+   if(!state.paused)state.time+=dt;
+   for(const k of ['yaw','polar','distance'])state.camera[k]=smooth(state.camera[k],state.target[k],dt);
+   draw();
+  }
+  state.raf=requestAnimationFrame(frame);
+ }
+ function offsetFor(event){const r=canvas.getBoundingClientRect();return {x:event.clientX-r.left,y:event.clientY-r.top};}
+ function gesture(){const points=[...state.pointers.values()];if(points.length<2)return null;return {distance:Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y)};}
+ canvas.addEventListener('pointerdown',e=>{
+  if(state.stopped)return;
+  canvas.setPointerCapture(e.pointerId);state.pointers.set(e.pointerId,offsetFor(e));state.gesture=gesture();
+ });
+ canvas.addEventListener('pointermove',e=>{
+  if(!state.pointers.has(e.pointerId))return;
+  const p=offsetFor(e),previous=state.pointers.get(e.pointerId),num=state.pointers.size;
+  if(num===1){
+   const dx=p.x-previous.x,dy=p.y-previous.y;
+   state.target.yaw-=dx*.0045;state.target.polar=clamp(state.target.polar+dy*.0040,.20,PI-.20);
+  }
+  state.pointers.set(e.pointerId,p);
+  if(num>=2){const now=gesture();if(state.gesture&&now&&state.gesture.distance>2){state.target.distance=clamp(state.target.distance*state.gesture.distance/Math.max(now.distance,2),7.5,28);}state.gesture=now;}
+ });
+ function forgetPointer(e){state.pointers.delete(e.pointerId);state.gesture=gesture();}
+ canvas.addEventListener('pointerup',forgetPointer);
+ canvas.addEventListener('pointercancel',forgetPointer);
+ canvas.addEventListener('lostpointercapture',forgetPointer);
+ canvas.addEventListener('wheel',e=>{if(state.stopped)return;e.preventDefault();state.target.distance=clamp(state.target.distance*Math.exp(e.deltaY*.0011),7.5,28);},{passive:false});
+ pauseButton.addEventListener('click',()=>{state.paused=!state.paused;state.lastFrame=null;syncUI();});
+ resetButton.addEventListener('click',resetCamera);
+ brightness.addEventListener('input',()=>{state.brightness=Number(brightness.value)/100;syncUI();});
+ window.addEventListener('resize',resize);
+ document.addEventListener('visibilitychange',()=>{state.lastFrame=null;});
+ canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();fail('Graphics context lost. Reload the page to restore the visualization.','WEBGL_CONTEXT_LOST');});
+ document.getElementById('reloadButton').addEventListener('click',()=>location.reload());
+ init();
+})();
+</script>
+</body>
+</html>

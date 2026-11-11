@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rocket Chopsticks Recovery — Super Heavy · Mechazilla</title>
+<style>
+html,body{margin:0;height:100%;background:#04060a;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block}
+#ui{position:fixed;inset:0;pointer-events:none;color:#e9eef6}
+#title{position:absolute;left:40px;bottom:46px;font-size:12px;font-weight:600;letter-spacing:.44em;text-transform:uppercase;opacity:.92;text-shadow:0 2px 24px rgba(0,0,0,.9)}
+#sub{position:absolute;left:41px;bottom:27px;font-size:9px;letter-spacing:.32em;text-transform:uppercase;opacity:.55;text-shadow:0 2px 18px rgba(0,0,0,.9)}
+#btns{position:absolute;right:34px;bottom:36px;display:flex;gap:8px;pointer-events:auto;opacity:.5;transition:opacity .25s}
+#btns:hover{opacity:1}
+button{background:rgba(12,16,24,.5);border:1px solid rgba(200,215,235,.26);color:#dfe7f2;font:inherit;font-size:9px;letter-spacing:.24em;text-transform:uppercase;padding:7px 13px;border-radius:2px;cursor:pointer}
+button:hover{background:rgba(46,58,76,.7);border-color:rgba(200,215,235,.55)}
+#bar{position:absolute;left:0;bottom:0;height:1px;background:rgba(255,178,116,.9);width:0;box-shadow:0 0 10px rgba(255,150,80,.8)}
+#load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#04060a;color:#7d8794;font-size:10px;letter-spacing:.5em;text-transform:uppercase;z-index:9;transition:opacity 1s}
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div id="ui">
+  <div id="title">Rocket Chopsticks Recovery</div>
+  <div id="sub">Super Heavy &middot; Mechazilla &middot; Starbase</div>
+  <div id="btns"><button id="btnPlay">Pause</button><button id="btnReplay">Replay</button></div>
+  <div id="bar"></div>
+</div>
+<div id="load">Loading</div>
+<script>
+(function(){
+'use strict';
+var canvas = document.getElementById('scene');
+var loadEl = document.getElementById('load');
+var barEl = document.getElementById('bar');
+var btnPlay = document.getElementById('btnPlay');
+var btnReplay = document.getElementById('btnReplay');
+window.__err = null;
+window.addEventListener('error', function(e){ window.__err = String(e.message || e); });
+
+/* ================= math ================= */
+var TAU = Math.PI * 2, DEG = Math.PI / 180;
+function clamp01(x){ return x < 0 ? 0 : (x > 1 ? 1 : x); }
+function lerp(a,b,u){ return a + (b - a) * u; }
+function smooth01(u){ u = clamp01(u); return u * u * (3 - 2 * u); }
+function lerp3(a,b,u){ return [lerp(a[0],b[0],u), lerp(a[1],b[1],u), lerp(a[2],b[2],u)]; }
+function cross3(a,b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+function norm3(v){ var l = Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]) || 1; return [v[0]/l, v[1]/l, v[2]/l]; }
+function m4id(){ return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]); }
+function m4mul(a,b){
+  var o = new Float32Array(16), c, r, b0, b1, b2, b3;
+  for(c = 0; c < 4; c++){
+    b0 = b[c*4]; b1 = b[c*4+1]; b2 = b[c*4+2]; b3 = b[c*4+3];
+    for(r = 0; r < 4; r++){ o[c*4+r] = a[r]*b0 + a[4+r]*b1 + a[8+r]*b2 + a[12+r]*b3; }
+  }
+  return o;
+}
+function m4t(x,y,z){ var m = m4id(); m[12] = x; m[13] = y; m[14] = z; return m; }
+function m4s(x,y,z){ var m = m4id(); m[0] = x; m[5] = y; m[10] = z; return m; }
+function m4ry(a){ var c = Math.cos(a), s = Math.sin(a); return new Float32Array([c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]); }
+function m4rx(a){ var c = Math.cos(a), s = Math.sin(a); return new Float32Array([1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]); }
+function m4rz(a){ var c = Math.cos(a), s = Math.sin(a); return new Float32Array([c,s,0,0, -s,c,0,0, 0,0,1,0, 0,0,0,1]); }
+function m4persp(fovy, aspect, near, far){
+  var f = 1 / Math.tan(fovy / 2), nf = 1 / (near - far);
+  return new Float32Array([f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)*nf,-1, 0,0,2*far*near*nf,0]);
+}
+function m4look(eye, ctr, up){
+  var z = norm3([eye[0]-ctr[0], eye[1]-ctr[1], eye[2]-ctr[2]]);
+  var x = norm3(cross3(up, z));
+  var y = cross3(z, x);
+  return new Float32Array([
+    x[0], y[0], z[0], 0,
+    x[1], y[1], z[1], 0,
+    x[2], y[2], z[2], 0,
+    -(x[0]*eye[0]+x[1]*eye[1]+x[2]*eye[2]),
+    -(y[0]*eye[0]+y[1]*eye[1]+y[2]*eye[2]),
+    -(z[0]*eye[0]+z[1]*eye[1]+z[2]*eye[2]), 1
+  ]);
+}
+var _seed = 20250107;
+function rnd(){ _seed = (_seed * 1664525 + 1013904223) >>> 0; return ((_seed >>> 8) & 0xffffff) / 0x1000000; }
+function h2(x,y){ var s = Math.sin(x*127.1 + y*311.7) * 43758.5453; return s - Math.floor(s); }
+function vnoise(x,y){
+  var xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+  var u = xf*xf*(3-2*xf), v = yf*yf*(3-2*yf);
+  return lerp(lerp(h2(xi,yi), h2(xi+1,yi), u), lerp(h2(xi,yi+1), h2(xi+1,yi+1), u), v);
+}
+
+/* ================= gl setup ================= */
+var gl = canvas.getContext('webgl2', {antialias:true, alpha:false, depth:true, preserveDrawingBuffer:true, powerPreference:'high-performance'});
+if(!gl){
+  loadEl.textContent = 'WebGL2 is required';
+  return;
+}
+function shader(type, src){
+  var s = gl.createShader(type);
+  gl.shaderSource(s, src); gl.compileShader(s);
+  if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error('shader: ' + gl.getShaderInfoLog(s));
+  return s;
+}
+function makeProg(vs, fs){
+  var p = gl.createProgram();
+  gl.attachShader(p, shader(gl.VERTEX_SHADER, vs));
+  gl.attachShader(p, shader(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p);
+  if(!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error('link: ' + gl.getProgramInfoLog(p));
+  var u = {}, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS), i, info;
+  for(i = 0; i < n; i++){ info = gl.getActiveUniform(p, i); u[info.name] = gl.getUniformLocation(p, info.name); }
+  return {p:p, u:u};
+}
+function uM(pr, name, m){ if(pr.u[name]) gl.uniformMatrix4fv(pr.u[name], false, m); }
+function u3(pr, name, v){ if(pr.u[name]) gl.uniform3f(pr.u[name], v[0], v[1], v[2]); }
+function u1(pr, name, v){ if(pr.u[name]) gl.uniform1f(pr.u[name], v); }
+
+var VS_MESH = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPos;
+layout(location=1) in vec3 aNormal;
+layout(location=2) in vec3 aColor;
+layout(location=3) in vec2 aMat;
+uniform mat4 uProj, uView, uModel;
+out vec3 vW; out vec3 vN; out vec3 vC; out vec2 vM;
+void main(){
+  vec4 wp = uModel * vec4(aPos, 1.0);
+  vW = wp.xyz;
+  vN = mat3(uModel) * aNormal;
+  vC = aColor; vM = aMat;
+  gl_Position = uProj * uView * wp;
+}`;
+
+var FS_MESH = `#version 300 es
+precision highp float;
+in vec3 vW; in vec3 vN; in vec3 vC; in vec2 vM;
+uniform vec3 uCam, uSunDir, uSunCol, uSkyCol, uGroundCol, uFogCol, uEnginePos, uSitePos;
+uniform float uEnginePow, uSitePow, uFogDensity;
+out vec4 o;
+void main(){
+  vec3 N = normalize(vN);
+  vec3 Vv = normalize(uCam - vW);
+  if(dot(N, Vv) < 0.0) N = -N;
+  vec3 L = normalize(uSunDir);
+  float metal = vM.x;
+  float ndl = max(dot(N, L), 0.0);
+  vec3 amb = mix(uGroundCol, uSkyCol, 0.5 + 0.5 * N.y);
+  vec3 base = vC;
+  vec3 H = normalize(L + Vv);
+  float sp = pow(max(dot(N, H), 0.0), mix(26.0, 150.0, metal));
+  vec3 col = base * (amb * 1.05 + uSunCol * ndl * 1.05);
+  col += uSunCol * sp * (0.05 + metal * 1.00);
+  float rim = pow(1.0 - max(dot(N, Vv), 0.0), 3.0);
+  col += uSkyCol * rim * (0.12 + 0.34 * metal);
+  vec3 de = uEnginePos - vW;
+  float dl = length(de);
+  vec3 Le = de / max(dl, 1e-4);
+  float att = uEnginePow / (1.0 + dl * dl * 0.015);
+  col += vec3(1.0, 0.52, 0.20) * att * (0.25 + 0.75 * max(dot(N, Le), 0.0)) * (0.35 + base);
+  vec3 ds = uSitePos - vW;
+  float dls = length(ds);
+  vec3 Ls = ds / max(dls, 1e-4);
+  float atts = uSitePow / (1.0 + dls * dls * 0.0018);
+  col += vec3(1.0, 0.88, 0.72) * atts * (0.20 + 0.80 * max(dot(N, Ls), 0.0)) * (0.30 + base);
+  col += base * vM.y * 5.0;
+  float dcam = length(uCam - vW);
+  float f = 1.0 - exp(-pow(dcam * uFogDensity, 1.8));
+  col = mix(col, uFogCol, clamp(f, 0.0, 1.0));
+  o = vec4(col, 1.0);
+}`;
+
+var VS_QUAD = `#version 300 es
+precision highp float;
+out vec2 vUV;
+void main(){
+  vec2 p = vec2(float((gl_VertexID & 1) * 4 - 1), float((gl_VertexID >> 1) * 4 - 1));
+  vUV = p * 0.5 + 0.5;
+  gl_Position = vec4(p, 0.0, 1.0);
+}`;
+
+var FS_SKY = `#version 300 es
+precision highp float;
+in vec2 vUV;
+uniform vec3 uRight, uUp, uFwd, uSunDir;
+uniform float uTanHalf, uAspect;
+out vec4 o;
+float h21(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float vn(vec2 p){
+  vec2 i = floor(p), f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  float a = h21(i), b = h21(i + vec2(1.0, 0.0)), c = h21(i + vec2(0.0, 1.0)), d = h21(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+float fbm(vec2 p){
+  float s = 0.0, a = 0.5;
+  for(int i = 0; i < 4; i++){ s += a * vn(p); p *= 2.03; a *= 0.5; }
+  return s;
+}
+void main(){
+  vec3 dir = normalize(uFwd + uRight * (vUV.x * uTanHalf * uAspect) + uUp * (vUV.y * uTanHalf));
+  float h = dir.y, hc = clamp(h, 0.0, 1.0);
+  vec3 zen = vec3(0.085, 0.120, 0.250);
+  vec3 mid = vec3(0.330, 0.370, 0.510);
+  vec3 hor = vec3(0.880, 0.600, 0.430);
+  vec3 col = mix(hor, mid, smoothstep(0.0, 0.22, hc));
+  col = mix(col, zen, smoothstep(0.08, 0.80, hc));
+  float sd = max(dot(dir, uSunDir), 0.0);
+  col += vec3(1.00, 0.58, 0.26) * pow(sd, 5.0) * 0.85 * (0.30 + 0.70 * exp(-max(h, 0.0) * 1.8));
+  col += vec3(1.00, 0.80, 0.52) * pow(sd, 90.0) * 1.30;
+  col += vec3(1.00, 0.94, 0.80) * smoothstep(0.9990, 0.9997, sd) * 2.4;
+  if(hc > 0.28){
+    vec2 sp = vec2(atan(dir.z, dir.x) * 3.0, dir.y * 8.0) * 62.0;
+    vec2 g = floor(sp), fr = fract(sp) - 0.5;
+    float tw = step(0.994, h21(g)) * smoothstep(0.34, 0.02, length(fr)) * smoothstep(0.28, 0.62, hc);
+    col += vec3(0.80, 0.86, 1.0) * tw * 0.55;
+  }
+  if(h > 0.010){
+    vec2 cp = dir.xz / (h + 0.12) * 0.55;
+    float n = fbm(cp * 1.6 + vec2(2.3, 0.7));
+    float band = smoothstep(0.34, 0.025, h) * smoothstep(0.010, 0.08, h);
+    vec3 cCol = mix(vec3(0.34, 0.28, 0.31), vec3(1.00, 0.70, 0.50), pow(sd, 1.8));
+    col = mix(col, cCol, clamp(n * 1.5 - 0.55, 0.0, 1.0) * band * 0.7);
+  }
+  if(h < 0.0){ col = mix(col, vec3(0.34, 0.26, 0.22), clamp(-h * 5.0, 0.0, 0.55)); }
+  o = vec4(col, 1.0);
+}`;
+
+var FS_BRIGHT = `#version 300 es
+precision highp float;
+in vec2 vUV;
+uniform sampler2D uTex;
+out vec4 o;
+void main(){
+  vec3 c = texture(uTex, vUV).rgb;
+  float l = max(max(c.r, c.g), c.b);
+  o = vec4(c * smoothstep(0.82, 1.14, l), 1.0);
+}`;
+
+var FS_BLUR = `#version 300 es
+precision highp float;
+in vec2 vUV;
+uniform sampler2D uTex;
+uniform vec2 uDir;
+out vec4 o;
+void main(){
+  vec3 s = texture(uTex, vUV).rgb * 0.2270;
+  s += (texture(uTex, vUV + uDir * 1.3846).rgb + texture(uTex, vUV - uDir * 1.3846).rgb) * 0.3162;
+  s += (texture(uTex, vUV + uDir * 3.2308).rgb + texture(uTex, vUV - uDir * 3.2308).rgb) * 0.0702;
+  o = vec4(s, 1.0);
+}`;
+
+var FS_POST = `#version 300 es
+precision highp float;
+in vec2 vUV;
+uniform sampler2D uScene, uBloom;
+uniform float uFade, uTime;
+out vec4 o;
+float h21(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+void main(){
+  vec3 col = texture(uScene, vUV).rgb + texture(uBloom, vUV).rgb * 0.60;
+  col *= 1.10;
+  col = clamp(col, 0.0, 1.0);
+  col = mix(col, col * col * (3.0 - 2.0 * col), 0.14);
+  col = mix(col, col * vec3(1.02, 1.00, 0.985), 0.5);
+  float vig = 1.0 - 0.32 * pow(clamp(length((vUV - 0.5) * vec2(1.06, 1.0)) * 1.62, 0.0, 1.0), 2.2);
+  col *= vig;
+  col += (h21(vUV * vec2(1733.0, 977.0) + uTime) - 0.5) * 0.011;
+  o = vec4(col * uFade, 1.0);
+}`;
+
+var VS_PART = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aCenter;
+layout(location=1) in vec2 aCorner;
+layout(location=2) in float aSize;
+layout(location=3) in vec4 aColor;
+uniform mat4 uProj, uView;
+out vec2 vC; out vec4 vCol;
+void main(){
+  vec4 vp = uView * vec4(aCenter, 1.0);
+  vp.xy += aCorner * aSize;
+  vC = aCorner; vCol = aColor;
+  gl_Position = uProj * vp;
+}`;
+
+var FS_PART = `#version 300 es
+precision highp float;
+in vec2 vC; in vec4 vCol;
+out vec4 o;
+void main(){
+  float d = length(vC);
+  float a = max(0.0, 1.0 - d * d);
+  a = a * a;
+  vec3 c = vCol.rgb * (0.80 + 0.35 * (0.5 - vC.y * 0.5));
+  o = vec4(c, vCol.a * a);
+}`;
+
+var FS_PART_ADD = `#version 300 es
+precision highp float;
+in vec2 vC; in vec4 vCol;
+out vec4 o;
+void main(){
+  float d = length(vC);
+  float a = max(0.0, 1.0 - d * d);
+  a = a * a * a;
+  o = vec4(vCol.rgb * a * vCol.a, 1.0);
+}`;
+
+var VS_PLUME = `#version 300 es
+precision highp float;
+layout(location=0) in vec3 aPos;
+layout(location=1) in vec3 aNormal;
+layout(location=2) in vec3 aColor;
+layout(location=3) in vec2 aMat;
+uniform mat4 uProj, uView, uModel;
+out float vT; out vec3 vN; out vec3 vW;
+void main(){
+  vec4 wp = uModel * vec4(aPos, 1.0);
+  vT = aMat.x; vN = mat3(uModel) * aNormal; vW = wp.xyz;
+  gl_Position = uProj * uView * wp;
+}`;
+
+var FS_PLUME = `#version 300 es
+precision highp float;
+in float vT; in vec3 vN; in vec3 vW;
+uniform vec3 uCam;
+uniform float uInt, uTime;
+out vec4 o;
+void main(){
+  vec3 Vv = normalize(uCam - vW);
+  vec3 N = normalize(vN);
+  float fr = 1.0 - abs(dot(N, Vv));
+  float t = clamp(vT, 0.0, 1.0);
+  float a = pow(1.0 - t, 1.5);
+  vec3 c = mix(vec3(1.0, 0.93, 0.76), vec3(1.0, 0.30, 0.05), clamp(t * 2.1, 0.0, 1.0));
+  float fl = 0.85 + 0.15 * sin(uTime * 57.0 + t * 11.0);
+  o = vec4(c * a * (0.28 + 0.95 * fr) * uInt * fl, 1.0);
+}`;
+
+var progMesh, progSky, progBright, progBlur, progPost, progPart, progPartAdd, progPlume;
+try{
+  progMesh = makeProg(VS_MESH, FS_MESH);
+  progSky = makeProg(VS_QUAD, FS_SKY);
+  progBright = makeProg(VS_QUAD, FS_BRIGHT);
+  progBlur = makeProg(VS_QUAD, FS_BLUR);
+  progPost = makeProg(VS_QUAD, FS_POST);
+  progPart = makeProg(VS_PART, FS_PART);
+  progPartAdd = makeProg(VS_PART, FS_PART_ADD);
+  progPlume = makeProg(VS_PLUME, FS_PLUME);
+}catch(e){
+  window.__err = String(e.message || e);
+  loadEl.textContent = 'Shader error';
+  return;
+}
+
+/* ================= mesh builder ================= */
+function Mesh(){ this.d = []; }
+Mesh.prototype.pv = function(p, n, c, m){
+  this.d.push(p[0], p[1], p[2], n[0], n[1], n[2], c[0], c[1], c[2], m[0], m[1]);
+};
+Mesh.prototype.tri = function(p0, p1, p2, c, m){
+  var n = norm3(cross3([p1[0]-p0[0], p1[1]-p0[1], p1[2]-p0[2]], [p2[0]-p0[0], p2[1]-p0[1], p2[2]-p0[2]]));
+  this.pv(p0, n, c, m); this.pv(p1, n, c, m); this.pv(p2, n, c, m);
+};
+Mesh.prototype.quad = function(p0, p1, p2, p3, c, m){
+  this.tri(p0, p1, p2, c, m); this.tri(p0, p2, p3, c, m);
+};
+Mesh.prototype.vq = function(p0, p1, p2, p3, n0, n1, n2, n3, c, m){
+  this.pv(p0, n0, c, m); this.pv(p1, n1, c, m); this.pv(p2, n2, c, m);
+  this.pv(p0, n0, c, m); this.pv(p2, n2, c, m); this.pv(p3, n3, c, m);
+};
+Mesh.prototype.boxM = function(M, c, m){
+  var P = [], i, x, y, z;
+  for(i = 0; i < 8; i++){
+    x = (i & 1) ? 0.5 : -0.5; y = (i & 2) ? 0.5 : -0.5; z = (i & 4) ? 0.5 : -0.5;
+    P.push([M[0]*x + M[4]*y + M[8]*z + M[12], M[1]*x + M[5]*y + M[9]*z + M[13], M[2]*x + M[6]*y + M[10]*z + M[14]]);
+  }
+  var F = [[0,1,3,2], [4,6,7,5], [0,4,5,1], [2,3,7,6], [0,2,6,4], [1,5,7,3]], f;
+  for(i = 0; i < 6; i++){ f = F[i]; this.quad(P[f[0]], P[f[1]], P[f[2]], P[f[3]], c, m); }
+};
+Mesh.prototype.box = function(cx, cy, cz, sx, sy, sz, c, m, ry){
+  var M = m4mul(m4t(cx, cy, cz), m4mul(ry ? m4ry(ry) : m4id(), m4s(sx, sy, sz)));
+  this.boxM(M, c, m);
+};
+Mesh.prototype.beam = function(p0, p1, w, c, m){
+  var dx = p1[0]-p0[0], dy = p1[1]-p0[1], dz = p1[2]-p0[2];
+  var len = Math.sqrt(dx*dx + dy*dy + dz*dz);
+  if(len < 1e-5) return;
+  var d = [dx/len, dy/len, dz/len];
+  var ref = Math.abs(d[1]) > 0.92 ? [1,0,0] : [0,1,0];
+  var s = norm3(cross3(ref, d)), t = cross3(d, s);
+  var h = w * 0.5, cn = [[-1,-1], [1,-1], [1,1], [-1,1]], A = [], B = [], i, u, v;
+  for(i = 0; i < 4; i++){
+    u = cn[i][0] * h; v = cn[i][1] * h;
+    A.push([p0[0]+s[0]*u+t[0]*v, p0[1]+s[1]*u+t[1]*v, p0[2]+s[2]*u+t[2]*v]);
+    B.push([p1[0]+s[0]*u+t[0]*v, p1[1]+s[1]*u+t[1]*v, p1[2]+s[2]*u+t[2]*v]);
+  }
+  for(i = 0; i < 4; i++){ var j = (i+1) % 4; this.quad(A[i], A[j], B[j], B[i], c, m); }
+  this.quad(A[3], A[2], A[1], A[0], c, m);
+  this.quad(B[0], B[1], B[2], B[3], c, m);
+};
+Mesh.prototype.cyl = function(cx, cz, y0, y1, r0, r1, segs, c, m, opt){
+  opt = opt || {};
+  var i, a0, a1, c0, s0, c1, s1, slope = (r0 - r1) / Math.max(1e-4, y1 - y0);
+  for(i = 0; i < segs; i++){
+    a0 = i / segs * TAU; a1 = (i+1) / segs * TAU;
+    c0 = Math.cos(a0); s0 = Math.sin(a0); c1 = Math.cos(a1); s1 = Math.sin(a1);
+    var n0 = norm3([c0, slope, s0]), n1 = norm3([c1, slope, s1]);
+    var p00 = [cx + c0*r0, y0, cz + s0*r0], p10 = [cx + c1*r0, y0, cz + s1*r0];
+    var p01 = [cx + c0*r1, y1, cz + s0*r1], p11 = [cx + c1*r1, y1, cz + s1*r1];
+    this.vq(p00, p10, p11, p01, n0, n1, n1, n0, c, m);
+  }
+  if(opt.capBot && r0 > 0.001){
+    for(i = 0; i < segs; i++){
+      a0 = i / segs * TAU; a1 = (i+1) / segs * TAU;
+      this.tri([cx, y0, cz], [cx + Math.cos(a1)*r0, y0, cz + Math.sin(a1)*r0], [cx + Math.cos(a0)*r0, y0, cz + Math.sin(a0)*r0], c, m);
+    }
+  }
+  if(opt.capTop && r1 > 0.001){
+    for(i = 0; i < segs; i++){
+      a0 = i / segs * TAU; a1 = (i+1) / segs * TAU;
+      this.tri([cx, y1, cz], [cx + Math.cos(a0)*r1, y1, cz + Math.sin(a0)*r1], [cx + Math.cos(a1)*r1, y1, cz + Math.sin(a1)*r1], c, m);
+    }
+  }
+};
+function uploadMesh(mb){
+  var data = new Float32Array(mb.d);
+  var vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  var vbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 44, 0);
+  gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 44, 12);
+  gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 3, gl.FLOAT, false, 44, 24);
+  gl.enableVertexAttribArray(3); gl.vertexAttribPointer(3, 2, gl.FLOAT, false, 44, 36);
+  gl.bindVertexArray(null);
+  return {vao: vao, count: data.length / 11};
+}
+
+/* ================= palette / materials ================= */
+var M = function(metal, emis){ return [metal, emis || 0]; };
+var C = {
+  steel: [0.50, 0.525, 0.575], steelDim: [0.34, 0.36, 0.395],
+  armSteel: [0.72, 0.735, 0.755], armDark: [0.54, 0.55, 0.57],
+  tower: [0.265, 0.28, 0.305], towerDark: [0.165, 0.175, 0.192], towerAccent: [0.36, 0.25, 0.16],
+  concrete: [0.395, 0.385, 0.365], concreteDark: [0.245, 0.235, 0.225], scorch: [0.085, 0.08, 0.078],
+  white: [0.62, 0.62, 0.60], engine: [0.085, 0.088, 0.095], nozzle: [0.235, 0.215, 0.20],
+  fin: [0.145, 0.145, 0.155], pin: [0.66, 0.58, 0.46], lamp: [1.0, 0.94, 0.80], red: [1.0, 0.16, 0.08]
+};
+
+/* ================= scene geometry ================= */
+var HALF = 9.5, TOPY = 146, BOOM_X = 24, ARM_PIVOT_Y = 83.5, CATCH_Y = 24.5;
+var PIVOT_Z = 7.2;
+var ARM_LEN = 40;
+
+function buildGround(mb){
+  var N = 40, S = 3000, i, j, x0, x1, z0, z1, t, c;
+  for(i = 0; i < N; i++){
+    for(j = 0; j < N; j++){
+      x0 = -S/2 + S*i/N; x1 = -S/2 + S*(i+1)/N;
+      z0 = -S/2 + S*j/N; z1 = -S/2 + S*(j+1)/N;
+      t = clamp01(vnoise((x0+x1)*0.006, (z0+z1)*0.006) * 0.7 + vnoise((x0+x1)*0.025, (z0+z1)*0.025) * 0.3);
+      c = [lerp(0.30, 0.44, t), lerp(0.255, 0.355, t), lerp(0.205, 0.275, t)];
+      mb.quad([x0, 0, z0], [x1, 0, z0], [x1, 0, z1], [x0, 0, z1], c, M(0.0));
+    }
+  }
+}
+function buildPad(mb){
+  mb.box(12, 0.02, 0, 176, 0.16, 124, C.concrete, M(0.05));
+  mb.box(12, 0.10, 0, 172, 0.10, 120, [0.345, 0.335, 0.32], M(0.05));
+  var i;
+  for(i = -3; i <= 3; i++){
+    mb.box(12 + i * 26, 0.14, 0, 0.5, 0.06, 120, C.concreteDark, M(0.0));
+  }
+  mb.cyl(24, 0, 0.12, 0.20, 26, 26, 28, C.scorch, M(0.0), {capTop:true});
+  mb.cyl(24, 0, 0.14, 0.22, 15, 15, 24, [0.05, 0.047, 0.045], M(0.0), {capTop:true});
+  mb.box(12, 0.16, -60, 176, 0.12, 2.2, C.concreteDark, M(0.0));
+  mb.box(12, 0.16, 60, 176, 0.12, 2.2, C.concreteDark, M(0.0));
+}
+function buildTower(mb){
+  var corners = [[-1,-1], [1,-1], [1,1], [-1,1]], i, y, sx, sz;
+  for(i = 0; i < 4; i++){
+    sx = corners[i][0]; sz = corners[i][1];
+    mb.box(sx*HALF, 1.8, sz*HALF, 7.4, 3.6, 7.4, C.concrete, M(0.0));
+    mb.box(sx*HALF, 3.9, sz*HALF, 4.4, 0.6, 4.4, C.steelDim, M(0.4));
+    mb.beam([sx*HALF, 4, sz*HALF], [sx*HALF, 62, sz*HALF], 2.0, C.tower, M(0.5));
+    mb.beam([sx*HALF, 62, sz*HALF], [sx*HALF, 104, sz*HALF], 1.65, C.tower, M(0.5));
+    mb.beam([sx*HALF, 104, sz*HALF], [sx*HALF, TOPY, sz*HALF], 1.35, C.tower, M(0.5));
+  }
+  for(y = 12; y <= 144; y += 12){
+    mb.beam([-HALF, y, -HALF], [HALF, y, -HALF], 0.78, C.towerDark, M(0.4));
+    mb.beam([-HALF, y, HALF], [HALF, y, HALF], 0.78, C.towerDark, M(0.4));
+    mb.beam([-HALF, y, -HALF], [-HALF, y, HALF], 0.78, C.towerDark, M(0.4));
+    mb.beam([HALF, y, -HALF], [HALF, y, HALF], 0.78, C.towerDark, M(0.4));
+    for(i = 0; i < 4; i++){
+      var c0 = corners[i], c1 = corners[(i+1) % 4];
+      var ax = c0[0]*HALF, az = c0[1]*HALF, bx = c1[0]*HALF, bz = c1[1]*HALF;
+      mb.beam([ax, y-12, az], [bx, y, bz], 0.44, C.tower, M(0.45));
+      mb.beam([bx, y-12, bz], [ax, y, az], 0.44, C.tower, M(0.45));
+    }
+  }
+  for(i = 0; i < 4; i++){
+    sx = corners[i][0]; sz = corners[i][1];
+    mb.beam([sx*HALF, 6, sz*HALF], [sx*HALF*0.25, 74, sz*HALF*0.25], 0.5, C.towerDark, M(0.4));
+    mb.beam([sx*HALF, 74, sz*HALF], [sx*HALF*0.25, 6, sz*HALF*0.25], 0.5, C.towerDark, M(0.4));
+  }
+  mb.box(-3.2, 74, -3.2, 5.0, 148, 5.0, [0.20, 0.212, 0.228], M(0.3));
+  for(y = 24; y <= 120; y += 24){
+    mb.box(0, y, 0, 18.6, 0.35, 18.6, C.towerDark, M(0.2));
+    for(i = 0; i < 4; i++){
+      var cc = corners[i], cd = corners[(i+1) % 4];
+      mb.beam([cc[0]*9.1, y + 1.25, cc[1]*9.1], [cd[0]*9.1, y + 1.25, cd[1]*9.1], 0.14, C.steelDim, M(0.4));
+      mb.beam([cc[0]*9.1, y + 0.2, cc[1]*9.1], [cc[0]*9.1, y + 1.25, cc[1]*9.1], 0.13, C.steelDim, M(0.4));
+    }
+    mb.box(9.1, y + 0.45, 0, 1.0, 0.9, 4.0, C.towerAccent, M(0.3));
+  }
+  mb.beam([-HALF, TOPY, -HALF], [-HALF, TOPY + 14, -HALF], 0.55, C.steelDim, M(0.5));
+  mb.box(-HALF, TOPY + 15.2, -HALF, 0.7, 2.6, 0.7, C.red, M(0.2, 0.9));
+  mb.box(HALF, TOPY + 0.4, HALF, 1.1, 0.9, 1.1, C.red, M(0.2, 0.9));
+  mb.box(-HALF, TOPY + 0.4, HALF, 1.1, 0.9, 1.1, C.red, M(0.2, 0.9));
+  mb.box(HALF, TOPY + 0.4, -HALF, 1.1, 0.9, 1.1, C.red, M(0.2, 0.9));
+  mb.beam([-HALF, TOPY, -HALF], [HALF + 7, TOPY + 2, -HALF], 0.7, C.steelDim, M(0.5));
+  for(i = 0; i < 6; i++){
+    var ly = 34 + i * 18;
+    mb.box(HALF + 0.8, ly, -HALF + 1.5, 0.8, 0.5, 0.8, C.lamp, M(0.2, 0.45));
+    mb.box(-HALF - 0.8, ly + 9, HALF - 1.5, 0.7, 0.45, 0.7, C.lamp, M(0.2, 0.45));
+  }
+  mb.box(11.2, 84.5, 0, 3.2, 11.0, 8.2, [0.225, 0.235, 0.255], M(0.4));
+  mb.box(12.4, 84.5, 0, 2.0, 9.0, 6.0, [0.16, 0.17, 0.182], M(0.35));
+  mb.beam([HALF, 78, -8.2], [HALF, 91, -8.2], 0.9, C.towerDark, M(0.45));
+  mb.beam([HALF, 78, 8.2], [HALF, 91, 8.2], 0.9, C.towerDark, M(0.45));
+  mb.beam([HALF, 78, -8.2], [13.6, 78, -8.2], 0.7, C.towerDark, M(0.45));
+  mb.beam([HALF, 91, -8.2], [13.6, 91, -8.2], 0.7, C.towerDark, M(0.45));
+  mb.beam([HALF, 78, 8.2], [13.6, 78, 8.2], 0.7, C.towerDark, M(0.45));
+  mb.beam([HALF, 91, 8.2], [13.6, 91, 8.2], 0.7, C.towerDark, M(0.45));
+  mb.cyl(12, PIVOT_Z, 81.2, 85.8, 1.05, 1.05, 12, C.steelDim, M(0.6), {capBot:true, capTop:true});
+  mb.cyl(12, -PIVOT_Z, 81.2, 85.8, 1.05, 1.05, 12, C.steelDim, M(0.6), {capBot:true, capTop:true});
+}
+function buildLaunchMount(mb){
+  var i, a0, a1, x0, z0, x1, z1, r = 15, y = 8.5;
+  for(i = 0; i < 8; i++){
+    a0 = i / 8 * TAU; a1 = (i+1) / 8 * TAU;
+    x0 = BOOM_X + Math.cos(a0) * r; z0 = Math.sin(a0) * r;
+    x1 = BOOM_X + Math.cos(a1) * r; z1 = Math.sin(a1) * r;
+    mb.beam([x0, y, z0], [x1, y, z1], 1.9, C.steelDim, M(0.45));
+    mb.beam([x0, y - 1.9, z0], [x1, y - 1.9, z1], 0.8, C.towerDark, M(0.4));
+    mb.beam([x0, y, z0], [x0, 0.15, z0], 1.5, C.steelDim, M(0.45));
+    mb.beam([x0, 0.4, z0], [BOOM_X + Math.cos(a0)*4.2, y - 1.2, Math.sin(a0)*4.2], 0.6, C.towerDark, M(0.4));
+    mb.box(x0, 0.3, z0, 3.4, 0.6, 3.4, C.concreteDark, M(0.0));
+  }
+  for(i = 0; i < 8; i++){
+    a0 = i / 8 * TAU + 0.19;
+    mb.box(BOOM_X + Math.cos(a0) * 15.4, y + 1.1, Math.sin(a0) * 15.4, 0.9, 0.9, 0.9, C.lamp, M(0.2, 0.6));
+  }
+  mb.cyl(BOOM_X, 0, 0.2, 1.0, 6.0, 6.0, 20, [0.09, 0.088, 0.085], M(0.1), {capTop:true});
+}
+function buildProps(mb){
+  var i, a, r, x, z, hh, ww;
+  var tanks = [[-62, -52, 5.4, 24], [-76, -44, 4.4, 19], [-68, -70, 4.0, 16]];
+  for(i = 0; i < tanks.length; i++){
+    x = tanks[i][0]; z = tanks[i][1];
+    mb.cyl(x, z, 0.4, tanks[i][3], tanks[i][2], tanks[i][2], 20, C.white, M(0.3), {capTop:true});
+    mb.cyl(x, z, tanks[i][3], tanks[i][3] + 1.4, tanks[i][2] * 0.98, tanks[i][2] * 0.55, 20, C.steelDim, M(0.4), {capTop:true});
+    mb.cyl(x, z, 1.6, 2.4, tanks[i][2] + 0.18, tanks[i][2] + 0.18, 20, C.steelDim, M(0.4));
+    mb.box(x, 0.3, z, tanks[i][2] * 2.6, 0.6, tanks[i][2] * 2.6, C.concreteDark, M(0.0));
+  }
+  mb.beam([-62, 1.2, -46], [-38, 1.2, -14], 0.55, C.steelDim, M(0.4));
+  mb.beam([-38, 1.2, -14], [-6, 1.2, -12], 0.55, C.steelDim, M(0.4));
+  mb.beam([-70, 1.2, -62], [-40, 1.2, -34], 0.45, C.steelDim, M(0.4));
+  mb.box(-54, 3.4, -26, 24, 6.8, 15, [0.31, 0.30, 0.29], M(0.1));
+  mb.box(-54, 7.2, -26, 25, 0.8, 16, C.concreteDark, M(0.1));
+  mb.box(-54, 4.0, -18.4, 12, 1.1, 0.3, C.lamp, M(0.1, 0.4));
+  var masts = [[-40, -58], [64, -68], [70, 46], [-42, 54]];
+  for(i = 0; i < 4; i++){
+    x = masts[i][0]; z = masts[i][1];
+    mb.box(x, 0.4, z, 3.0, 0.8, 3.0, C.concreteDark, M(0.0));
+    mb.beam([x, 0.6, z], [x, 27, z], 0.85, C.steelDim, M(0.4));
+    mb.box(x, 28.2, z, 2.6, 1.4, 3.4, [0.19, 0.20, 0.22], M(0.4));
+    mb.box(x, 27.4, z, 2.2, 0.5, 3.0, C.lamp, M(0.2, 0.7));
+  }
+  for(i = 0; i < 12; i++){
+    a = i / 12 * TAU + 0.31;
+    r = 980 + 300 * h2(i, 4.1);
+    x = Math.cos(a) * r; z = Math.sin(a) * r;
+    hh = 12 + 20 * h2(i, 6.3); ww = 260 + 320 * h2(i, 2.7);
+    mb.box(x, hh * 0.5 - 4, z, ww, hh, ww * 0.7, [0.42, 0.34, 0.30], M(0.0));
+  }
+}
+function buildBoosterMesh(mb){
+  var R = 4.5, i, k, y0 = 7.8, y1 = 70.0, nb = 9, bh = (y1 - y0) / nb, a, b, sh, col;
+  mb.cyl(0, 0, 0.6, y0, R * 0.995, R, 30, C.engine, M(0.55), {capBot:true});
+  mb.cyl(0, 0, 0.6, 1.5, R * 1.01, R * 1.01, 30, C.steelDim, M(0.5));
+  mb.cyl(0, 0, 6.6, 7.9, R * 1.01, R * 1.01, 30, C.steelDim, M(0.5));
+  for(k = 0; k < nb; k++){
+    a = y0 + k * bh; b = a + bh;
+    sh = 0.505 + 0.048 * Math.sin(k * 2.1 + 0.6) + 0.018 * Math.cos(k * 5.09);
+    col = [sh * 0.955, sh * 0.995, sh * 1.065];
+    mb.cyl(0, 0, a, b, R, R, 30, col, M(0.96), {});
+    mb.cyl(0, 0, b - 0.07, b + 0.07, R * 1.008, R * 1.008, 30, [0.315, 0.325, 0.355], M(0.6), {});
+  }
+  mb.cyl(0, 0, 66.2, 70.0, R, R, 30, [0.275, 0.285, 0.305], M(0.65), {});
+  mb.cyl(0, 0, 69.7, 70.05, R * 1.006, R * 1.002, 30, [0.17, 0.175, 0.185], M(0.5), {capTop:true});
+  for(i = 0; i < 12; i++){
+    a = i / 12 * TAU + 0.13;
+    var sx = Math.cos(a) * R * 1.004, sz = Math.sin(a) * R * 1.004;
+    mb.beam([sx, 8.0, sz], [sx, 66.0, sz], 0.075, [0.355, 0.365, 0.39], M(0.7));
+  }
+  var rax = Math.cos(2.7) * (R + 0.16), raz = Math.sin(2.7) * (R + 0.16);
+  mb.box(rax, 38, raz, 0.42, 52, 0.55, [0.42, 0.43, 0.45], M(0.6));
+  mb.box(rax * 1.05, 63, raz * 1.05, 0.55, 1.0, 0.7, C.steelDim, M(0.5));
+  for(i = 0; i < 4; i++){
+    a = Math.PI / 2 + i * Math.PI / 2;
+    var mx = Math.cos(a) * 5.25, mz = Math.sin(a) * 5.25;
+    mb.boxM(m4mul(m4mul(m4t(mx, 59.95, mz), m4ry(-a)), m4s(1.5, 0.9, 1.35)), C.pin, M(0.35));
+    mb.boxM(m4mul(m4mul(m4t(Math.cos(a) * 4.6, 60.0, Math.sin(a) * 4.6), m4ry(-a)), m4s(0.4, 1.7, 1.9)), [0.28, 0.295, 0.315], M(0.5));
+  }
+  var engines = [], ea;
+  for(i = 0; i < 3; i++){ ea = i / 3 * TAU + 1.2; engines.push([Math.cos(ea) * 1.18, Math.sin(ea) * 1.18, 1]); }
+  for(i = 0; i < 10; i++){ ea = i / 10 * TAU + 0.3; engines.push([Math.cos(ea) * 3.05, Math.sin(ea) * 3.05, 0]); }
+  for(i = 0; i < engines.length; i++){
+    var ex = engines[i][0], ez = engines[i][1];
+    mb.cyl(ex, ez, -1.0, 2.7, 0.62, 0.30, 12, C.nozzle, M(0.75), {});
+    mb.cyl(ex, ez, -1.05, -0.75, 0.66, 0.63, 12, [0.14, 0.13, 0.125], M(0.6), {});
+    mb.cyl(ex, ez, 2.4, 2.75, 0.34, 0.40, 10, C.steelDim, M(0.6), {});
+  }
+  return engines;
+}
+function buildFinMesh(){
+  var mb = new Mesh(), i, y;
+  mb.box(0.28, 0, 0, 0.56, 4.7, 0.44, [0.20, 0.205, 0.215], M(0.55));
+  mb.beam([0.55, -2.15, 0], [3.15, -2.15, 0], 0.24, C.fin, M(0.5));
+  mb.beam([0.55, 2.15, 0], [3.15, 2.15, 0], 0.24, C.fin, M(0.5));
+  mb.beam([0.55, -2.15, 0], [0.55, 2.15, 0], 0.22, C.fin, M(0.5));
+  mb.beam([3.15, -2.15, 0], [3.15, 2.15, 0], 0.22, C.fin, M(0.5));
+  for(i = 1; i < 4; i++){
+    y = -2.15 + i * 4.3 / 4;
+    mb.beam([0.55, y, 0], [3.15, y, 0], 0.10, C.fin, M(0.45));
+  }
+  for(i = 1; i < 4; i++){
+    var x = 0.55 + i * 2.6 / 4;
+    mb.beam([x, -2.15, 0], [x, 2.15, 0], 0.10, C.fin, M(0.45));
+  }
+  mb.beam([0.7, -2.0, 0], [3.0, 2.0, 0], 0.08, [0.19, 0.19, 0.2], M(0.4));
+  mb.beam([0.7, 2.0, 0], [3.0, -2.0, 0], 0.08, [0.19, 0.19, 0.2], M(0.4));
+  return uploadMesh(mb);
+}
+function buildArmMesh(){
+  var mb = new Mesh(), L = ARM_LEN, nS = 14, zc = 1.6, i, z, k, x0, x1, xa, xb;
+  var topY = 0, botY = function(x){ return -5.0 + 2.4 * (x / L); };
+  mb.box(1.6, -2.4, 0, 4.0, 6.4, 4.6, [0.30, 0.31, 0.33], M(0.35));
+  mb.cyl(0, 0, -3.2, 3.2, 0.95, 0.95, 12, C.steelDim, M(0.6), {capBot:true, capTop:true});
+  for(i = 0; i < 2; i++){
+    z = i ? zc : -zc;
+    mb.beam([1.0, topY, z], [L, topY, z], 0.55, C.armSteel, M(0.30));
+    for(k = 0; k < nS; k++){
+      xa = L * k / nS; xb = L * (k + 1) / nS;
+      mb.beam([xa, botY(xa), z], [xb, botY(xb), z], 0.46, C.armDark, M(0.30));
+    }
+  }
+  for(i = 0; i < nS; i++){
+    x0 = L * i / nS; x1 = L * (i + 1) / nS;
+    for(var s = 0; s < 2; s++){
+      z = s ? zc : -zc;
+      mb.beam([x0, topY, z], [x1, botY(x1), z], 0.26, C.armSteel, M(0.25));
+      mb.beam([x0, botY(x0), z], [x0, topY, z], 0.24, C.armDark, M(0.25));
+    }
+    mb.beam([x0, topY, -zc], [x0, topY, zc], 0.22, C.armSteel, M(0.25));
+    mb.beam([x0, botY(x0), -zc], [x0, botY(x0), zc], 0.22, C.armDark, M(0.25));
+    mb.beam([x0, topY, -zc], [x1, botY(x1), zc], 0.16, C.armDark, M(0.25));
+    mb.beam([x0, botY(x0), -zc], [x1, topY, zc], 0.16, C.armDark, M(0.25));
+  }
+  mb.beam([L, topY, -zc], [L, botY(L), -zc], 0.34, C.armSteel, M(0.3));
+  mb.beam([L, topY, zc], [L, botY(L), zc], 0.34, C.armSteel, M(0.3));
+  var sx = 12;
+  mb.box(sx, 0.10, -0.30, 3.2, 0.50, 3.30, [0.44, 0.45, 0.47], M(0.35));
+  mb.box(sx, 0.44, -0.30, 3.0, 0.12, 3.10, C.pin, M(0.35));
+  mb.box(sx, 0.62, 1.48, 2.8, 1.15, 0.40, [0.30, 0.31, 0.33], M(0.35));
+  mb.box(L - 1.6, 0.55, 0, 2.2, 1.3, 2.6, [0.30, 0.31, 0.33], M(0.35));
+  mb.box(L - 0.4, 1.25, 0, 0.45, 0.45, 0.45, C.red, M(0.2, 1.0));
+  mb.beam([4.0, -0.1, 0], [4.0, -3.6, 0], 0.7, C.steelDim, M(0.5));
+  mb.beam([4.0, -3.6, 0], [8.6, -0.1, 0], 0.6, C.steelDim, M(0.5));
+  mb.beam([10.0, -0.2, 0], [10.0, -3.0, 0], 0.5, C.steelDim, M(0.5));
+  return uploadMesh(mb);
+}
+function buildPlumeMesh(){
+  var mb = new Mesh(), segs = 16, i, a0, a1, c0, s0, c1, s1;
+  for(i = 0; i < segs; i++){
+    a0 = i / segs * TAU; a1 = (i+1) / segs * TAU;
+    c0 = Math.cos(a0); s0 = Math.sin(a0); c1 = Math.cos(a1); s1 = Math.sin(a1);
+    var n0 = [c0, 0.32, s0], n1 = [c1, 0.32, s1];
+    var p00 = [c0, 0, s0], p10 = [c1, 0, s1], p01 = [c0 * 0.28, -1, s0 * 0.28], p11 = [c1 * 0.28, -1, s1 * 0.28];
+    mb.pv(p00, n0, [1,1,1], [0,0]); mb.pv(p10, n1, [1,1,1], [0,0]); mb.pv(p11, n1, [1,1,1], [1,0]);
+    mb.pv(p00, n0, [1,1,1], [0,0]); mb.pv(p11, n1, [1,1,1], [1,0]); mb.pv(p01, n0, [1,1,1], [1,0]);
+  }
+  return uploadMesh(mb);
+}
+
+var sceneMesh, boosterMesh, finMesh, armMesh, plumeMesh, enginesList;
+try{
+  var ms = new Mesh();
+  buildGround(ms); buildPad(ms); buildTower(ms); buildLaunchMount(ms); buildProps(ms);
+  sceneMesh = uploadMesh(ms);
+  var mbB = new Mesh();
+  enginesList = buildBoosterMesh(mbB);
+  boosterMesh = uploadMesh(mbB);
+  finMesh = buildFinMesh();
+  armMesh = buildArmMesh();
+  plumeMesh = buildPlumeMesh();
+}catch(e){
+  window.__err = String(e.message || e);
+  loadEl.textContent = 'Build error';
+  return;
+}
+
+/* ================= particles ================= */
+var MAXP = 900;
+var partVBO = gl.createBuffer();
+var partVAO = gl.createVertexArray();
+gl.bindVertexArray(partVAO);
+gl.bindBuffer(gl.ARRAY_BUFFER, partVBO);
+gl.bufferData(gl.ARRAY_BUFFER, MAXP * 6 * 10 * 4, gl.DYNAMIC_DRAW);
+gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 40, 0);
+gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 40, 12);
+gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 1, gl.FLOAT, false, 40, 20);
+gl.enableVertexAttribArray(3); gl.vertexAttribPointer(3, 4, gl.FLOAT, false, 40, 24);
+gl.bindVertexArray(null);
+
+var DUST = [], EXH = [], VAP = [], SPK = [], i;
+for(i = 0; i < 190; i++){
+  DUST.push({t0: rnd() * 12, life: 7 + rnd() * 8, ang: rnd() * TAU, r: 8 + rnd() * 44, h: 0.5 + rnd() * 2.2, size: 3.0 + rnd() * 6.0, a: 0.05 + rnd() * 0.09});
+}
+for(i = 0; i < 340; i++){
+  EXH.push({t0: rnd() * 3.4, life: 2.2 + rnd() * 1.9, ang: rnd() * TAU, v: rnd(), size: 0.75 + rnd() * 0.8});
+}
+for(i = 0; i < 80; i++){
+  VAP.push({t0: rnd() * 6, life: 3.4 + rnd() * 3.5, y: 8 + rnd() * 40, ang: rnd() * TAU, drift: 0.4 + rnd() * 0.9, size: 0.6 + rnd() * 1.2});
+}
+for(i = 0; i < 110; i++){
+  SPK.push({t0: rnd() * 0.6, life: 0.22 + rnd() * 0.5, ang: rnd() * TAU, v: rnd() * rnd()});
+}
+var CORNERS = [[-1,-1], [1,-1], [1,1], [-1,-1], [1,1], [-1,1]];
+var pa = [];
+function pushP(x, y, z, size, r, g, b, a){
+  for(var c = 0; c < 6; c++){
+    pa.push(x, y, z, CORNERS[c][0], CORNERS[c][1], size, r, g, b, a);
+  }
+}
+
+/* ================= timeline ================= */
+var DURATION = 30.0, START_Y = 152.0;
+function altAt(t){
+  if(t <= 0) return START_Y;
+  if(t < 20){
+    var u = t / 20, s = u * u * u * (u * (u * 6 - 15) + 10);
+    return CATCH_Y + (START_Y - CATCH_Y) * (1 - s);
+  }
+  return CATCH_Y + sagAt(t);
+}
+function sagAt(t){
+  if(t <= 20) return 0;
+  var d = t - 20;
+  return -0.24 * Math.sin(d * 7.4) * Math.exp(-d * 2.1);
+}
+function throttleAt(t){
+  if(t >= 22.9) return 0;
+  var base;
+  if(t < 19.4) base = 0.84;
+  else if(t < 20.8) base = lerp(0.84, 0.52, (t - 19.4) / 1.4);
+  else base = lerp(0.52, 0.0, smooth01((t - 20.8) / 2.1));
+  return clamp01(base * (1 + 0.07 * Math.sin(t * 41.0) + 0.05 * Math.sin(t * 17.3 + 1.2)));
+}
+function armAngle(t){
+  var open = 17.0 * DEG, mid = 4.6 * DEG, close = 0.8 * DEG;
+  if(t < 6.5) return open;
+  if(t < 12.5) return lerp(open, mid, smooth01((t - 6.5) / 6.0));
+  if(t < 17.5) return lerp(mid, close, smooth01((t - 12.5) / 5.0));
+  return close;
+}
+function bstate(t){
+  var alt = altAt(t);
+  var damp = 1 - smooth01((t - 14.5) / 4.5);
+  return {
+    x: BOOM_X + 0.45 * Math.sin(t * 0.8 + 0.5) * damp,
+    y: alt,
+    z: 0.38 * Math.sin(t * 1.1 + 2.0) * damp,
+    pitch: (0.50 * Math.sin(t * 0.72 + 1.1) + 0.22 * Math.sin(t * 1.9)) * damp * DEG,
+    tilt: 0.42 * Math.sin(t * 0.55 + 2.4) * damp * DEG,
+    spin: 0.05 * t
+  };
+}
+function fadeAt(t){
+  return smooth01(t / 0.9) * (1 - smooth01((t - 28.7) / 1.3));
+}
+function phaseName(t){
+  if(t < 4) return 'A-establishing';
+  if(t < 10) return 'B-approach';
+  if(t < 16) return 'C-alignment';
+  if(t < 22) return 'D-catch';
+  if(t < 26) return 'E-cutoff';
+  return 'F-triumph';
+}
+function cameraAt(t){
+  var by = altAt(t), u, ang, R;
+  if(t < 4){
+    u = smooth01(t / 4);
+    return {pos: lerp3([-96, 26, -268], [-84, 34, -246], u), tgt: lerp3([10, 106, 4], [12, 98, 3], u), fov: lerp(47, 44, u)};
+  }
+  if(t < 10){
+    u = smooth01((t - 4) / 6);
+    return {pos: lerp3([168, 24, -272], [158, 28, -262], u), tgt: [BOOM_X - 2, by + 28, 0], fov: lerp(24, 22, u)};
+  }
+  if(t < 16){
+    u = smooth01((t - 10) / 6);
+    return {pos: lerp3([14, 54, -300], [8, 62, -286], u), tgt: lerp3([16, 84, 0], [16, 80, 0], u), fov: lerp(36, 33, u)};
+  }
+  if(t < 22){
+    u = smooth01((t - 16) / 6);
+    return {pos: lerp3([62, 5, -196], [54, 8, -184], u), tgt: lerp3([19, 62, 0], [20, 66, 0], u), fov: lerp(44, 40, u)};
+  }
+  if(t < 26){
+    u = smooth01((t - 22) / 4);
+    return {pos: lerp3([70, 88, -262], [62, 90, -248], u), tgt: lerp3([18, 82, 0], [19, 84, 0], u), fov: lerp(32, 30, u)};
+  }
+  u = smooth01((t - 26) / 4);
+  ang = lerp(-26 * DEG, 2 * DEG, u);
+  R = lerp(285, 255, u);
+  return {pos: [BOOM_X + Math.sin(ang) * R, lerp(58, 100, u), -Math.cos(ang) * R], tgt: [BOOM_X - 4, lerp(70, 78, u), 0], fov: lerp(32, 30, u)};
+}
+
+/* ================= framebuffers ================= */
+var fboScene = null, fboA = null, fboB = null, bufW = 0, bufH = 0, emptyVAO = gl.createVertexArray();
+function makeTex(w, h){
+  var t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return t;
+}
+function makeFB(w, h, depth){
+  var fb = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  var tex = makeTex(w, h);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+  if(depth){
+    var rb = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, rb);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, w, h);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rb);
+  }
+  var ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  return {fb: fb, tex: tex, ok: ok};
+}
+function ensureFBO(){
+  var dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+  var w = Math.max(2, Math.floor(canvas.clientWidth * dpr));
+  var h = Math.max(2, Math.floor(canvas.clientHeight * dpr));
+  if(fboScene && w === bufW && h === bufH) return;
+  bufW = w; bufH = h;
+  canvas.width = w; canvas.height = h;
+  fboScene = makeFB(w, h, true);
+  var bw = Math.max(2, w >> 2), bh = Math.max(2, h >> 2);
+  fboA = makeFB(bw, bh, false);
+  fboB = makeFB(bw, bh, false);
+}
+
+/* ================= render ================= */
+var SUN = norm3([0.68, 0.26, -0.58]);
+var SUNCOL = [0.98, 0.855, 0.735];
+var SKYCOL = [0.31, 0.375, 0.525];
+var GROUNDCOL = [0.235, 0.195, 0.165];
+var FOGCOL = [0.615, 0.505, 0.445];
+var SITEPOS = [4, 20, 20];
+
+function drawMesh(m){
+  gl.bindVertexArray(m.vao);
+  gl.drawArrays(gl.TRIANGLES, 0, m.count);
+}
+function render(t){
+  ensureFBO();
+  var W = bufW, H = bufH, aspect = W / H;
+  var cam = cameraAt(t);
+  var view = m4look(cam.pos, cam.tgt, [0, 1, 0]);
+  var proj = m4persp(cam.fov * DEG, aspect, 0.5, 8000);
+  var fwd = norm3([cam.tgt[0]-cam.pos[0], cam.tgt[1]-cam.pos[1], cam.tgt[2]-cam.pos[2]]);
+  var right = norm3(cross3(fwd, [0, 1, 0]));
+  var up = cross3(right, fwd);
+  var tanHalf = Math.tan(cam.fov * DEG / 2);
+
+  var bs = bstate(t), thr = throttleAt(t), sag = sagAt(t), armA = armAngle(t);
+  var bm = m4mul(m4t(bs.x, bs.y, bs.z), m4mul(m4rz(bs.tilt), m4mul(m4rx(bs.pitch), m4ry(bs.spin))));
+  var nozzle = [bs.x + Math.sin(bs.pitch) * 1.0, bs.y - 1.0, bs.z];
+  var engPow = thr * 1.5;
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fboScene.fb);
+  gl.viewport(0, 0, W, H);
+  gl.clearColor(0.03, 0.04, 0.06, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.disable(gl.BLEND);
+
+  gl.disable(gl.DEPTH_TEST);
+  gl.depthMask(false);
+  gl.useProgram(progSky.p);
+  u3(progSky, 'uRight', right); u3(progSky, 'uUp', up); u3(progSky, 'uFwd', fwd);
+  u3(progSky, 'uSunDir', SUN); u1(progSky, 'uTanHalf', tanHalf); u1(progSky, 'uAspect', aspect);
+  gl.bindVertexArray(emptyVAO);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  gl.enable(gl.DEPTH_TEST);
+  gl.depthMask(true);
+  gl.useProgram(progMesh.p);
+  uM(progMesh, 'uProj', proj); uM(progMesh, 'uView', view);
+  u3(progMesh, 'uCam', cam.pos); u3(progMesh, 'uSunDir', SUN); u3(progMesh, 'uSunCol', SUNCOL);
+  u3(progMesh, 'uSkyCol', SKYCOL); u3(progMesh, 'uGroundCol', GROUNDCOL); u3(progMesh, 'uFogCol', FOGCOL);
+  u3(progMesh, 'uEnginePos', nozzle); u3(progMesh, 'uSitePos', SITEPOS);
+  u1(progMesh, 'uEnginePow', engPow); u1(progMesh, 'uSitePow', 1.5); u1(progMesh, 'uFogDensity', 0.0011);
+  uM(progMesh, 'uModel', m4id());
+  drawMesh(sceneMesh);
+  uM(progMesh, 'uModel', bm);
+  drawMesh(boosterMesh);
+  var fins = [45, 135, 225, 315], fi;
+  for(fi = 0; fi < 4; fi++){
+    var az = fins[fi] * DEG;
+    var defl = (0.09 * Math.sin(t * 1.7 + fi * 1.7) + 0.04 * Math.sin(t * 0.9 + fi)) * (1 - smooth01((t - 18) / 3)) * 12 * DEG;
+    var mf = m4mul(bm, m4mul(m4t(0, 62.9, 0), m4mul(m4ry(-az), m4mul(m4t(4.5, 0, 0), m4rz(defl)))));
+    uM(progMesh, 'uModel', mf);
+    drawMesh(finMesh);
+  }
+  uM(progMesh, 'uModel', m4mul(m4t(12, ARM_PIVOT_Y + sag, PIVOT_Z), m4ry(-armA)));
+  drawMesh(armMesh);
+  uM(progMesh, 'uModel', m4mul(m4t(12, ARM_PIVOT_Y + sag, -PIVOT_Z), m4mul(m4s(1, 1, -1), m4ry(-armA))));
+  drawMesh(armMesh);
+
+  gl.depthMask(false);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE);
+  if(thr > 0.01){
+    gl.useProgram(progPlume.p);
+    uM(progPlume, 'uProj', proj); uM(progPlume, 'uView', view);
+    u3(progPlume, 'uCam', cam.pos); u1(progPlume, 'uTime', t);
+    for(fi = 0; fi < 3; fi++){
+      var ex = enginesList[fi][0], ez = enginesList[fi][1];
+      var sc = 1.4 + 0.6 * thr, ln = 6.5 + 11.0 * thr;
+      uM(progPlume, 'uModel', m4mul(bm, m4mul(m4t(ex, -1.05, ez), m4s(sc, ln, sc))));
+      u1(progPlume, 'uInt', 0.80 * thr);
+      drawMesh(plumeMesh);
+      uM(progPlume, 'uModel', m4mul(bm, m4mul(m4t(ex, -1.05, ez), m4s(sc * 1.6, ln * 0.62, sc * 1.6))));
+      u1(progPlume, 'uInt', 0.15 * thr);
+      drawMesh(plumeMesh);
+    }
+  }
+
+  pa.length = 0;
+  var j;
+  for(j = 0; j < SPK.length; j++){
+    var sp = SPK[j];
+    var ageS = (t + sp.t0) % sp.life, tsS = t - ageS;
+    if(throttleAt(tsS < 0 ? tsS + DURATION : tsS) < 0.05) continue;
+    var py = nozzle[1] - ageS * (24 + 46 * sp.v);
+    var rr = 0.5 + ageS * 5.0 * sp.v;
+    pushP(nozzle[0] + Math.cos(sp.ang) * rr, py, nozzle[2] + Math.sin(sp.ang) * rr, 0.22 + sp.v * 0.4,
+      1.0, 0.62, 0.24, (1 - ageS / sp.life) * 0.9);
+  }
+  var gndGlow = thr * (1 - clamp01((bs.y - 22) / 45));
+  pushP(nozzle[0], nozzle[1] - 0.4, nozzle[2], 3.4 + 2.2 * thr, 1.0, 0.70, 0.36, 0.55 * thr);
+  if(gndGlow > 0.01) pushP(nozzle[0], 2.0, nozzle[2], 15 + 10 * gndGlow, 1.0, 0.46, 0.16, 0.36 * gndGlow);
+  pushP(14, 6, 0, 26, 1.0, 0.72, 0.50, 0.055);
+  pushP(-6, 12, 10, 30, 1.0, 0.78, 0.60, 0.035);
+  gl.useProgram(progPartAdd.p);
+  uM(progPartAdd, 'uProj', proj); uM(progPartAdd, 'uView', view);
+  gl.bindVertexArray(partVAO);
+  gl.bindBuffer(gl.ARRAY_BUFFER, partVBO);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(pa));
+  gl.drawArrays(gl.TRIANGLES, 0, pa.length / 10);
+
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  pa.length = 0;
+  var amt = clamp01(0.28 + 1.25 * thr + 0.45 * (1 - clamp01((altAt(t) - 20) / 46)));
+  var k, p, age, u, rad, px, pyy, pz, agl;
+  for(k = 0; k < DUST.length; k++){
+    p = DUST[k];
+    age = (t + p.t0) % p.life; u = age / p.life;
+    agl = p.ang + age * 0.05;
+    rad = p.r + age * 1.7;
+    px = 18 + Math.cos(agl) * rad;
+    pz = Math.sin(agl) * rad * 0.82;
+    pyy = p.h + age * 0.28 + Math.sin(agl * 3.1) * 0.3;
+    pushP(px, pyy, pz, p.size + age * 1.2, 0.76, 0.705, 0.655, Math.sin(Math.PI * u) * p.a * amt);
+  }
+  for(k = 0; k < EXH.length; k++){
+    p = EXH[k];
+    age = (t + p.t0) % p.life;
+    var ts = t - age, sold = 0;
+    while(ts < 0){ ts += DURATION; sold = 1; }
+    var thrS = throttleAt(ts);
+    if(thrS < 0.05 || sold) continue;
+    var st = bstate(ts);
+    var nx = st.x, ny = st.y - 1.0, nz = st.z;
+    var fall = 37 * age - 6.2 * age * age;
+    var yy = ny - fall, pen = 1.1 - yy, sx2, sz2;
+    if(pen > 0){
+      var spread = 1.3 + pen * 0.55 + age * 2.5;
+      var sw = p.ang + age * 0.45;
+      sx2 = nx + Math.cos(sw) * spread; sz2 = nz + Math.sin(sw) * spread;
+      yy = 1.1 + Math.min(pen * 0.10, 3.5) + age * 0.45;
+    }else{
+      sx2 = nx + Math.cos(p.ang) * (0.8 + age * 0.5);
+      sz2 = nz + Math.sin(p.ang) * (0.8 + age * 0.5);
+    }
+    u = age / p.life;
+    var warm = Math.max(0, 1 - age * 2.0);
+    pushP(sx2, yy, sz2, (2.2 + age * 4.2) * p.size,
+      0.66 + 0.30 * warm, 0.62 + 0.15 * warm, 0.605 + 0.02 * warm,
+      clamp01(u * 7.0) * (1 - u) * (1 - u) * 0.15 * clamp01(thrS * 1.3));
+  }
+  var vestate = bstate(t);
+  for(k = 0; k < VAP.length; k++){
+    p = VAP[k];
+    age = (t + p.t0) % p.life; u = age / p.life;
+    var rr2 = 4.85 + age * p.drift;
+    px = vestate.x + Math.cos(p.ang) * rr2;
+    pz = vestate.z + Math.sin(p.ang) * rr2;
+    pyy = vestate.y + p.y + age * 0.5 - age * age * 0.35;
+    pushP(px, pyy, pz, (1.3 + age * 1.7) * p.size, 0.84, 0.84, 0.88,
+      Math.sin(Math.PI * u) * 0.022 * (0.55 + 0.45 * thr));
+  }
+  gl.useProgram(progPart.p);
+  uM(progPart, 'uProj', proj); uM(progPart, 'uView', view);
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(pa));
+  gl.drawArrays(gl.TRIANGLES, 0, pa.length / 10);
+  gl.disable(gl.BLEND);
+  gl.depthMask(true);
+
+  if(fboScene.ok && fboA.ok && fboB.ok){
+    var bw = Math.max(2, W >> 2), bh = Math.max(2, H >> 2);
+    gl.disable(gl.DEPTH_TEST);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fboA.fb);
+    gl.viewport(0, 0, bw, bh);
+    gl.useProgram(progBright.p);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboScene.tex);
+    gl.uniform1i(progBright.u.uTex, 0);
+    gl.bindVertexArray(emptyVAO);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fboB.fb);
+    gl.useProgram(progBlur.p);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboA.tex);
+    gl.uniform1i(progBlur.u.uTex, 0);
+    gl.uniform2f(progBlur.u.uDir, 1 / bw, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fboA.fb);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboB.tex);
+    gl.uniform2f(progBlur.u.uDir, 0, 1 / bh);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, W, H);
+    gl.useProgram(progPost.p);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboScene.tex);
+    gl.uniform1i(progPost.u.uScene, 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, fboA.tex);
+    gl.uniform1i(progPost.u.uBloom, 1);
+    u1(progPost, 'uFade', fadeAt(t));
+    u1(progPost, 'uTime', t);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }else{
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, W, H);
+    gl.disable(gl.DEPTH_TEST);
+    gl.useProgram(progPost.p);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, fboScene.tex);
+    gl.uniform1i(progPost.u.uScene, 0);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, fboScene.tex);
+    gl.uniform1i(progPost.u.uBloom, 1);
+    u1(progPost, 'uFade', fadeAt(t));
+    u1(progPost, 'uTime', t);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+  gl.enable(gl.DEPTH_TEST);
+}
+
+/* ================= loop / ui ================= */
+var tNow = 0, paused = false, lastMs = 0, started = false;
+function loop(now){
+  requestAnimationFrame(loop);
+  if(!lastMs) lastMs = now;
+  var dt = Math.min(0.08, (now - lastMs) / 1000);
+  lastMs = now;
+  if(!paused) tNow = (tNow + dt) % DURATION;
+  render(tNow);
+  if(barEl) barEl.style.width = (tNow / DURATION * 100).toFixed(2) + '%';
+  if(!started){
+    started = true;
+    if(loadEl){ loadEl.style.opacity = '0'; setTimeout(function(){ if(loadEl && loadEl.parentNode) loadEl.parentNode.removeChild(loadEl); }, 1200); }
+  }
+}
+btnPlay.addEventListener('click', function(){
+  paused = !paused;
+  btnPlay.textContent = paused ? 'Play' : 'Pause';
+});
+btnReplay.addEventListener('click', function(){
+  tNow = 0; paused = false; lastMs = 0;
+  btnPlay.textContent = 'Pause';
+});
+window.demo = {
+  setTime: function(v){ tNow = ((v % DURATION) + DURATION) % DURATION; paused = true; if(btnPlay) btnPlay.textContent = 'Play'; render(tNow); },
+  play: function(){ paused = false; lastMs = 0; if(btnPlay) btnPlay.textContent = 'Pause'; },
+  pause: function(){ paused = true; if(btnPlay) btnPlay.textContent = 'Play'; },
+  restart: function(){ tNow = 0; paused = false; lastMs = 0; if(btnPlay) btnPlay.textContent = 'Pause'; },
+  phase: function(){ return phaseName(tNow); },
+  state: function(){
+    return {
+      time: Math.round(tNow * 100) / 100,
+      phase: phaseName(tNow),
+      paused: paused,
+      altitude: Math.round(altAt(tNow) * 100) / 100,
+      throttle: Math.round(throttleAt(tNow) * 100) / 100,
+      armDeg: Math.round(armAngle(tNow) / DEG * 100) / 100,
+      catchHeight: CATCH_Y
+    };
+  }
+};
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

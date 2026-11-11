@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Event Horizon — an interactive black hole</title>
+<style>
+  :root{
+    --ink:#f2e8db;
+    --dim:rgba(242,232,219,.52);
+    --line:rgba(255,255,255,.13);
+    --glass:rgba(12,12,16,.52);
+    --accent:#ffb27a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#000;overflow:hidden}
+  body{
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  #bh{position:fixed;inset:0;width:100%;height:100%;display:block;background:#000;touch-action:none;cursor:grab}
+  #bh.dragging{cursor:grabbing}
+
+  .hud{
+    position:fixed;inset:0;pointer-events:none;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:clamp(16px,2.6vw,34px);
+  }
+  .hud header h1{
+    margin:0;font-size:clamp(13px,1.4vw,15px);font-weight:600;
+    letter-spacing:.34em;text-transform:uppercase;
+    color:rgba(255,240,228,.9);
+    text-shadow:0 0 18px rgba(255,150,70,.25);
+  }
+  .hud header p{
+    margin:6px 0 0;font-size:11.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--dim);
+  }
+  .hud footer{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:16px;flex-wrap:wrap;
+  }
+  .hint{margin:0;font-size:11.5px;letter-spacing:.09em;color:var(--dim);line-height:1.6}
+  .panel{
+    pointer-events:auto;display:flex;align-items:center;gap:6px;
+    padding:7px;border-radius:999px;
+    background:var(--glass);
+    border:1px solid var(--line);
+    backdrop-filter:blur(12px) saturate(120%);
+    -webkit-backdrop-filter:blur(12px) saturate(120%);
+    box-shadow:0 12px 40px rgba(0,0,0,.55);
+  }
+  .panel button{
+    appearance:none;border:1px solid transparent;border-radius:999px;
+    background:rgba(255,255,255,.055);
+    color:var(--ink);font:inherit;font-size:12px;letter-spacing:.03em;
+    padding:8px 14px;cursor:pointer;white-space:nowrap;
+    transition:background .16s ease,transform .16s ease;
+  }
+  .panel button:hover{background:rgba(255,255,255,.12)}
+  .panel button:active{transform:translateY(1px)}
+  .panel button:focus-visible{outline:1px solid var(--accent);outline-offset:2px}
+  .slider{display:flex;align-items:center;gap:8px;padding:0 12px 0 8px}
+  .slider span{
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dim);white-space:nowrap;
+  }
+  .slider input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:clamp(84px,12vw,130px);height:18px;background:transparent;cursor:pointer;
+  }
+  .slider input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:rgba(255,255,255,.18)}
+  .slider input[type=range]::-moz-range-track{height:3px;border-radius:2px;background:rgba(255,255,255,.18)}
+  .slider input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:13px;height:13px;margin-top:-5px;border-radius:50%;
+    background:var(--accent);border:none;box-shadow:0 0 10px rgba(255,150,80,.7);
+  }
+  .slider input[type=range]::-moz-range-thumb{
+    width:13px;height:13px;border-radius:50%;background:var(--accent);border:none;
+    box-shadow:0 0 10px rgba(255,150,80,.7);
+  }
+  .slider output{font-size:11px;font-variant-numeric:tabular-nums;color:var(--dim);min-width:3.1em;text-align:right}
+
+  #err{
+    position:fixed;inset:0;display:none;place-items:center;padding:24px;text-align:center;
+    background:radial-gradient(60% 60% at 50% 45%,#0b0a0e,#000 75%);
+  }
+  body.is-error #err{display:grid}
+  body.is-error .panel{display:none}
+  #err h2{font-size:14px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 10px;font-weight:600}
+  #err p{margin:0;font-size:13px;line-height:1.6;color:var(--dim);max-width:46ch}
+
+  @media (max-width:700px){
+    .panel{width:100%;justify-content:space-between;flex-wrap:wrap;border-radius:18px}
+    .hint{order:2;width:100%}
+  }
+</style>
+</head>
+<body>
+<canvas id="bh" aria-label="Interactive black hole visualization"></canvas>
+
+<div class="hud">
+  <header>
+    <h1>Event Horizon</h1>
+    <p>An artistic black-hole study</p>
+  </header>
+  <footer>
+    <p class="hint">Drag to orbit &middot; scroll or pinch to zoom</p>
+    <div class="panel">
+      <button id="btnPause" type="button" aria-pressed="false">Pause</button>
+      <button id="btnReset" type="button">Reset view</button>
+      <label class="slider" for="brightness">
+        <span>Disk brightness</span>
+        <input id="brightness" type="range" min="0.25" max="2" step="0.01" value="1" />
+        <output id="brightVal" for="brightness">100%</output>
+      </label>
+    </div>
+  </footer>
+</div>
+
+<div id="err" role="alert">
+  <div>
+    <h2>Renderer unavailable</h2>
+    <p id="errMsg">This visualization needs WebGL 2, which is not available in this browser or is disabled. Try a current version of Chrome, Edge, Firefox or Safari with hardware acceleration enabled.</p>
+  </div>
+</div>
+
+<script id="frag" type="x-shader/x-fragment">#version 300 es
+precision highp float;
+
+out vec4 fragColor;
+
+uniform vec2  uRes;
+uniform float uTime;
+uniform float uYaw;
+uniform float uPitch;
+uniform float uDist;
+uniform float uBright;
+uniform float uFocal;
+
+const float RS   = 1.10;   // black-hole silhouette radius
+const float RIN  = 1.72;   // disk inner edge
+const float ROUT = 4.05;   // disk outer edge
+
+float hash21(vec2 p){
+  p = fract(p * vec2(123.34, 456.21));
+  p += dot(p, p + 45.32);
+  return fract(p.x * p.y);
+}
+
+vec3 hash33(vec3 p){
+  p = fract(p * vec3(0.1031, 0.1030, 0.0973));
+  p += dot(p, p.yxz + 33.33);
+  return fract((p.xxy + p.yxx) * p.zyx);
+}
+
+float vnoise(vec2 p){
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  float a = hash21(i);
+  float b = hash21(i + vec2(1.0, 0.0));
+  float c = hash21(i + vec2(0.0, 1.0));
+  float d = hash21(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float fbm2(vec2 p){
+  float s = 0.55 * vnoise(p);
+  p = mat2(1.6, 1.2, -1.2, 1.6) * p;
+  s += 0.28 * vnoise(p);
+  p = mat2(1.6, 1.2, -1.2, 1.6) * p;
+  s += 0.14 * vnoise(p);
+  return s * 1.03;
+}
+
+vec3 starField(vec3 rd){
+  vec3 acc = vec3(0.0);
+  for (int k = 0; k < 2; k++){
+    float scale = (k == 0) ? 55.0 : 105.0;
+    vec3 p = rd * scale;
+    vec3 id = floor(p);
+    vec3 f = fract(p);
+    vec3 h = hash33(id + vec3(float(k) * 19.7, 3.1, 7.9));
+    vec3 c = vec3(0.5) + (h - 0.5) * 0.62;
+    float d = length(f - c);
+    float size = (k == 0) ? 0.048 : 0.034;
+    float s = smoothstep(size, 0.0, d);
+    float br = 0.22 + 0.95 * pow(h.y, 4.0);
+    if (k == 1) br *= 0.55;
+    vec3 tint = mix(vec3(0.68, 0.78, 1.0), vec3(1.0, 0.86, 0.68), h.x);
+    acc += tint * s * br;
+  }
+  return acc * 1.05;
+}
+
+// brightness profile + colour of the disk at a point in its plane
+vec3 diskRadiance(vec2 p, vec3 ro, out float alpha){
+  float r = length(p);
+  float rn = clamp((r - RIN) / (ROUT - RIN), 0.0, 1.0);
+  float ang = atan(p.y, p.x);
+
+  // differential (Keplerian-like) rotation: inner bands sweep faster
+  float om = 1.15 * pow(RIN / max(r, RIN), 1.5);
+  float a = ang - om * uTime;
+  vec2 q = vec2(cos(a), sin(a)) * r;
+
+  float n1 = fbm2(q * 1.15);
+  float n2 = vnoise(q * 3.3 + vec2(11.0, 5.0));
+  float tex = 0.40 + 0.92 * n1 + 0.22 * n2;
+  tex *= 0.84 + 0.16 * sin(r * 9.0 - 5.0 * n1 + 2.0 * a);
+
+  float inner = smoothstep(RIN, RIN + 0.07, r);
+  float outer = 1.0 - smoothstep(ROUT - 0.75, ROUT, r);
+  float e = (0.85 * exp(-rn * 2.6) + 2.90 * exp(-rn * 16.0)) * inner * outer;
+
+  // orbital velocity of the pattern, used for the left/right brightness asymmetry
+  vec3 P = vec3(p.x, 0.0, p.y);
+  vec3 vel = normalize(vec3(-p.y, 0.0, p.x) + vec3(1e-4, 0.0, 0.0));
+  vec3 vdir = normalize(ro - P);
+  float dop = dot(vel, vdir);
+  float beam = pow(clamp(1.0 + 0.45 * dop, 0.05, 2.0), 2.0);
+
+  vec3 c1 = vec3(1.00, 0.98, 0.93);
+  vec3 c2 = vec3(1.00, 0.66, 0.28);
+  vec3 c3 = vec3(0.62, 0.20, 0.05);
+  vec3 col = mix(c1, c2, smoothstep(0.0, 0.26, rn));
+  col = mix(col, c3, smoothstep(0.30, 0.85, rn));
+  col = mix(col, vec3(0.88, 0.93, 1.00), clamp(dop, 0.0, 1.0) * 0.20);
+
+  float I = e * tex * beam * uBright * 1.25;
+  alpha = clamp(I * 1.40, 0.0, 1.0);
+  return col * I;
+}
+
+void main(){
+  float m  = min(uRes.x, uRes.y);
+  vec2 uv  = (gl_FragCoord.xy - 0.5 * uRes) / m;
+
+  float cp = cos(uPitch), sp = sin(uPitch);
+  vec3 ro = vec3(sin(uYaw) * cp, sp, cos(uYaw) * cp) * uDist;
+  vec3 ww = normalize(-ro);
+  vec3 uu = normalize(cross(ww, vec3(0.0, 1.0, 0.0)));
+  vec3 vv = cross(uu, ww);
+  vec3 rd = normalize(uv.x * uu + uv.y * vv + uFocal * ww);
+
+  // background: near-black with a restrained star field
+  vec3 col = vec3(0.0035, 0.0042, 0.0085);
+  col += vec3(0.0055, 0.0042, 0.0032) * exp(-abs(rd.y) * 9.0);
+  col += starField(rd);
+
+  // black-hole silhouette (analytic sphere)
+  float tS = -1.0;
+  float bq = dot(ro, rd);
+  float cq = dot(ro, ro) - RS * RS;
+  float disc = bq * bq - cq;
+  if (disc > 0.0) {
+    float t0 = -bq - sqrt(disc);
+    if (t0 > 0.0) tS = t0;
+  }
+
+  // accretion disk: the plane y = 0
+  float tD = -1.0;
+  if (abs(rd.y) > 1e-4) {
+    float t = -ro.y / rd.y;
+    if (t > 0.0) tD = t;
+  }
+
+  float frontA = 0.0;
+  vec3 diskRGB = vec3(0.0);
+  if (tD > 0.0) {
+    vec2 hp = vec2(ro.x + rd.x * tD, ro.z + rd.z * tD);
+    diskRGB = diskRadiance(hp, ro, frontA);
+  }
+
+  if (tS > 0.0) col = vec3(0.0);
+  if (tD > 0.0 && (tS < 0.0 || tD < tS)) {
+    col = col * (1.0 - frontA) + diskRGB;
+  }
+
+  // screen-space polar frame around the (centred) hole
+  float sRad = uFocal * RS / sqrt(max(uDist * uDist - RS * RS, 1e-3));
+  float sr = length(uv);
+  float u  = sr / max(sRad, 1e-5);
+  float sa = atan(uv.y, uv.x);
+  float up01 = uv.y / max(sr, 1e-5);
+  float k = u - 1.0;
+
+  // simple lensed far-side arc: the far side of the disk lifted over the shadow
+  float prof = smoothstep(0.0, 0.05, k) * exp(-max(k, 0.0) * 3.4) * (1.0 - smoothstep(0.44, 0.86, k));
+  float aw = mix(0.10, 1.0, smoothstep(-0.45, 0.72, up01));
+  float srcR = mix(RIN * 1.02, ROUT * 0.92, clamp(k / 0.72, 0.0, 1.0));
+  float aAng = sa - 1.2 * uTime * pow(RIN / srcR, 1.5);
+  vec2 aq = vec2(cos(aAng), sin(aAng)) * srcR;
+  float atex = 0.58 + 0.52 * vnoise(aq * 2.1) + 0.16 * sin(aAng * 6.0 + srcR * 4.0);
+  vec3 arcCol = mix(vec3(1.00, 0.95, 0.88), vec3(1.00, 0.60, 0.22), clamp(k / 0.65, 0.0, 1.0));
+  col += arcCol * (prof * aw * atex * 1.65 * uBright) * (1.0 - 0.85 * frontA);
+
+  // thin luminous ring hugging the silhouette
+  float pixU = 1.0 / max(m * sRad, 1e-5);
+  float rw = max(0.0105, pixU * 1.25);
+  float rq = k / rw;
+  float ring = exp(-rq * rq);
+  col += vec3(1.00, 0.93, 0.84) * ring * 2.05 * (0.80 + 0.30 * aw);
+  col += vec3(1.00, 0.66, 0.34) * 0.30 * exp(-max(k, 0.0) * 8.0) * smoothstep(0.0, 0.03, k);
+
+  // tone map + vignette
+  col = max(col, vec3(0.0));
+  col = (col * (2.51 * col + 0.03)) / (col * (2.43 * col + 0.59) + 0.14);
+  float vig = smoothstep(1.30, 0.22, length(uv * vec2(0.92, 1.06)));
+  col *= mix(0.72, 1.0, vig);
+  col = pow(clamp(col, 0.0, 1.0), vec3(0.4545));
+  col += (hash21(gl_FragCoord.xy + 0.5) - 0.5) * (1.0 / 255.0);
+
+  fragColor = vec4(col, 1.0);
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+
+  var canvas = document.getElementById('bh');
+  var errBox = document.getElementById('err');
+  var errMsg = document.getElementById('errMsg');
+
+  function fail(message) {
+    document.body.classList.add('is-error');
+    errMsg.textContent = message;
+    errBox.hidden = false;
+  }
+
+  var gl = null;
+  try {
+    gl = canvas.getContext('webgl2', {
+      alpha: false,
+      antialias: false,
+      depth: false,
+      stencil: false,
+      premultipliedAlpha: false,
+      preserveDrawingBuffer: true,
+      powerPreference: 'high-performance'
+    });
+  } catch (e) {
+    gl = null;
+  }
+
+  if (!gl) {
+    fail('This visualization needs WebGL 2, which is not available in this browser or is disabled. Try a current version of Chrome, Edge, Firefox or Safari with hardware acceleration enabled.');
+    return;
+  }
+
+  var VERT = [
+    '#version 300 es',
+    'void main(){',
+    '  vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));',
+    '  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var FRAG = document.getElementById('frag').textContent.trim();
+
+  function compileShader(type, source) {
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      var log = gl.getShaderInfoLog(shader) || 'unknown shader error';
+      gl.deleteShader(shader);
+      throw new Error(log);
+    }
+    return shader;
+  }
+
+  var program;
+  try {
+    var vs = compileShader(gl.VERTEX_SHADER, VERT);
+    var fs = compileShader(gl.FRAGMENT_SHADER, FRAG);
+    program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      throw new Error(gl.getProgramInfoLog(program) || 'program link failed');
+    }
+  } catch (e) {
+    fail('The shader could not be built, so the scene cannot be drawn. (' + (e && e.message ? String(e.message).slice(0, 220) : 'unknown error') + ')');
+    return;
+  }
+
+  var U = {
+    res: gl.getUniformLocation(program, 'uRes'),
+    time: gl.getUniformLocation(program, 'uTime'),
+    yaw: gl.getUniformLocation(program, 'uYaw'),
+    pitch: gl.getUniformLocation(program, 'uPitch'),
+    dist: gl.getUniformLocation(program, 'uDist'),
+    bright: gl.getUniformLocation(program, 'uBright'),
+    focal: gl.getUniformLocation(program, 'uFocal')
+  };
+
+  var vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  gl.useProgram(program);
+  gl.disable(gl.DEPTH_TEST);
+  gl.disable(gl.BLEND);
+
+  var FOV = 50 * Math.PI / 180;
+  var FOCAL = 0.5 / Math.tan(FOV * 0.5);
+
+  var HOME = { yaw: 0.35, pitch: 0.56, dist: 8.0 };
+  var LIM = { pitchMin: 0.10, pitchMax: 1.30, distMin: 5.8, distMax: 16.0 };
+
+  var view = { yaw: HOME.yaw, pitch: HOME.pitch, dist: HOME.dist };
+  var brightness = 1.0;
+  var paused = false;
+  var elapsed = 0;
+  var dirty = true;
+  var now = function () {
+    return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  };
+  var last = now();
+
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var w = Math.max(2, Math.round(canvas.clientWidth * dpr));
+    var h = Math.max(2, Math.round(canvas.clientHeight * dpr));
+    var cap = 2400000;
+    var k = Math.min(1, Math.sqrt(cap / (w * h)));
+    w = Math.max(2, Math.round(w * k));
+    h = Math.max(2, Math.round(h * k));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+      dirty = true;
+    }
+  }
+
+  function render() {
+    gl.useProgram(program);
+    gl.bindVertexArray(vao);
+    gl.uniform2f(U.res, canvas.width, canvas.height);
+    gl.uniform1f(U.time, elapsed);
+    gl.uniform1f(U.yaw, view.yaw);
+    gl.uniform1f(U.pitch, view.pitch);
+    gl.uniform1f(U.dist, view.dist);
+    gl.uniform1f(U.bright, brightness);
+    gl.uniform1f(U.focal, FOCAL);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  // ---- pointer interaction: orbit + pinch zoom ----
+  var pointers = new Map();
+  var pinchStart = 0;
+  var distStart = 0;
+
+  function spread() {
+    var vals = Array.from(pointers.values());
+    if (vals.length < 2) return 0;
+    var dx = vals[0].x - vals[1].x;
+    var dy = vals[0].y - vals[1].y;
+    return Math.hypot(dx, dy);
+  }
+
+  canvas.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (canvas.setPointerCapture) {
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    }
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    canvas.classList.add('dragging');
+    if (pointers.size === 2) {
+      pinchStart = spread();
+      distStart = view.dist;
+    }
+  });
+
+  canvas.addEventListener('pointermove', function (e) {
+    var p = pointers.get(e.pointerId);
+    if (!p) return;
+    var dx = e.clientX - p.x;
+    var dy = e.clientY - p.y;
+    p.x = e.clientX;
+    p.y = e.clientY;
+
+    if (pointers.size === 1) {
+      view.yaw -= dx * 0.005;
+      view.pitch = clamp(view.pitch + dy * 0.004, LIM.pitchMin, LIM.pitchMax);
+      dirty = true;
+    } else if (pointers.size === 2 && pinchStart > 0) {
+      var s = spread();
+      if (s > 1) {
+        view.dist = clamp(distStart * (pinchStart / s), LIM.distMin, LIM.distMax);
+        dirty = true;
+      }
+    }
+  });
+
+  function endPointer(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) pinchStart = 0;
+    if (pointers.size === 0) canvas.classList.remove('dragging');
+  }
+
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+  canvas.addEventListener('lostpointercapture', endPointer);
+
+  canvas.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    var d = e.deltaY * (e.deltaMode === 1 ? 16 : (e.deltaMode === 2 ? 400 : 1));
+    view.dist = clamp(view.dist * Math.exp(d * 0.0012), LIM.distMin, LIM.distMax);
+    dirty = true;
+  }, { passive: false });
+
+  // ---- controls ----
+  var btnPause = document.getElementById('btnPause');
+  var btnReset = document.getElementById('btnReset');
+  var slider = document.getElementById('brightness');
+  var sliderOut = document.getElementById('brightVal');
+
+  btnPause.addEventListener('click', function () {
+    paused = !paused;
+    btnPause.textContent = paused ? 'Resume' : 'Pause';
+    btnPause.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    last = now();
+    dirty = true;
+  });
+
+  btnReset.addEventListener('click', function () {
+    view.yaw = HOME.yaw;
+    view.pitch = HOME.pitch;
+    view.dist = HOME.dist;
+    dirty = true;
+  });
+
+  function applyBrightness() {
+    brightness = parseFloat(slider.value);
+    if (!isFinite(brightness)) brightness = 1.0;
+    sliderOut.textContent = Math.round(brightness * 100) + '%';
+    dirty = true;
+  }
+
+  slider.addEventListener('input', applyBrightness);
+  slider.addEventListener('change', applyBrightness);
+
+  // ---- loop: elapsed time drives the disk, pause freezes the scene clock ----
+  function frame(t) {
+    requestAnimationFrame(frame);
+    var dt = (t - last) / 1000;
+    last = t;
+    if (!isFinite(dt) || dt < 0) dt = 0;
+    if (dt > 0.05) dt = 0.05;
+    if (!paused) {
+      elapsed += dt;
+      dirty = true;
+    }
+    if (dirty) {
+      render();
+      dirty = false;
+    }
+  }
+
+  canvas.addEventListener('webglcontextlost', function (e) {
+    e.preventDefault();
+    fail('The graphics context was lost. Reload the page to restore the visualization.');
+  });
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', resize);
+  document.addEventListener('visibilitychange', function () {
+    last = now();
+    dirty = true;
+  });
+
+  applyBrightness();
+  resize();
+  render();
+  dirty = false;
+  requestAnimationFrame(frame);
+}());
+</script>
+</body>
+</html>

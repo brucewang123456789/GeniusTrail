@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WORMHOLE — Geometry of a Passage</title>
+<style>
+  :root {
+    --bg: #04060d;
+    --ink: #dce8f3;
+    --dim: #93a8bd;
+    --accent: #7fd6ef;
+    --stroke: rgba(126, 178, 214, 0.18);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--ink);
+    font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  #canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+  #canvas.dragging { cursor: grabbing; }
+  #canvas.locked { cursor: default; }
+  .vignette {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(132% 108% at 55% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.36) 78%, rgba(0,0,0,0.68) 100%);
+  }
+  .caption {
+    position: fixed; z-index: 2; top: 14px; right: 16px; max-width: 64vw;
+    font-size: 11px; letter-spacing: 0.1em; line-height: 1.45;
+    color: rgba(188, 209, 232, 0.66); text-align: right;
+    padding: 5px 10px; border-radius: 7px;
+    background: rgba(4, 7, 14, 0.40);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+  }
+  .panel {
+    position: fixed; z-index: 3; left: 22px; top: 50%; transform: translateY(-50%);
+    width: 284px; max-height: calc(100vh - 32px); overflow-y: auto;
+    padding: 17px 17px 15px; border-radius: 16px;
+    background: linear-gradient(180deg, rgba(10, 16, 28, 0.84), rgba(6, 10, 19, 0.8));
+    border: 1px solid var(--stroke);
+    box-shadow: 0 26px 64px -22px rgba(0,0,0,0.92), inset 0 1px 0 rgba(180,220,255,0.06);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    backdrop-filter: blur(14px) saturate(120%);
+    scrollbar-width: thin;
+  }
+  .head h1 {
+    margin: 0; font-size: 18px; font-weight: 500;
+    letter-spacing: 0.3em; text-indent: 0.06em; color: #eaf5ff;
+  }
+  .head .sub {
+    margin: 3px 0 0; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(127, 214, 239, 0.78);
+  }
+  .head .desc {
+    margin: 10px 0 0; font-size: 11.5px; line-height: 1.55; color: var(--dim);
+  }
+  .row { display: flex; gap: 8px; margin-top: 10px; }
+  button {
+    flex: 1 1 0; min-width: 0; font: inherit; font-size: 12.5px; letter-spacing: 0.03em;
+    color: var(--ink); background: rgba(126, 178, 214, 0.06);
+    border: 1px solid rgba(126, 178, 214, 0.22); border-radius: 9px;
+    padding: 8px 6px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+  }
+  button:hover:not(:disabled) { background: rgba(126, 178, 214, 0.14); border-color: rgba(146, 214, 240, 0.45); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button[aria-pressed="true"] { background: rgba(127, 214, 239, 0.15); border-color: rgba(127, 214, 239, 0.48); color: #ecfaff; }
+  button:disabled { opacity: 0.38; cursor: not-allowed; }
+  #journeyBtn { flex: 1 1 100%; font-weight: 600; letter-spacing: 0.06em; }
+  .field { margin-top: 13px; }
+  .field .lbl {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim);
+    margin-bottom: 4px;
+  }
+  input[type="range"] {
+    width: 100%; height: 18px; margin: 0; accent-color: #6fd0ef; cursor: pointer;
+    background: transparent;
+  }
+  input[type="range"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  input[type="range"]:disabled { opacity: 0.4; cursor: not-allowed; }
+  output { font-variant-numeric: tabular-nums; color: #d3ecf8; letter-spacing: 0.02em; }
+  .hud { margin-top: 12px; }
+  .hud[hidden] { display: none; }
+  .hud .txt {
+    display: flex; justify-content: space-between; gap: 8px;
+    font-size: 9.5px; letter-spacing: 0.13em; text-transform: uppercase; color: var(--dim);
+  }
+  .bar { margin-top: 6px; height: 3px; border-radius: 2px; background: rgba(126, 178, 214, 0.16); overflow: hidden; }
+  .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6fd0ef, #b79bf5); }
+  .sr {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  .error {
+    position: fixed; z-index: 10; inset: 0; display: grid; place-items: center;
+    background: rgba(3, 5, 10, 0.94); padding: 24px;
+  }
+  .error[hidden] { display: none; }
+  .error .card {
+    width: 100%; max-width: 580px; padding: 22px; border-radius: 14px;
+    border: 1px solid rgba(224, 132, 132, 0.34); background: rgba(18, 11, 16, 0.92);
+    box-shadow: 0 30px 70px -30px #000;
+  }
+  .error h2 { margin: 0 0 8px; font-size: 16px; letter-spacing: 0.08em; color: #ffd7d7; }
+  .error p { margin: 0; font-size: 12.5px; line-height: 1.55; color: #d8c3c6; }
+  .error pre {
+    margin: 12px 0 0; max-height: 240px; overflow: auto; padding: 10px 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px; line-height: 1.5; color: #ffdede;
+    background: rgba(0, 0, 0, 0.42); border-radius: 8px; white-space: pre-wrap; word-break: break-word;
+  }
+  noscript p { padding: 24px; font-size: 13px; color: #cbd9e6; }
+  @media (max-width: 760px), (max-height: 620px) {
+    .panel {
+      left: 10px; right: 10px; bottom: 10px; top: auto; width: auto; transform: none;
+      padding: 13px 14px; max-height: 54vh;
+    }
+    .head h1 { font-size: 15px; letter-spacing: 0.24em; }
+    .head .sub { font-size: 9.5px; letter-spacing: 0.18em; }
+    .head .desc { display: none; }
+    .caption { top: 8px; right: 10px; left: 10px; max-width: none; text-align: center; font-size: 10px; }
+    button { padding: 7px 6px; font-size: 12px; }
+    .field { margin-top: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas" role="img" aria-label="Embedding-diagram surface of an Ellis wormhole: two broad mouths joined by a narrow throat, rendered as a shaded three-dimensional mesh with a coordinate grid."></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="caption" id="caption">Ellis spatial embedding • Illustrative traversal.</div>
+
+<section class="panel" id="panel" aria-labelledby="title">
+  <header class="head">
+    <h1 id="title">WORMHOLE</h1>
+    <p class="sub">Geometry of a Passage</p>
+    <p class="desc">Spatial-slice embedding&nbsp; r = a·cosh(z/a) swept about the throat. Drag to orbit · scroll or pinch to zoom.</p>
+  </header>
+  <div class="row">
+    <button id="journeyBtn" type="button">Begin Journey</button>
+  </div>
+  <div class="row">
+    <button id="pauseBtn" type="button" aria-pressed="false">Pause</button>
+    <button id="resetBtn" type="button" title="Return to the fitted exterior view and end any journey">Reset View</button>
+  </div>
+  <div class="field">
+    <div class="lbl"><label for="radius">Throat radius a</label><output id="radiusOut" for="radius">1.00</output></div>
+    <input id="radius" type="range" min="0.65" max="1.5" step="0.01" value="1.00">
+  </div>
+  <div class="row">
+    <button id="cutawayBtn" type="button" aria-pressed="true">Cutaway: On</button>
+    <button id="gridBtn" type="button" aria-pressed="true">Grid: On</button>
+  </div>
+  <div class="hud" id="hud" hidden>
+    <div class="txt"><span>Illustrative camera tour</span><span id="hudPct">0%</span></div>
+    <div class="bar"><div class="fill" id="hudFill"></div></div>
+  </div>
+</section>
+
+<div class="error" id="errorPanel" hidden role="alertdialog" aria-labelledby="errorTitle">
+  <div class="card">
+    <h2 id="errorTitle">WebGL2 unavailable</h2>
+    <p id="errorLead">This exhibit needs a WebGL2 context. The technical detail is also printed to the browser console.</p>
+    <pre id="errorBody"></pre>
+    <div class="row"><button id="reloadBtn" type="button" style="flex:0 0 auto;padding:8px 16px">Reload page</button></div>
+  </div>
+</div>
+
+<p class="sr" id="live" aria-live="polite"></p>
+<noscript><p>This exhibit renders an Ellis wormhole embedding surface with WebGL2 and needs JavaScript enabled.</p></noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------------------------------------------------------------- DOM */
+  var canvas = document.getElementById('canvas');
+  var errorPanel = document.getElementById('errorPanel');
+  var errorTitle = document.getElementById('errorTitle');
+  var errorBody = document.getElementById('errorBody');
+  var btnJourney = document.getElementById('journeyBtn');
+  var btnPause = document.getElementById('pauseBtn');
+  var btnReset = document.getElementById('resetBtn');
+  var btnCut = document.getElementById('cutawayBtn');
+  var btnGrid = document.getElementById('gridBtn');
+  var radiusInput = document.getElementById('radius');
+  var radiusOut = document.getElementById('radiusOut');
+  var hud = document.getElementById('hud');
+  var hudFill = document.getElementById('hudFill');
+  var hudPct = document.getElementById('hudPct');
+  var live = document.getElementById('live');
+
+  function fail(title, err) {
+    var detail = err && err.message ? err.message : String(err);
+    if (window.console && console.error) {
+      console.error('[' + title + '] ' + detail + (err && err.stack ? '\n' + err.stack : ''));
+    }
+    errorTitle.textContent = title;
+    errorBody.textContent = detail;
+    errorPanel.hidden = false;
+  }
+
+  document.getElementById('reloadBtn').addEventListener('click', function () { location.reload(); });
+
+  /* -------------------------------------------------------------- maths */
+  var FOV_Y = 45 * Math.PI / 180;
+  var NEAR = 0.03, FAR = 120;
+  var TAU = Math.PI * 2;
+  var L_MIN = -6, L_MAX = 6;
+  var L_SEG = 160, PHI_SEG = 128;
+  var AZ_LINES = 24;
+  var TOUR_DURATION = 10.0;
+  var TRANSITION = 0.6;
+  var MIN_DIST = 7, MAX_DIST = 40;
+  var POLAR_MIN = 0.15;
+  var A_MIN = 0.65, A_MAX = 1.5, A_DEF = 1.0;
+  var MAX_PIXELS = 2.5e6;
+  var MAX_DPR = 1.5;
+  var NOMINAL_CAM = [11, 7, 12];
+
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+  function smootherstep(u) { return u * u * u * (u * (u * 6 - 15) + 10); }
+  function round4(v) { return +v.toFixed(4); }
+  function norm3(v) { var n = Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]) || 1; return [v[0]/n, v[1]/n, v[2]/n]; }
+  function cross3(a, b) { return [a[1]*b[2] - a[2]*b[1], a[2]*b[0] - a[0]*b[2], a[0]*b[1] - a[1]*b[0]]; }
+
+  // Lens-shift offset so the exhibit clears the overlay panel instead of hiding behind it.
+  var comp = { x: 0, y: 0 };
+
+  function perspective(aspect) {
+    var f = 1 / Math.tan(FOV_Y / 2), nf = 1 / (NEAR - FAR);
+    var m = new Float32Array(16);
+    m[0] = f / aspect; m[5] = f; m[10] = (FAR + NEAR) * nf; m[11] = -1; m[14] = 2 * FAR * NEAR * nf;
+    m[8] = -comp.x;   // NDC x shift
+    m[9] = -comp.y;   // NDC y shift
+    return m;
+  }
+
+  function mat4Mul(a, b) {
+    var o = new Float32Array(16);
+    for (var c = 0; c < 4; c++) {
+      for (var r = 0; r < 4; r++) {
+        var s = 0;
+        for (var k = 0; k < 4; k++) s += a[k * 4 + r] * b[c * 4 + k];
+        o[c * 4 + r] = s;
+      }
+    }
+    return o;
+  }
+
+  function mat4Invert(m) {
+    var o = new Float32Array(16);
+    var a00=m[0],a01=m[1],a02=m[2],a03=m[3], a10=m[4],a11=m[5],a12=m[6],a13=m[7],
+        a20=m[8],a21=m[9],a22=m[10],a23=m[11], a30=m[12],a31=m[13],a32=m[14],a33=m[15];
+    var b00=a00*a11-a01*a10, b01=a00*a12-a02*a10, b02=a00*a13-a03*a10,
+        b03=a01*a12-a02*a11, b04=a01*a13-a03*a11, b05=a02*a13-a03*a12,
+        b06=a20*a31-a21*a30, b07=a20*a32-a22*a30, b08=a20*a33-a23*a30,
+        b09=a21*a32-a22*a31, b10=a21*a33-a23*a31, b11=a22*a33-a23*a32;
+    var det = b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06;
+    if (!det) return o;
+    det = 1 / det;
+    o[0]=(a11*b11-a12*b10+a13*b09)*det;
+    o[1]=(a02*b10-a01*b11-a03*b09)*det;
+    o[2]=(a31*b05-a32*b04+a33*b03)*det;
+    o[3]=(a22*b04-a21*b05-a23*b03)*det;
+    o[4]=(a12*b08-a10*b11-a13*b07)*det;
+    o[5]=(a00*b11-a02*b08+a03*b07)*det;
+    o[6]=(a32*b02-a30*b05-a33*b01)*det;
+    o[7]=(a20*b05-a22*b02+a23*b01)*det;
+    o[8]=(a10*b10-a11*b08+a13*b06)*det;
+    o[9]=(a01*b08-a00*b10-a03*b06)*det;
+    o[10]=(a30*b04-a31*b02+a33*b00)*det;
+    o[11]=(a21*b02-a20*b04-a23*b00)*det;
+    o[12]=(a11*b07-a10*b09-a12*b06)*det;
+    o[13]=(a00*b09-a01*b07+a02*b06)*det;
+    o[14]=(a31*b01-a30*b03-a32*b00)*det;
+    o[15]=(a20*b03-a21*b01+a22*b00)*det;
+    return o;
+  }
+
+  function quatFromMat3(m) {
+    var m00=m[0],m01=m[1],m02=m[2],m10=m[3],m11=m[4],m12=m[5],m20=m[6],m21=m[7],m22=m[8];
+    var tr = m00 + m11 + m22, s, x, y, z, w;
+    if (tr > 0) { s = Math.sqrt(tr + 1) * 2; w = 0.25 * s; x = (m21 - m12) / s; y = (m02 - m20) / s; z = (m10 - m01) / s; }
+    else if (m00 > m11 && m00 > m22) { s = Math.sqrt(1 + m00 - m11 - m22) * 2; w = (m21 - m12) / s; x = 0.25 * s; y = (m01 + m10) / s; z = (m02 + m20) / s; }
+    else if (m11 > m22) { s = Math.sqrt(1 + m11 - m00 - m22) * 2; w = (m02 - m20) / s; x = (m01 + m10) / s; y = 0.25 * s; z = (m12 + m21) / s; }
+    else { s = Math.sqrt(1 + m22 - m00 - m11) * 2; w = (m10 - m01) / s; x = (m02 + m20) / s; y = (m12 + m21) / s; z = 0.25 * s; }
+    var n = Math.sqrt(x*x + y*y + z*z + w*w) || 1;
+    return [x/n, y/n, z/n, w/n];
+  }
+
+  function quatFromLookAt(pos, target, up) {
+    var f = norm3([target[0]-pos[0], target[1]-pos[1], target[2]-pos[2]]);
+    var r = cross3(f, up);
+    if (Math.sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]) < 1e-6) r = cross3(f, [0, 0, 1]);
+    r = norm3(r);
+    var u = cross3(r, f);
+    return quatFromMat3([r[0], u[0], -f[0],  r[1], u[1], -f[1],  r[2], u[2], -f[2]]);
+  }
+
+  function quatSlerp(a, b, t) {
+    var ax=a[0], ay=a[1], az=a[2], aw=a[3];
+    var bx=b[0], by=b[1], bz=b[2], bw=b[3];
+    var dot = ax*bx + ay*by + az*bz + aw*bw;
+    if (dot < 0) { bx=-bx; by=-by; bz=-bz; bw=-bw; dot = -dot; }
+    var k0, k1;
+    if (dot > 0.9995) { k0 = 1 - t; k1 = t; }
+    else {
+      var theta = Math.acos(clamp(dot, -1, 1)), sn = Math.sin(theta);
+      k0 = Math.sin((1 - t) * theta) / sn; k1 = Math.sin(t * theta) / sn;
+    }
+    var x = ax*k0 + bx*k1, y = ay*k0 + by*k1, z = az*k0 + bz*k1, w = aw*k0 + bw*k1;
+    var n = Math.sqrt(x*x + y*y + z*z + w*w) || 1;
+    return [x/n, y/n, z/n, w/n];
+  }
+
+  function viewFromCamera(cam) {
+    var x = cam.q[0], y = cam.q[1], z = cam.q[2], w = cam.q[3];
+    var r00 = 1 - 2*(y*y + z*z), r01 = 2*(x*y - z*w), r02 = 2*(x*z + y*w);
+    var r10 = 2*(x*y + z*w), r11 = 1 - 2*(x*x + z*z), r12 = 2*(y*z - x*w);
+    var r20 = 2*(x*z - y*w), r21 = 2*(y*z + x*w), r22 = 1 - 2*(x*x + y*y);
+    var p = cam.p, m = new Float32Array(16);
+    m[0] = r00; m[4] = r10; m[8]  = r20;
+    m[1] = r01; m[5] = r11; m[9]  = r21;
+    m[2] = r02; m[6] = r12; m[10] = r22;
+    m[12] = -(r00*p[0] + r10*p[1] + r20*p[2]);
+    m[13] = -(r01*p[0] + r11*p[1] + r21*p[2]);
+    m[14] = -(r02*p[0] + r12*p[1] + r22*p[2]);
+    m[15] = 1;
+    return m;
+  }
+
+  /* ------------------------------------------------------------- shaders */
+  var SURF_VS = [
+    '#version 300 es',
+    'layout(location=0) in vec3 aPos;',
+    'layout(location=1) in vec3 aNrm;',
+    'layout(location=2) in vec2 aLP;',
+    'uniform mat4 uProj;',
+    'uniform mat4 uView;',
+    'out vec3 vPos;',
+    'out vec3 vNrm;',
+    'out vec2 vLP;',
+    'void main() {',
+    '  vPos = aPos; vNrm = aNrm; vLP = aLP;',
+    '  gl_Position = uProj * uView * vec4(aPos, 1.0);',
+    '}'
+  ].join('\n');
+
+  var SURF_FS = [
+    '#version 300 es',
+    'precision highp float;',
+    'in vec3 vPos;',
+    'in vec3 vNrm;',
+    'in vec2 vLP;',
+    'uniform vec3  uCamPos;',
+    'uniform float uTime;',
+    'uniform float uGridOn;',
+    'uniform float uCut;',
+    'uniform float uAlpha;',
+    'out vec4 outColor;',
+    'const float TAU = 6.28318530718;',
+    'vec3 aces(vec3 x) {',
+    '  x = max(x, vec3(0.0));',
+    '  return (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);',
+    '}',
+    'void main() {',
+    '  float l = vLP.x;',
+    '  float phi = vLP.y;',
+    // Camera-facing longitudinal cutaway: alpha is frozen once per frame in a uniform.
+    '  float thr = mix(1.0001, 0.86602540, uCut);',
+    '  if (cos(phi - uAlpha) > thr) discard;',
+    '',
+    '  vec3 N = normalize(vNrm);',
+    '  if (!gl_FrontFacing) N = -N;',
+    '  vec3 V = normalize(uCamPos - vPos);',
+    '  float ndv = clamp(dot(N, V), 0.0, 1.0);',
+    '',
+    '  float side = tanh(l * 0.5);',
+    '  vec3 tintPos = vec3(0.055, 0.320, 0.450);',
+    '  vec3 tintNeg = vec3(0.105, 0.040, 0.300);',
+    '  vec3 tint = mix(tintNeg, tintPos, 0.5 + 0.5 * side);',
+    '  bool outer = gl_FrontFacing;',
+    '',
+    '  vec3 Lk = normalize(vec3(0.42, 0.80, 0.43));',
+    '  vec3 Lf = normalize(vec3(-0.62, -0.10, -0.78));',
+    '  float dk = max(dot(N, Lk), 0.0);',
+    '  float df = max(dot(N, Lf), 0.0);',
+    '  float hemi = 0.5 + 0.5 * N.y;',
+    '  float fres = pow(1.0 - ndv, 3.0);',
+    '',
+    '  vec3 col = vec3(0.0028, 0.0038, 0.0080);',
+    // The outer skin takes the cool key; the hollow side sees a dimmer, cooler bounce,
+    // so mouth and interior read as different depths.
+    '  vec3 ambOut = tint * (0.014 + 0.028 * hemi);',
+    '  vec3 ambIn  = vec3(0.014, 0.026, 0.045) * (0.55 + 0.70 * hemi);',
+    '  col += outer ? ambOut : ambIn;',
+    '  col += tint * vec3(0.62, 0.84, 1.00) * dk * (outer ? 0.17 : 0.12);',
+    '  col += tint * vec3(0.90, 0.62, 1.00) * df * (outer ? 0.09 : 0.07);',
+    '  col += tint * fres * 0.26;',
+    '  vec3 H = normalize(Lk + V);',
+    '  col += vec3(0.30, 0.44, 0.56) * pow(max(dot(N, H), 0.0), 30.0) * 0.10;',
+    '',
+    // Cavity falloff: the funnel walls occlude their own depth toward the waist.
+    '  float tq2 = l / 2.0;',
+    '  col *= mix(1.0, 0.45, exp(-tq2 * tq2));',
+    '',
+    // open-end contour: the displayed-domain boundary, not an asymptotic end
+    '  float rim = smoothstep(5.94, 6.0, abs(l));',
+    '  col += mix(tint, vec3(0.62, 0.86, 1.00), 0.55) * rim * 0.42;',
+    '',
+    // cut-section edge, only once the cutaway is fully open
+    '  float cutEdge = smoothstep(0.836, 0.8660, cos(phi - uAlpha)) * smoothstep(0.95, 1.0, uCut);',
+    '  col += mix(tint, vec3(0.62, 0.86, 1.00), 0.55) * cutEdge * 0.40;',
+    '',
+    // throat annotation band (minimum-radius cross-section)
+    '  float tq = l / 0.20;',
+    '  col += vec3(0.55, 0.46, 0.33) * exp(-tq * tq) * 0.40;',
+    '',
+    '  if (uGridOn > 0.5) {',
+    '    vec2 g = vec2(l / 0.5000, phi * (24.0 / TAU));',
+    '    vec2 w = max(fwidth(g), vec2(1e-6));',
+    '    vec2 d2 = abs(fract(g - 0.5) - 0.5) / w;',
+    '    float fade = 1.0 - smoothstep(0.18, 0.55, max(w.x, w.y));',
+    '    float line = (1.0 - smoothstep(0.0, 0.85, min(d2.x, d2.y))) * fade;',
+    '    float wave = 0.5 + 0.5 * cos(TAU * (l / 2.4 + 0.18 * uTime));',
+    '    float gi = line * (0.13 + 0.20 * wave);',
+    '    col += mix(tint, vec3(0.50, 0.78, 0.94), 0.55) * gi;',
+    '  }',
+    '',
+    '  float dist = length(uCamPos - vPos);',
+    '  float fog = clamp((dist - 8.0) * 0.024, 0.0, 0.45);',
+    '  col = mix(col, vec3(0.004, 0.006, 0.013), fog);',
+    '  outColor = vec4(pow(aces(col), vec3(1.0 / 2.2)), 1.0);',
+    '}'
+  ].join('\n');
+
+  var RING_VS = [
+    '#version 300 es',
+    'layout(location=0) in vec3 aPos;',
+    'layout(location=1) in vec3 aNrm;',
+    'layout(location=2) in float aPhi;',
+    'uniform mat4 uProj;',
+    'uniform mat4 uView;',
+    'out vec3 vPos;',
+    'out vec3 vNrm;',
+    'out float vPhi;',
+    'void main() {',
+    '  vPos = aPos; vNrm = aNrm; vPhi = aPhi;',
+    '  gl_Position = uProj * uView * vec4(aPos, 1.0);',
+    '}'
+  ].join('\n');
+
+  var RING_FS = [
+    '#version 300 es',
+    'precision highp float;',
+    'in vec3 vPos;',
+    'in vec3 vNrm;',
+    'in float vPhi;',
+    'uniform vec3 uCamPos;',
+    'uniform float uCut;',
+    'uniform float uAlpha;',
+    'out vec4 outColor;',
+    'vec3 aces(vec3 x) {',
+    '  x = max(x, vec3(0.0));',
+    '  return (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);',
+    '}',
+    'void main() {',
+    '  float thr = mix(1.0001, 0.86602540, uCut);',
+    '  if (cos(vPhi - uAlpha) > thr) discard;',
+    '  vec3 N = normalize(vNrm);',
+    '  vec3 V = normalize(uCamPos - vPos);',
+    '  float ndv = clamp(abs(dot(N, V)), 0.0, 1.0);',
+    '  vec3 c = vec3(1.00, 0.92, 0.78) * (0.62 + 0.42 * ndv);',
+    '  outColor = vec4(pow(aces(c), vec3(1.0 / 2.2)), 1.0);',
+    '}'
+  ].join('\n');
+
+  var BG_VS = [
+    '#version 300 es',
+    'out vec2 vNdc;',
+    'void main() {',
+    '  vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));',
+    '  vNdc = p * 2.0 - 1.0;',
+    '  gl_Position = vec4(vNdc, 1.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var BG_FS = [
+    '#version 300 es',
+    'precision highp float;',
+    'in vec2 vNdc;',
+    'uniform mat4 uInvVP;',
+    'uniform vec3 uCamPos;',
+    'out vec4 outColor;',
+    'vec3 aces(vec3 x) {',
+    '  x = max(x, vec3(0.0));',
+    '  return (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14);',
+    '}',
+    'vec3 hash33(vec3 p) {',
+    '  return fract(sin(vec3(dot(p, vec3(127.1, 311.7, 74.7)),',
+    '                          dot(p, vec3(269.5, 183.3, 246.1)),',
+    '                          dot(p, vec3(113.5, 271.9, 124.6)))) * 43758.5453123);',
+    '}',
+    'float vnoise(vec3 p) {',
+    '  vec3 i = floor(p), f = fract(p);',
+    '  f = f * f * (3.0 - 2.0 * f);',
+    '  float n000 = hash33(i + vec3(0.0, 0.0, 0.0)).x;',
+    '  float n100 = hash33(i + vec3(1.0, 0.0, 0.0)).x;',
+    '  float n010 = hash33(i + vec3(0.0, 1.0, 0.0)).x;',
+    '  float n110 = hash33(i + vec3(1.0, 1.0, 0.0)).x;',
+    '  float n001 = hash33(i + vec3(0.0, 0.0, 1.0)).x;',
+    '  float n101 = hash33(i + vec3(1.0, 0.0, 1.0)).x;',
+    '  float n011 = hash33(i + vec3(0.0, 1.0, 1.0)).x;',
+    '  float n111 = hash33(i + vec3(1.0, 1.0, 1.0)).x;',
+    '  return mix(mix(mix(n000, n100, f.x), mix(n010, n110, f.x), f.y),',
+    '             mix(mix(n001, n101, f.x), mix(n011, n111, f.x), f.y), f.z);',
+    '}',
+    // Each star sits wholly inside one hash cell of the view direction, so the field
+    // is seed-fixed, sparse and independent of screen pixels.
+    'vec3 starLayer(vec3 d, float cells, float prob, float sizeScale, float gain, vec3 seed) {',
+    '  vec3 p = d * cells;',
+    '  vec3 id = floor(p);',
+    '  vec3 r = hash33(id + seed);',
+    '  if (r.z > prob) return vec3(0.0);',
+    '  vec3 c = id + 0.22 + 0.56 * hash33(id + seed + 17.7);',
+    '  float dd = length(p - c);',
+    '  float rad = mix(0.050, 0.170, r.x) * sizeScale;',
+    '  float core = smoothstep(rad, 0.0, dd);',
+    '  core = core * core * core;',
+    '  float mag = 0.30 + 0.70 * pow(r.y, 4.0);',
+    '  vec3 tint = mix(vec3(0.70, 0.83, 1.00), vec3(1.00, 0.88, 0.74), r.x * r.x);',
+    '  return tint * (gain * mag * core);',
+    '}',
+    'void main() {',
+    '  vec4 far = uInvVP * vec4(vNdc, 1.0, 1.0);',
+    '  vec3 dir = normalize(far.xyz / far.w - uCamPos);',
+    '  vec3 col = vec3(0.0042, 0.0060, 0.0130);',
+    '',
+    '  float n1 = vnoise(dir * 2.1 + vec3(11.3, 4.7, 8.1));',
+    '  float n2 = vnoise(dir * 5.3 - vec3(3.4, 9.1, 1.2));',
+    '  float n = 0.66 * n1 + 0.34 * n2;',
+    '  vec3 bandN = normalize(vec3(0.35, 0.82, -0.45));',
+    '  float bd = dot(dir, bandN) / 0.58;',
+    '  float band = exp(-bd * bd);',
+    '  vec3 neb = mix(vec3(0.045, 0.085, 0.200), vec3(0.140, 0.055, 0.235), smoothstep(0.34, 0.86, n));',
+    '  col += neb * band * smoothstep(0.26, 0.96, n) * 0.46;',
+    '',
+    '  col += starLayer(dir, 45.0, 0.200, 1.10, 1.75, vec3(5.13, 9.71, 2.37));',
+    '  col += starLayer(dir, 92.0, 0.080, 0.75, 0.75, vec3(21.7, 3.31, 14.9));',
+    '',
+    '  outColor = vec4(pow(aces(col), vec3(1.0 / 2.2)), 1.0);',
+    '}'
+  ].join('\n');
+
+  /* ---------------------------------------------------------------- state */
+  var state = {
+    mode: 'exterior',      // exterior | enter | tour | hold | returning
+    paused: false,
+    time: 0,
+    a: A_DEF,
+    gridOn: true,
+    cutawayOn: true,
+    cut: 1,
+    tourT: 0,
+    zStart: 0,
+    zEnd: 0,
+    trans: null,
+    saved: null,
+    cam: { p: [12.05, 7.67, 13.14], q: [0, 0, 0, 1] },
+    sphereRadius: 6.57,
+    fitDist: 19.5
+  };
+
+  var orbit = { azim: 0.828, polar: 1.166, dist: 19.5, azimT: 0.828, polarT: 1.166, distT: 19.5 };
+
+  /* ------------------------------------------------------------------ gl */
+  var gl = null;
+  try {
+    gl = canvas.getContext('webgl2', {
+      antialias: true, alpha: false, depth: true, stencil: false,
+      premultipliedAlpha: true, preserveDrawingBuffer: false,
+      powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false
+    });
+    if (!gl) throw new Error('canvas.getContext("webgl2") returned null — WebGL2 is unavailable or disabled in this browser.');
+  } catch (err) {
+    fail('WebGL2 initialization failed', err);
+    return;
+  }
+
+  var lost = false;
+  canvas.addEventListener('webglcontextlost', function (ev) {
+    ev.preventDefault();
+    lost = true;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+    fail('WebGL context lost', new Error('The graphics context was lost. Rendering is stopped and the last frame is not shown as a live view. Reload to restart the exhibit.'));
+  }, false);
+
+  function numberLines(src) {
+    return src.split('\n').map(function (line, i) { return String(i + 1).padStart(3, ' ') + ' | ' + line; }).join('\n');
+  }
+
+  function compileShader(type, src, label) {
+    var sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      var log = gl.getShaderInfoLog(sh) || '(no info log)';
+      gl.deleteShader(sh);
+      throw new Error(label + ' failed to compile:\n' + log + '\n--- source ---\n' + numberLines(src));
+    }
+    return sh;
+  }
+
+  function buildProgram(vsSrc, fsSrc, label) {
+    var vs = compileShader(gl.VERTEX_SHADER, vsSrc, label + ' vertex shader');
+    var fs = compileShader(gl.FRAGMENT_SHADER, fsSrc, label + ' fragment shader');
+    var prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      var log = gl.getProgramInfoLog(prog) || '(no info log)';
+      gl.deleteProgram(prog);
+      throw new Error(label + ' failed to link:\n' + log);
+    }
+    return prog;
+  }
+
+  function uniformsOf(prog, names) {
+    var out = {};
+    for (var i = 0; i < names.length; i++) out[names[i]] = gl.getUniformLocation(prog, names[i]);
+    return out;
+  }
+
+  var surfProg, ringProg, bgProg, emptyVao;
+  try {
+    surfProg = { p: buildProgram(SURF_VS, SURF_FS, 'Surface'), u: null };
+    surfProg.u = uniformsOf(surfProg.p, ['uProj', 'uView', 'uCamPos', 'uTime', 'uGridOn', 'uCut', 'uAlpha']);
+    ringProg = { p: buildProgram(RING_VS, RING_FS, 'Throat ring'), u: null };
+    ringProg.u = uniformsOf(ringProg.p, ['uProj', 'uView', 'uCamPos', 'uCut', 'uAlpha']);
+    bgProg = { p: buildProgram(BG_VS, BG_FS, 'Star background'), u: null };
+    bgProg.u = uniformsOf(bgProg.p, ['uInvVP', 'uCamPos']);
+    emptyVao = gl.createVertexArray();
+  } catch (err) {
+    fail('Shader compilation failed', err);
+    return;
+  }
+
+  gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
+  gl.disable(gl.CULL_FACE);
+  gl.disable(gl.BLEND);
+
+  /* ------------------------------------------------------------- geometry */
+  var geo = { vCount: 0, count: 0, pos: null, nrm: null, lp: null, vboPos: null, vboNrm: null, vboLp: null, ibo: null, vao: null };
+
+  function createSurfaceBuffers() {
+    var nL = L_SEG + 1, nP = PHI_SEG + 1;
+    geo.vCount = nL * nP;
+    geo.pos = new Float32Array(geo.vCount * 3);
+    geo.nrm = new Float32Array(geo.vCount * 3);
+    geo.lp = new Float32Array(geo.vCount * 2);
+
+    var idx = new Uint32Array(L_SEG * PHI_SEG * 6);
+    var k = 0;
+    for (var i = 0; i < L_SEG; i++) {
+      for (var j = 0; j < PHI_SEG; j++) {
+        var v00 = i * nP + j, v01 = v00 + 1, v10 = v00 + nP, v11 = v10 + 1;
+        // cross(dPhi, dL) = +N, so gl_FrontFacing tracks the outward side.
+        idx[k++] = v00; idx[k++] = v01; idx[k++] = v11;
+        idx[k++] = v00; idx[k++] = v11; idx[k++] = v10;
+      }
+    }
+    geo.count = idx.length;
+
+    geo.vboPos = gl.createBuffer();
+    geo.vboNrm = gl.createBuffer();
+    geo.vboLp = gl.createBuffer();
+    geo.ibo = gl.createBuffer();
+
+    uploadSurface(state.a);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, geo.vboLp);
+    gl.bufferData(gl.ARRAY_BUFFER, geo.lp, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, geo.ibo);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+
+    geo.vao = gl.createVertexArray();
+    gl.bindVertexArray(geo.vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, geo.vboPos);
+    gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, geo.vboNrm);
+    gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, geo.vboLp);
+    gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, geo.ibo);
+    gl.bindVertexArray(null);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
+
+  // r(l) = sqrt(l^2 + a^2), z(l) = a*asinh(l/a): one continuous parameterization,
+  // both mouths, no caps. Rebuilds in place on radius change (GPU buffers reused).
+  function uploadSurface(a) {
+    var nL = L_SEG + 1, nP = PHI_SEG + 1, p = 0, maxR2 = 0;
+    for (var i = 0; i < nL; i++) {
+      var l = L_MIN + (L_MAX - L_MIN) * i / L_SEG;
+      var r = Math.sqrt(l * l + a * a);
+      var z = a * Math.asinh(l / a);
+      for (var j = 0; j < nP; j++) {
+        var phi = TAU * j / PHI_SEG;
+        var c = Math.cos(phi), s = Math.sin(phi);
+        var x = r * c, y = r * s;
+        geo.pos[p * 3] = x; geo.pos[p * 3 + 1] = y; geo.pos[p * 3 + 2] = z;
+        var nx = a * c, ny = a * s, nz = -l;
+        var inv = 1 / Math.sqrt(nx * nx + ny * ny + nz * nz);
+        geo.nrm[p * 3] = nx * inv; geo.nrm[p * 3 + 1] = ny * inv; geo.nrm[p * 3 + 2] = nz * inv;
+        geo.lp[p * 2] = l; geo.lp[p * 2 + 1] = phi;
+        var rr = x * x + y * y + z * z;
+        if (rr > maxR2) maxR2 = rr;
+        p++;
+      }
+    }
+    state.sphereRadius = Math.sqrt(maxR2);
+    gl.bindBuffer(gl.ARRAY_BUFFER, geo.vboPos);
+    gl.bufferData(gl.ARRAY_BUFFER, geo.pos, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, geo.vboNrm);
+    gl.bufferData(gl.ARRAY_BUFFER, geo.nrm, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
+
+  var RING_SEG = 200, TUBE_SEG = 8, TUBE_R = 0.017;
+  var ring = { pos: null, nrm: null, phi: null, count: 0, vboPos: null, vboNrm: null, vboPhi: null, ibo: null, vao: null };
+
+  function createRingBuffers() {
+    var nR = RING_SEG + 1, nT = TUBE_SEG + 1;
+    var verts = nR * nT;
+    ring.pos = new Float32Array(verts * 3);
+    ring.nrm = new Float32Array(verts * 3);
+    ring.phi = new Float32Array(verts);
+
+    var idx = new Uint32Array(RING_SEG * TUBE_SEG * 6);
+    var k = 0;
+    for (var i = 0; i < RING_SEG; i++) {
+      for (var j = 0; j < TUBE_SEG; j++) {
+        var a0 = i * nT + j, a1 = a0 + 1, b0 = (i + 1) * nT + j, b1 = b0 + 1;
+        idx[k++] = a0; idx[k++] = b0; idx[k++] = b1;
+        idx[k++] = a0; idx[k++] = b1; idx[k++] = a1;
+      }
+    }
+    ring.count = idx.length;
+
+    ring.vboPos = gl.createBuffer();
+    ring.vboNrm = gl.createBuffer();
+    ring.vboPhi = gl.createBuffer();
+    ring.ibo = gl.createBuffer();
+    uploadRing(state.a);
+    gl.bindBuffer(gl.ARRAY_BUFFER, ring.vboPhi);
+    gl.bufferData(gl.ARRAY_BUFFER, ring.phi, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ring.ibo);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+
+    ring.vao = gl.createVertexArray();
+    gl.bindVertexArray(ring.vao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, ring.vboPos);
+    gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, ring.vboNrm);
+    gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, ring.vboPhi);
+    gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 1, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ring.ibo);
+    gl.bindVertexArray(null);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
+
+  function uploadRing(a) {
+    var nT = TUBE_SEG + 1, v = 0;
+    for (var i = 0; i <= RING_SEG; i++) {
+      var phi = TAU * i / RING_SEG;
+      var cp = Math.cos(phi), sp = Math.sin(phi);
+      var cx = a * cp, cy = a * sp;
+      for (var j = 0; j < nT; j++) {
+        var th = TAU * j / TUBE_SEG, ct = Math.cos(th), st = Math.sin(th);
+        ring.pos[v * 3] = cx + TUBE_R * ct * cp;
+        ring.pos[v * 3 + 1] = cy + TUBE_R * ct * sp;
+        ring.pos[v * 3 + 2] = TUBE_R * st;
+        ring.nrm[v * 3] = ct * cp;
+        ring.nrm[v * 3 + 1] = ct * sp;
+        ring.nrm[v * 3 + 2] = st;
+        ring.phi[v] = phi;
+        v++;
+      }
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, ring.vboPos);
+    gl.bufferData(gl.ARRAY_BUFFER, ring.pos, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, ring.vboNrm);
+    gl.bufferData(gl.ARRAY_BUFFER, ring.nrm, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
+
+  /* --------------------------------------------------------------- camera */
+  var proj = perspective(1);
+  var aspect = 1;
+
+  function sphericalPos(d, polar, azim) {
+    var sp = Math.sin(polar);
+    return [d * sp * Math.cos(azim), d * Math.cos(polar), d * sp * Math.sin(azim)];
+  }
+
+  function exteriorCamera() {
+    var p = sphericalPos(orbit.dist, orbit.polar, orbit.azim);
+    return { p: p, q: quatFromLookAt(p, [0, 0, 0], [0, 1, 0]) };
+  }
+
+  function distMax() { return Math.max(MAX_DIST, state.fitDist); }
+
+  function updateComposition() {
+    var narrow = (window.innerWidth || 1024) <= 760;
+    comp.x = narrow ? 0 : 0.16;
+    comp.y = narrow ? 0.22 : 0.0;
+  }
+
+  // Fit the actual bounding sphere of the truncated surface with a 12% margin,
+  // using the tighter of the vertical/horizontal fields of view and allowing for
+  // the composition lens shift.
+  function fitDistance() {
+    var vHalf = FOV_Y / 2;
+    var hHalf = Math.atan(Math.tan(vHalf) * aspect);
+    var ex = 1 - Math.abs(comp.x), ey = 1 - Math.abs(comp.y);
+    var dX = state.sphereRadius / Math.sin(hHalf * 0.88 * ex);
+    var dY = state.sphereRadius / Math.sin(vHalf * 0.88 * ey);
+    return Math.max(dX, dY);
+  }
+
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.max(1, rect.width), cssH = Math.max(1, rect.height);
+    var scale = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    var w = Math.round(cssW * scale), h = Math.round(cssH * scale);
+    if (w * h > MAX_PIXELS) {
+      var s = Math.sqrt(MAX_PIXELS / (w * h));
+      w = Math.max(1, Math.round(w * s));
+      h = Math.max(1, Math.round(h * s));
+    }
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    gl.viewport(0, 0, w, h);
+    aspect = w / h;
+    updateComposition();
+    proj = perspective(aspect);
+    // Keep the surface inside the frame after a resize without discarding a
+    // deliberate zoom-out: only push the camera back when it would clip.
+    var need = fitDistance();
+    if (state.mode === 'exterior') {
+      if (orbit.distT < need) orbit.distT = need;
+      if (orbit.dist < need) orbit.dist = need;
+    }
+  }
+
+  function applyInitialView() {
+    var dir = norm3(NOMINAL_CAM);
+    orbit.azim = orbit.azimT = Math.atan2(dir[2], dir[0]);
+    orbit.polar = orbit.polarT = Math.acos(clamp(dir[1], -1, 1));
+    state.fitDist = Math.max(Math.sqrt(NOMINAL_CAM[0] * NOMINAL_CAM[0] + NOMINAL_CAM[1] * NOMINAL_CAM[1] + NOMINAL_CAM[2] * NOMINAL_CAM[2]), fitDistance());
+    orbit.dist = orbit.distT = state.fitDist;
+  }
+
+  /* ------------------------------------------------------------ transitions */
+  function lerpCam(a, b, t) {
+    return {
+      p: [a.p[0] + (b.p[0] - a.p[0]) * t, a.p[1] + (b.p[1] - a.p[1]) * t, a.p[2] + (b.p[2] - a.p[2]) * t],
+      q: quatSlerp(a.q, b.q, t)
+    };
+  }
+
+  function throatZ(a) { return a * Math.asinh(6 / a); }
+
+  function beginJourney() {
+    if (state.mode !== 'exterior') return;
+    state.saved = {
+      azim: orbit.azim, polar: orbit.polar, dist: orbit.dist,
+      azimT: orbit.azimT, polarT: orbit.polarT, distT: orbit.distT,
+      cutaway: state.cutawayOn
+    };
+    var z6 = throatZ(state.a);
+    state.zStart = z6 + 2;
+    state.zEnd = -z6 - 2;
+    state.tourT = 0;
+    var entrance = { p: [0, 0, state.zStart], q: [0, 0, 0, 1] };
+    state.trans = { t: 0, dur: TRANSITION, from: state.cam, to: entrance };
+    state.mode = 'enter';
+    setProgress(0);
+    syncUI();
+    live.textContent = 'Entering the illustrative camera tour.';
+  }
+
+  function returnToExterior() {
+    if (state.mode === 'exterior' || state.mode === 'returning' || !state.saved) return;
+    var s = state.saved;
+    var p = sphericalPos(s.dist, s.polar, s.azim);
+    var to = { p: p, q: quatFromLookAt(p, [0, 0, 0], [0, 1, 0]) };
+    state.trans = { t: 0, dur: TRANSITION, from: state.cam, to: to };
+    state.mode = 'returning';
+    syncUI();
+    live.textContent = 'Returning to the exterior view.';
+  }
+
+  function finishReturn() {
+    var s = state.saved;
+    orbit.azim = orbit.azimT = s.azim;
+    orbit.polar = orbit.polarT = s.polar;
+    orbit.dist = orbit.distT = s.dist;
+    state.cutawayOn = s.cutaway;
+    state.mode = 'exterior';
+    state.cam = exteriorCamera();
+    syncUI();
+    live.textContent = 'Exterior view restored.';
+  }
+
+  function resetView() {
+    state.saved = null;
+    state.trans = null;
+    state.mode = 'exterior';
+    state.tourT = 0;
+    applyInitialView();
+    state.cam = exteriorCamera();
+    setProgress(0);
+    syncUI();
+    live.textContent = 'Camera reset to the fitted exterior view.';
+  }
+
+  function advanceJourney(dt) {
+    if (state.mode === 'enter' || state.mode === 'returning') {
+      var tr = state.trans;
+      tr.t += dt;
+      var u = clamp(tr.t / tr.dur, 0, 1);
+      state.cam = lerpCam(tr.from, tr.to, smootherstep(u));
+      if (u >= 1) {
+        state.cam = { p: tr.to.p.slice(), q: tr.to.q.slice() };
+        if (state.mode === 'enter') {
+          state.mode = 'tour';
+          state.tourT = 0;
+          setProgress(0);
+          syncUI();
+          live.textContent = 'Illustrative camera tour running.';
+        } else {
+          finishReturn();
+        }
+      }
+      return;
+    }
+    if (state.mode === 'tour') {
+      state.tourT = Math.min(TOUR_DURATION, state.tourT + dt);
+      var uu = state.tourT / TOUR_DURATION;
+      var zp = state.zStart + (state.zEnd - state.zStart) * smootherstep(uu);
+      state.cam = { p: [0, 0, zp], q: [0, 0, 0, 1] };
+      setProgress(uu);
+      if (state.tourT >= TOUR_DURATION) {
+        state.mode = 'hold';
+        setProgress(1);
+        syncUI();
+        live.textContent = 'Tour complete. The far-side exit view is held until you return.';
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------------- timing */
+  function tick(dt, hidden) {
+    var active = !state.paused && !hidden;
+
+    // Cutaway opening/closing follows the mode and the user toggle and remains
+    // responsive while paused (it is a control response, not a transition).
+    var cutTarget = (state.mode === 'exterior' && state.cutawayOn) ? 1 : 0;
+    var kc = 1 - Math.exp(-dt * 18);
+    state.cut += (cutTarget - state.cut) * kc;
+    if (Math.abs(cutTarget - state.cut) < 0.0005) state.cut = cutTarget;
+
+    if (state.mode === 'exterior') {
+      var k = 1 - Math.exp(-dt * 9);
+      orbit.azim += (orbit.azimT - orbit.azim) * k;
+      orbit.polar += (orbit.polarT - orbit.polar) * k;
+      orbit.dist = Math.exp(Math.log(orbit.dist) + (Math.log(orbit.distT) - Math.log(orbit.dist)) * k);
+      state.cam = exteriorCamera();
+    }
+
+    if (active) state.time += dt;
+    if (!active || state.mode === 'exterior') return;
+    advanceJourney(dt);
+  }
+
+  /* --------------------------------------------------------------- drawing */
+  var frameCount = 0, fpsAccum = 0, fpsSamples = 0, frameMs = 0;
+
+  function draw() {
+    if (lost || !gl) return;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.004, 0.006, 0.014, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    var cam = state.cam;
+    var view = viewFromCamera(cam);
+    var vp = mat4Mul(proj, view);
+    var inv = mat4Invert(vp);
+    var alpha = Math.atan2(cam.p[1], cam.p[0]);
+
+    // Background first with depth writes off, so foreground geometry occludes it.
+    gl.disable(gl.DEPTH_TEST);
+    gl.depthMask(false);
+    gl.useProgram(bgProg.p);
+    gl.uniformMatrix4fv(bgProg.u.uInvVP, false, inv);
+    gl.uniform3fv(bgProg.u.uCamPos, cam.p);
+    gl.bindVertexArray(emptyVao);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthMask(true);
+    gl.useProgram(surfProg.p);
+    gl.uniformMatrix4fv(surfProg.u.uProj, false, proj);
+    gl.uniformMatrix4fv(surfProg.u.uView, false, view);
+    gl.uniform3fv(surfProg.u.uCamPos, cam.p);
+    gl.uniform1f(surfProg.u.uTime, state.time);
+    gl.uniform1f(surfProg.u.uGridOn, state.gridOn ? 1 : 0);
+    gl.uniform1f(surfProg.u.uCut, state.cut);
+    gl.uniform1f(surfProg.u.uAlpha, alpha);
+    gl.bindVertexArray(geo.vao);
+    gl.drawElements(gl.TRIANGLES, geo.count, gl.UNSIGNED_INT, 0);
+
+    // Throat annotation ring: same cutaway rule, depth tested against the surface.
+    gl.useProgram(ringProg.p);
+    gl.uniformMatrix4fv(ringProg.u.uProj, false, proj);
+    gl.uniformMatrix4fv(ringProg.u.uView, false, view);
+    gl.uniform3fv(ringProg.u.uCamPos, cam.p);
+    gl.uniform1f(ringProg.u.uCut, state.cut);
+    gl.uniform1f(ringProg.u.uAlpha, alpha);
+    gl.bindVertexArray(ring.vao);
+    gl.drawElements(gl.TRIANGLES, ring.count, gl.UNSIGNED_INT, 0);
+    gl.bindVertexArray(null);
+
+    frameCount++;
+  }
+
+  /* ------------------------------------------------------------------- ui */
+  var lastPct = -1;
+  function setProgress(u) {
+    var v = clamp(u, 0, 1);
+    hudFill.style.width = (v * 100).toFixed(1) + '%';
+    var pct = Math.round(v * 100);
+    if (pct !== lastPct) { hudPct.textContent = pct + '%'; lastPct = pct; }
+  }
+
+  function syncUI() {
+    var inJourney = state.mode !== 'exterior';
+    btnJourney.textContent = inJourney ? 'Return to Exterior' : 'Begin Journey';
+    btnPause.textContent = state.paused ? 'Resume' : 'Pause';
+    btnPause.setAttribute('aria-pressed', state.paused ? 'true' : 'false');
+    btnCut.textContent = 'Cutaway: ' + (state.cutawayOn ? 'On' : 'Off');
+    btnCut.setAttribute('aria-pressed', state.cutawayOn ? 'true' : 'false');
+    btnGrid.textContent = 'Grid: ' + (state.gridOn ? 'On' : 'Off');
+    btnGrid.setAttribute('aria-pressed', state.gridOn ? 'true' : 'false');
+    btnCut.disabled = inJourney;
+    btnCut.title = inJourney ? 'Cutaway is suspended during the interior tour' : 'Toggle the camera-facing longitudinal cutaway';
+    radiusInput.disabled = inJourney;
+    hud.hidden = !(state.mode === 'enter' || state.mode === 'tour' || state.mode === 'hold');
+    canvas.classList.toggle('locked', inJourney);
+  }
+
+  function togglePause() {
+    state.paused = !state.paused;
+    syncUI();
+    live.textContent = state.paused ? 'Paused.' : 'Running.';
+  }
+
+  btnJourney.addEventListener('click', function () {
+    if (state.mode === 'exterior') beginJourney();
+    else returnToExterior();
+  });
+  btnPause.addEventListener('click', togglePause);
+  btnReset.addEventListener('click', resetView);
+  btnCut.addEventListener('click', function () {
+    if (state.mode !== 'exterior') return;
+    state.cutawayOn = !state.cutawayOn;
+    syncUI();
+    live.textContent = 'Cutaway ' + (state.cutawayOn ? 'on' : 'off') + '.';
+  });
+  btnGrid.addEventListener('click', function () {
+    state.gridOn = !state.gridOn;
+    syncUI();
+    live.textContent = 'Grid ' + (state.gridOn ? 'on' : 'off') + '.';
+  });
+  radiusInput.addEventListener('input', function () {
+    if (state.mode !== 'exterior') return;
+    var a = parseFloat(radiusInput.value);
+    if (!isFinite(a)) return;
+    state.a = clamp(a, A_MIN, A_MAX);
+    radiusOut.textContent = state.a.toFixed(2);
+    uploadSurface(state.a);
+    uploadRing(state.a);
+  });
+
+  /* --------------------------------------------------------------- pointer */
+  var pointers = new Map();
+  var drag = 'none';
+  var pinchSpan0 = 0, pinchDist0 = 0;
+
+  function pointerSpan() {
+    var it = pointers.values();
+    var a = it.next().value, b = it.next().value;
+    if (!a || !b) return 0;
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+
+  canvas.addEventListener('pointerdown', function (e) {
+    if (state.mode !== 'exterior') return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* capture is best effort */ }
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 1) {
+      drag = 'rotate';
+      canvas.classList.add('dragging');
+    } else if (pointers.size === 2) {
+      drag = 'pinch';
+      pinchSpan0 = pointerSpan();
+      pinchDist0 = orbit.distT;
+    }
+    if (e.cancelable) e.preventDefault();
+  });
+
+  canvas.addEventListener('pointermove', function (e) {
+    var p = pointers.get(e.pointerId);
+    if (!p || state.mode !== 'exterior') return;
+    if (drag === 'rotate' && pointers.size === 1) {
+      var dx = e.clientX - p.x, dy = e.clientY - p.y;
+      p.x = e.clientX; p.y = e.clientY;
+      orbit.azimT -= dx * 0.006;
+      orbit.polarT = clamp(orbit.polarT - dy * 0.006, POLAR_MIN, Math.PI - POLAR_MIN);
+    } else if (drag === 'pinch' && pointers.size === 2) {
+      p.x = e.clientX; p.y = e.clientY;
+      var span = pointerSpan();
+      if (pinchSpan0 > 1 && span > 1) {
+        orbit.distT = clamp(pinchDist0 * (pinchSpan0 / span), MIN_DIST, distMax());
+      }
+    }
+    if (e.cancelable) e.preventDefault();
+  });
+
+  function endPointer(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch (err) { /* already released */ }
+    if (pointers.size === 1) {
+      drag = 'rotate';   // continue from the surviving pointer without a jump
+    } else if (pointers.size === 0) {
+      drag = 'none';
+      canvas.classList.remove('dragging');
+    }
+  }
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+  canvas.addEventListener('lostpointercapture', endPointer);
+
+  canvas.addEventListener('wheel', function (e) {
+    if (e.cancelable) e.preventDefault();
+    if (state.mode !== 'exterior') return;
+    var unit = e.deltaMode === 1 ? 16 : (e.deltaMode === 2 ? 100 : 1);
+    var dy = e.deltaY * unit;
+    orbit.distT = clamp(orbit.distT * Math.exp(dy * 0.0012), MIN_DIST, distMax());
+  }, { passive: false });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      if (state.mode !== 'exterior') returnToExterior();
+      return;
+    }
+    if (e.code === 'Space' || e.key === ' ') {
+      var t = e.target;
+      var tag = t && t.tagName ? t.tagName.toUpperCase() : '';
+      if (tag === 'INPUT' || tag === 'BUTTON' || tag === 'SELECT' || tag === 'TEXTAREA' || (t && t.isContentEditable)) return;
+      e.preventDefault();
+      togglePause();
+    }
+  });
+
+  /* ------------------------------------------------------------ main loop */
+  var rafId = 0, prevTime = 0;
+
+  function frame(now) {
+    rafId = requestAnimationFrame(frame);
+    if (!prevTime) prevTime = now;
+    var dt = (now - prevTime) / 1000;
+    prevTime = now;
+    if (!isFinite(dt) || dt < 0) dt = 0;
+    if (dt > 0.05) dt = 0.05;   // clamp unusually large frame deltas
+    if (dt > 0) {
+      fpsAccum += dt; fpsSamples++;
+      if (fpsSamples >= 30) { frameMs = (fpsAccum / fpsSamples) * 1000; fpsAccum = 0; fpsSamples = 0; }
+    }
+    tick(dt, typeof document.hidden === 'boolean' ? document.hidden : false);
+    draw();
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    // Suspend simulation advancement while hidden and avoid a catch-up jump.
+    prevTime = 0;
+  });
+
+  var resizeTimer = 0;
+  window.addEventListener('resize', function () {
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { resizeTimer = 0; resize(); }, 60);
+  });
+  window.addEventListener('orientationchange', function () { resize(); });
+
+  /* ------------------------------------------------------------------ init */
+  try {
+    resize();
+    createSurfaceBuffers();
+    createRingBuffers();
+  } catch (err) {
+    fail('Geometry initialization failed', err);
+    return;
+  }
+
+  var reduced = false;
+  try { reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (err) { reduced = false; }
+  state.paused = reduced;
+
+  applyInitialView();
+  state.cam = exteriorCamera();
+  radiusOut.textContent = state.a.toFixed(2);
+  syncUI();
+  setProgress(0);
+  rafId = requestAnimationFrame(frame);
+
+  /* --------------------------------------- optional scripted debug surface */
+  window.wormhole = {
+    phase: function () {
+      if (state.mode === 'tour') return state.tourT / TOUR_DURATION;
+      return state.mode === 'hold' ? 1 : 0;
+    },
+    state: function () {
+      return {
+        mode: state.mode,
+        paused: state.paused,
+        a: +state.a.toFixed(4),
+        grid: state.gridOn,
+        cutaway: state.cutawayOn,
+        cutUniform: +state.cut.toFixed(4),
+        tourProgress: +(state.mode === 'tour' ? state.tourT / TOUR_DURATION : (state.mode === 'hold' ? 1 : 0)).toFixed(4),
+        cam: state.cam.p.map(round4),
+        camQuat: state.cam.q.map(round4),
+        dist: +orbit.dist.toFixed(3),
+        azimuthDeg: +(orbit.azim * 180 / Math.PI).toFixed(2),
+        polarDeg: +(orbit.polar * 180 / Math.PI).toFixed(2),
+        simTime: +state.time.toFixed(3),
+        frameMs: +frameMs.toFixed(2),
+        frames: frameCount,
+        drawSize: [canvas.width, canvas.height],
+        cssSize: [Math.round(canvas.getBoundingClientRect().width), Math.round(canvas.getBoundingClientRect().height)],
+        comp: [+comp.x.toFixed(3), +comp.y.toFixed(3)]
+      };
+    },
+    play: function () { if (state.paused) togglePause(); return window.wormhole.state(); },
+    pause: function () { if (!state.paused) togglePause(); return window.wormhole.state(); },
+    restart: function () { resetView(); return window.wormhole.state(); },
+    setPaused: function (v) { if (!!v !== state.paused) togglePause(); return window.wormhole.state(); },
+    startJourney: function () { beginJourney(); return window.wormhole.state(); },
+    returnToExterior: function () { returnToExterior(); return window.wormhole.state(); },
+    setRadius: function (a) {
+      radiusInput.value = String(clamp(+a, A_MIN, A_MAX));
+      radiusInput.dispatchEvent(new Event('input', { bubbles: true }));
+      return window.wormhole.state();
+    },
+    setCutaway: function (v) { if (!!v !== state.cutawayOn) btnCut.click(); return window.wormhole.state(); },
+    setGrid: function (v) { if (!!v !== state.gridOn) btnGrid.click(); return window.wormhole.state(); },
+    orbitTo: function (azimDeg, polarDeg, dist) {
+      if (typeof azimDeg === 'number') orbit.azimT = azimDeg * Math.PI / 180;
+      if (typeof polarDeg === 'number') orbit.polarT = clamp(polarDeg * Math.PI / 180, POLAR_MIN, Math.PI - POLAR_MIN);
+      if (typeof dist === 'number') orbit.distT = clamp(dist, MIN_DIST, distMax());
+      return window.wormhole.state();
+    },
+    snapOrbit: function () {
+      orbit.azim = orbit.azimT; orbit.polar = orbit.polarT; orbit.dist = orbit.distT;
+      tick(0.016, false); draw();
+      return window.wormhole.state();
+    },
+    advance: function (seconds) {
+      var was = state.paused;
+      state.paused = false;
+      var left = clamp(+seconds || 0, 0, 40), step = 1 / 60;
+      while (left > 1e-6) { var d = Math.min(step, left); tick(d, false); left -= d; }
+      state.paused = was;
+      draw();
+      return window.wormhole.state();
+    },
+    geometryReport: function () {
+      var a = state.a;
+      var samples = [-6, -4.5, -3.2, -1.7, -0.9, -0.3, 0, 0.3, 0.9, 1.7, 3.2, 4.5, 6];
+      var maxMetric = 0, maxProfile = 0, maxDeriv = 0, maxFD = 0;
+      for (var i = 0; i < samples.length; i++) {
+        var l = samples[i];
+        var r = Math.sqrt(l * l + a * a);
+        var z = a * Math.asinh(l / a);
+        maxMetric = Math.max(maxMetric, Math.abs(r * r - l * l - a * a));
+        maxProfile = Math.max(maxProfile, Math.abs(r - a * Math.cosh(z / a)));
+        var drdl = l / r, dzdl = a / r;
+        maxDeriv = Math.max(maxDeriv, Math.abs(drdl * drdl + dzdl * dzdl - 1));
+        var h = 1e-5;
+        var fd = (a * Math.asinh((l + h) / a) - a * Math.asinh((l - h) / a)) / (2 * h);
+        maxFD = Math.max(maxFD, Math.abs(fd - dzdl));
+      }
+      var nP = PHI_SEG + 1;
+      var throatRow = Math.round((0 - L_MIN) / (L_MAX - L_MIN) * L_SEG);
+      var tp = throatRow * nP;
+      var throatRingRadius = Math.hypot(geo.pos[tp * 3], geo.pos[tp * 3 + 1]);
+      var throatRingZ = geo.pos[tp * 3 + 2];
+      var seamMax = 0;
+      for (var row = 0; row <= L_SEG; row++) {
+        var base = row * nP;
+        var dx = geo.pos[(base + nP - 1) * 3] - geo.pos[base * 3];
+        var dy = geo.pos[(base + nP - 1) * 3 + 1] - geo.pos[base * 3 + 1];
+        var dz = geo.pos[(base + nP - 1) * 3 + 2] - geo.pos[base * 3 + 2];
+        seamMax = Math.max(seamMax, Math.hypot(dx, dy, dz));
+      }
+      var radiusResidual = 0;
+      for (var row2 = 0; row2 <= L_SEG; row2++) {
+        var b2 = row2 * nP;
+        var lV = geo.lp[b2 * 2];
+        var rv = Math.sqrt(lV * lV + a * a);
+        for (var j = 0; j < nP; j++) {
+          var x = geo.pos[(b2 + j) * 3], y = geo.pos[(b2 + j) * 3 + 1];
+          radiusResidual = Math.max(radiusResidual, Math.abs(Math.hypot(x, y) - rv));
+        }
+      }
+      return {
+        a: a,
+        samples: samples.length,
+        maxAbs_r2_minus_l2_minus_a2: maxMetric,
+        maxAbs_r_minus_a_cosh_z_over_a: maxProfile,
+        maxAbs_drdl2_plus_dzdl2_minus_1: maxDeriv,
+        maxAbs_finiteDifference_dzdl_error: maxFD,
+        z_at_l0: a * Math.asinh(0),
+        vertices: geo.vCount,
+        triangles: geo.count / 3,
+        longitudinalIntervals: L_SEG,
+        azimuthalIntervals: PHI_SEG,
+        longitudinalRings: L_SEG + 1,
+        azimuthVerticesPerRing: nP,
+        throatRowIndex: throatRow,
+        throatRingRadius: throatRingRadius,
+        throatRingZ: throatRingZ,
+        azimuthSeamPositionGap: seamMax,
+        phiFirst: geo.lp[1],
+        phiLast: geo.lp[(nP - 1) * 2 + 1],
+        maxAbs_vertexRadius_minus_r: radiusResidual,
+        boundingSphereRadius: state.sphereRadius
+      };
+    },
+    projectionReport: function () {
+      var view = viewFromCamera(state.cam);
+      var vp = mat4Mul(proj, view);
+      var maxX = 0, maxY = 0, outside = 0;
+      for (var i = 0; i < geo.vCount; i++) {
+        var x = geo.pos[i * 3], y = geo.pos[i * 3 + 1], z = geo.pos[i * 3 + 2];
+        var cx = vp[0] * x + vp[4] * y + vp[8] * z + vp[12];
+        var cy = vp[1] * x + vp[5] * y + vp[9] * z + vp[13];
+        var cw = vp[3] * x + vp[7] * y + vp[11] * z + vp[15];
+        var nx = cx / cw, ny = cy / cw;
+        maxX = Math.max(maxX, Math.abs(nx));
+        maxY = Math.max(maxY, Math.abs(ny));
+        if (Math.abs(nx) > 1 || Math.abs(ny) > 1) outside++;
+      }
+      var id = mat4Mul(vp, mat4Invert(vp));
+      var idErr = 0;
+      for (var k = 0; k < 16; k++) {
+        var want = (k % 5 === 0) ? 1 : 0;
+        idErr = Math.max(idErr, Math.abs(id[k] - want));
+      }
+      return {
+        distance: +orbit.dist.toFixed(4),
+        fovYDeg: 45,
+        aspect: +aspect.toFixed(4),
+        comp: [+comp.x.toFixed(3), +comp.y.toFixed(3)],
+        maxAbsNdcX: +maxX.toFixed(5),
+        maxAbsNdcY: +maxY.toFixed(5),
+        verticesOutsideNdc: outside,
+        inverseVpMaxError: idErr
+      };
+    },
+    // Runtime behaviour audit: parallax, pause/hidden suspension, no external fetches.
+    runtimeReport: function () {
+      var out = {};
+      var savedAz = orbit.azim, savedAzT = orbit.azimT;
+      var sample = [0, 20 * 129, 40 * 129 + 64, 80 * 129, 120 * 129 + 30, 160 * 129];
+      function projectAll(cam) {
+        var vp = mat4Mul(proj, viewFromCamera(cam));
+        return sample.map(function (vi) {
+          var x = geo.pos[vi * 3], y = geo.pos[vi * 3 + 1], z = geo.pos[vi * 3 + 2];
+          var cx = vp[0]*x + vp[4]*y + vp[8]*z + vp[12];
+          var cy = vp[1]*x + vp[5]*y + vp[9]*z + vp[13];
+          var cw = vp[3]*x + vp[7]*y + vp[11]*z + vp[15];
+          return [cx / cw, cy / cw];
+        });
+      }
+      var pa = projectAll(exteriorCamera());
+      orbit.azim = orbit.azimT = savedAz + Math.PI / 6;
+      var pb = projectAll(exteriorCamera());
+      orbit.azim = savedAz; orbit.azimT = savedAzT;
+      var maxD = 0;
+      for (var i = 0; i < pa.length; i++) {
+        maxD = Math.max(maxD, Math.hypot(pa[i][0] - pb[i][0], pa[i][1] - pb[i][1]));
+      }
+      out.parallaxMaxNdcShiftPer30deg = +maxD.toFixed(4);
+      out.distanceUnchangedAfterOrbit = +orbit.dist.toFixed(4);
+
+      var wasPaused = state.paused;
+      state.paused = false;
+      var t1 = state.time; tick(0.5, false);
+      out.runningAdvance = +(state.time - t1).toFixed(4);
+      var t2 = state.time; tick(0.5, true);
+      out.hiddenAdvance = +(state.time - t2).toFixed(6);
+      state.paused = true;
+      var t3 = state.time; tick(0.5, false);
+      out.pausedAdvance = +(state.time - t3).toFixed(6);
+      state.paused = wasPaused;
+      syncUI();
+
+      out.resourceRequests = (window.performance && performance.getEntriesByType)
+        ? performance.getEntriesByType('resource').length : -1;
+      out.externalRefs = document.querySelectorAll('script[src], link[href], img[src], source[src]').length;
+      out.canvasCount = document.querySelectorAll('canvas').length;
+      out.controls = Array.prototype.map.call(
+        document.querySelectorAll('#panel button, #panel input'),
+        function (el) { return el.id; }
+      );
+      out.viewportMeta = !!document.querySelector('meta[name="viewport"]');
+      out.title = document.title;
+      draw();
+      return out;
+    },
+    // Deterministic audit of the guided journey: entrance, traversal clearance,
+    // orientation stability, exit hold, return and repeated cycles.
+    journeyReport: function () {
+      var wasPaused = state.paused;
+      resetView();
+      state.paused = false;
+      var dt = 1 / 60, out = {}, t = 0, g, i;
+
+      beginJourney();
+      out.modeOnStart = state.mode;
+      while (state.mode === 'enter' && t < 5) { tick(dt, false); t += dt; }
+      out.enterSeconds = +t.toFixed(3);
+      out.modeAfterEnter = state.mode;
+      out.entranceCam = state.cam.p.map(round4);
+      out.entranceQuat = state.cam.q.map(round4);
+      out.zStart = +state.zStart.toFixed(4);
+      out.zEnd = +state.zEnd.toFixed(4);
+
+      var marks = [0, 2, 4, 6, 8, 10];
+      out.samples = [];
+      var minClear = 1e9, maxOffAxis = 0, monotonic = true, quatDev = 0;
+      var prevZ = state.cam.p[2];
+      for (i = 0; i < marks.length; i++) {
+        g = 0;
+        while (state.mode === 'tour' && state.tourT < marks[i] - 1e-9 && g < 4000) {
+          tick(dt, false); g++;
+          var zc = state.cam.p[2];
+          if (zc > prevZ + 1e-9) monotonic = false;
+          prevZ = zc;
+          var lc = state.a * Math.sinh(zc / state.a);
+          var wall = Math.sqrt(lc * lc + state.a * state.a);
+          if (wall < minClear) minClear = wall;
+          maxOffAxis = Math.max(maxOffAxis, Math.abs(state.cam.p[0]), Math.abs(state.cam.p[1]));
+          quatDev = Math.max(quatDev, Math.abs(state.cam.q[0]), Math.abs(state.cam.q[1]), Math.abs(state.cam.q[2]), Math.abs(1 - state.cam.q[3]));
+        }
+        out.samples.push({ mark: marks[i], z: round4(state.cam.p[2]), progress: +(state.tourT / TOUR_DURATION).toFixed(4), mode: state.mode });
+      }
+      out.minWallClearance = +minClear.toFixed(4);
+      out.maxOffAxis = +maxOffAxis.toFixed(6);
+      out.pathMonotonic = monotonic;
+      out.maxOrientationDeviation = +quatDev.toFixed(6);
+      out.modeAfterTour = state.mode;
+      out.hudVisible = !hud.hidden;
+      out.hudText = hudPct.textContent;
+
+      var zHold = state.cam.p[2];
+      for (i = 0; i < 120; i++) tick(dt, false);
+      out.holdDrift = +Math.abs(state.cam.p[2] - zHold).toFixed(6);
+      out.modeAfterHold = state.mode;
+
+      returnToExterior();
+      t = 0;
+      while (state.mode === 'returning' && t < 5) { tick(dt, false); t += dt; }
+      out.returnSeconds = +t.toFixed(3);
+      out.modeAfterReturn = state.mode;
+      out.returnedCam = state.cam.p.map(round4);
+      out.cutawayAfterReturn = state.cutawayOn;
+      out.hudHiddenAfterReturn = hud.hidden;
+
+      var cycles = 0;
+      for (var c = 0; c < 3; c++) {
+        beginJourney();
+        g = 0;
+        while (state.mode !== 'hold' && g < 3000) { tick(dt, false); g++; }
+        if (state.mode === 'hold') cycles++;
+        returnToExterior();
+        g = 0;
+        while (state.mode === 'returning' && g < 400) { tick(dt, false); g++; }
+      }
+      out.completedCycles = cycles;
+      out.finalMode = state.mode;
+      out.finalDist = +orbit.dist.toFixed(3);
+
+      state.paused = wasPaused;
+      resetView();
+      out.cameraAfterAudit = state.cam.p.map(round4);
+      return out;
+    },
+    // Radius extremes and control toggles.
+    auditReport: function () {
+      resetView();
+      state.paused = false;
+      var out = { radii: [] }, list = [A_MIN, A_DEF, A_MAX], i;
+      for (i = 0; i < list.length; i++) {
+        var a = list[i];
+        radiusInput.value = String(a);
+        radiusInput.dispatchEvent(new Event('input', { bubbles: true }));
+        var g = window.wormhole.geometryReport();
+        var p = window.wormhole.projectionReport();
+        out.radii.push({
+          a: a,
+          outputText: radiusOut.textContent,
+          throatRingRadius: g.throatRingRadius,
+          throatRingZ: g.throatRingZ,
+          r2Residual: g.maxAbs_r2_minus_l2_minus_a2,
+          seamGap: g.azimuthSeamPositionGap,
+          vertexRadiusResidual: g.maxAbs_vertexRadius_minus_r,
+          zAtEnd: +(a * Math.asinh(6 / a)).toFixed(4),
+          outsideNdc: p.verticesOutsideNdc,
+          maxAbsNdcX: p.maxAbsNdcX,
+          maxAbsNdcY: p.maxAbsNdcY
+        });
+      }
+      radiusInput.value = String(A_DEF);
+      radiusInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+      btnGrid.click(); out.gridAfterOff = window.wormhole.state().grid;
+      btnGrid.click(); out.gridAfterOn = window.wormhole.state().grid;
+      btnGrid.click(); tick(1.0, false); draw(); out.gridUniformOff = window.wormhole.state().grid; btnGrid.click();
+
+      btnCut.click(); tick(1.0, false);
+      out.cutUniformOff = window.wormhole.state().cutUniform;
+      btnCut.click(); tick(1.0, false);
+      out.cutUniformOn = window.wormhole.state().cutUniform;
+      out.cutToggleState = window.wormhole.state().cutaway;
+
+      beginJourney();
+      tick(0.7, false);
+      out.radiusDisabledInJourney = radiusInput.disabled;
+      out.cutawayDisabledInJourney = btnCut.disabled;
+      out.hudVisibleInJourney = !hud.hidden;
+      out.journeyLabel = btnJourney.textContent;
+      out.pauseLabel = btnPause.textContent;
+      returnToExterior();
+      var g2 = 0;
+      while (state.mode === 'returning' && g2 < 300) { tick(1 / 60, false); g2++; }
+      out.radiusEnabledAfterReturn = !radiusInput.disabled;
+      out.modeAfterReturn = state.mode;
+      resetView();
+      out.finalCam = state.cam.p.map(round4);
+      return out;
+    }
+  };
+})();
+</script>
+</body>
+</html>
