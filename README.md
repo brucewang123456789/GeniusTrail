@@ -256,10 +256,10 @@ The technical report records fixed-denominator local reward audits under the aut
 
 | Benchmark | Confirmed passes | Score | Retained records |
 |---|---:|---:|---|
-| DeepSWE v1.1 | 89 / 113 | **78.8%** | [DeepSWE v1.1 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/evidence/deepswe-1.1) |
-| Terminal-Bench 3.0 | 31 / 74 | **41.9%** | [Terminal-Bench 3.0 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/evidence/terminal-bench-3.0) |
-| Terminal-Bench 4.0 | 30 / 66 | **45.5%** | [Terminal-Bench 4.0 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/evidence/terminal-bench-4.0) |
-| SWE-Marathon | 9 / 20 | **45.0%** | [SWE-Marathon evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/evidence/swe-marathon) |
+| DeepSWE v1.1 | 89 / 113 | **78.8%** | [DeepSWE v1.1 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/deepswe-1.1) |
+| Terminal-Bench 3.0 | 31 / 74 | **41.9%** | [Terminal-Bench 3.0 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/terminal-bench-3.0) |
+| Terminal-Bench 4.0 | 30 / 66 | **45.5%** | [Terminal-Bench 4.0 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/terminal-bench-4.0) |
+| SWE-Marathon | 9 / 20 | **45.0%** | [SWE-Marathon evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/swe-marathon) |
 
 These are author-reported reward audits. Official leaderboard standing is outside their scope. SWE-Marathon used reference assistance as an internal control. The public folders contain retained records and may cover only a subset of a suite. Use the report's denominator and inspect `official_evaluation.json` for each task. [Browse all retained evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/evidence).
 
