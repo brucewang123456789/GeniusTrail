@@ -1,0 +1,13 @@
+{
+  "name": "@voder/acceptance-module8",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Voder Agent A01-A12 independent release evidence harness; additive only",
+  "scripts": {
+    "selftest": "node --test test/*.test.mjs",
+    "audit": "node src/audit.mjs",
+    "live": "node src/live.mjs"
+  },
+  "engines": {"node": ">=22.16"}
+}

@@ -1,0 +1,10 @@
+import {fileURLToPath} from 'node:url';
+import test from 'node:test';import assert from 'node:assert/strict';import {createServer} from 'node:http';import {mkdtemp,mkdir,writeFile,readFile} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import {createAdapters} from '../lib/adapters.mjs';
+const voderRoot=process.env.VODER_ROOT_TEST||process.env.VODER_ROOT||fileURLToPath(new URL('../../../', import.meta.url));
+test('real provider-bridge child and real installed open plugin: loopback API model proposal',async()=>{
+ const server=createServer(async(req,res)=>{if(req.url!=='/v1/chat/completions'){res.writeHead(404);res.end();return;}let body='';for await(const chunk of req)body+=chunk;const wire=JSON.parse(body);assert.equal(wire.model,'fixture-model');res.setHeader('Content-Type','application/json');res.end(JSON.stringify({id:'chatcmpl-fixture',object:'chat.completion',created:1,model:'fixture-model',choices:[{index:0,message:{role:'assistant',content:'{"version":1,"patches":[]}'},finish_reason:'stop'}],usage:{prompt_tokens:23,completion_tokens:7,total_tokens:30}}));});
+ await new Promise(ok=>server.listen(0,'127.0.0.1',ok));const prev=process.env.VODER_CONFIG_DIR;
+ try{const config=await mkdtemp(join(tmpdir(),'voder-cli-model-fixture-'));await mkdir(join(config,'credentials'),{mode:0o700});await writeFile(join(config,'state.json'),JSON.stringify({version:1,plugins:{cloud:false,open:true},active:{kind:'open',alias:'fixture'},openProfiles:{fixture:{runtime:'compatible',endpoint:`http://127.0.0.1:${server.address().port}/v1`,model:'fixture-model',allowLoopbackHttp:true}}}),{mode:0o600});process.env.VODER_CONFIG_DIR=config;
+ const run=await mkdtemp(join(tmpdir(),'voder-bridge-run-'));const adapter=createAdapters(voderRoot);const result=await adapter.model(run,1,'Respond JSON');assert.equal(result.providerId,'open_compatible');assert.equal(result.model,'fixture-model');assert.match(result.text,/"patches"/);assert.equal(result.usage.totalTokens,30);
+ }finally{if(prev===undefined)delete process.env.VODER_CONFIG_DIR;else process.env.VODER_CONFIG_DIR=prev;await new Promise(ok=>server.close(ok));}
+});

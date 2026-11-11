@@ -1,0 +1,14 @@
+{
+  "compiler": "rustc 1.91.0",
+  "target": "x86_64-unknown-linux-musl",
+  "binary_sha256": "05dd954381189a21d4c32088c02b66b2e3cf1daedbec9c96d3a8849a37776ee7",
+  "sources": {
+    "native/Cargo.toml": "6f3ef37e3a75fa215cad72b6c21df50380ecd2f960b9e2a06308421305d27c65",
+    "native/Cargo.lock": "203beac380ad75e3caf65c53ab325460b71f72c25f7dcc0683b2849cf5699595",
+    "native/src/main.rs": "5b1b352af7d6d31f6aaf9b94f1e0a4922b6a63b35f9a4d6d63fc5c1c605c5f55",
+    "native/src/resolver.rs": "72869c138f84af9e6e5e9289eeb594f4e2e3d767f95bff1208a10b4343ecaba5"
+  },
+  "tls": "rustls / webpki roots; certificate validation required",
+  "network_mode": "direct; explicit fail-closed for applicable proxy environment",
+  "protocol": "RFC8484-secure-DNS + generic-http-search-v1 + legacy-search + fetch"
+}

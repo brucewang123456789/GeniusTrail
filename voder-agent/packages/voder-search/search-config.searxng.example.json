@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "providers": [
+    {
+      "id": "local-search",
+      "preset": "searxng",
+      "endpoint": "http://127.0.0.1:8888/search",
+      "allow_loopback": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "voder.context.skills.v1",
+  "skills": [
+    {
+      "name": "missing-input-audit",
+      "sha256": "e99e567b0cd7b17769dee82b8205a54035a2e5f9918333f20d9a69e659ac54ee"
+    },
+    {
+      "name": "root-cause-analysis",
+      "sha256": "fc0104a407e1f66c08c74808cae761c6defb717b744feacdec72d7d18de481ba"
+    },
+    {
+      "name": "sandbox-verification",
+      "sha256": "0e9c9cef8616ed09d152af98d087733e2ca78f5779463b0577c1adfb05820eab"
+    },
+    {
+      "name": "scientific-validation",
+      "sha256": "8af32b133c1005e8d0a751281fd7a76a963e3e49ba3e34a3b47bfaedc717c21a"
+    }
+  ]
+}

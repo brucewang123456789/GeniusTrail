@@ -1,0 +1,15 @@
+{
+  "name": "@voder/sandbox-modal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22.16.0"},
+  "dependencies": {"modal": "0.11.0"},
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/*.test.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "smoke": "node --experimental-strip-types src/smoke.ts",
+    "acceptance": "node --experimental-strip-types src/acceptance.ts"
+  },
+  "devDependencies": {"typescript":"5.8.3", "@types/node":"^22.0.0"}
+}

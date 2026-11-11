@@ -1,0 +1,73 @@
+Create a polished, original SVG illustration of a pelican riding a bicycle.
+
+Treat this as a complete visual engineering task: build the artwork, inspect the rendered result, repair defects, and deliver verified files. Deliver the finished work, not a proposal or instructions for someone else to implement.
+
+## 1. Visual requirements
+
+The illustration must communicate “a pelican riding a bicycle” immediately, without relying on a caption.
+
+- Draw a clearly recognizable pelican with a long bill, a distinct throat pouch, a readable eye, and a coherent head, neck, body, and wing silhouette. It must not look like a generic duck or an arbitrary bird.
+- Show the pelican actively riding: its body is supported by the saddle, at least one wing visibly reaches the handlebars, and its visible feet make convincing contact with the pedals. Anatomical stylization is welcome; disconnected limbs and impossible contact points are not.
+- Draw a recognizable, mechanically coherent bicycle with two circular wheels, hubs, a connected frame, fork, handlebars, saddle, crank, pedals, and an intelligible drivetrain. Align the fork with the front hub and connect the saddle and crank plausibly to the frame.
+- Use deliberate layering so the bird, bicycle frame, pedals, and wheels overlap convincingly. Hidden parts may be occluded naturally.
+- Use a clear side or slight three-quarter view, balanced composition, consistent visual language, controlled line weights, and a restrained, harmonious palette.
+- Keep the entire subject comfortably inside the canvas. Use a simple background and, if useful, a subtle ground shadow. Decorative elements must support the subject rather than obscure it.
+
+Aim for a finished editorial vector illustration with strong silhouettes and clean geometry. Visual clarity and structural correctness take priority over ornament.
+
+## 2. Technical requirements
+
+- Produce a static, self-contained SVG with a `viewBox` of `0 0 1024 768`.
+- Use editable SVG vector geometry. Do not embed raster images, external assets, scripts, remote resources, or `foreignObject`.
+- Do not use image-generation services, retrieve existing pelican illustrations, or copy an existing solution. Construct the artwork yourself in SVG.
+- Use valid XML, unique IDs, and valid references. Avoid unnecessary complexity, redundant elements, and invisible off-canvas content.
+- Ensure the artwork renders correctly in a standards-compliant browser and remains legible at a smaller display size.
+- Include a concise accessible title and description.
+- Work inside the provided task directory. Preserve unrelated files and settings.
+
+## 3. Efficient execution
+
+Minimize unnecessary tokens, tool calls, and elapsed time while meeting the quality requirements.
+
+Begin with a brief implementation plan. Then work in short action-and-check cycles: choose the next useful action from the evidence currently available, execute it, inspect the result, and decide what to do next.
+
+- Inspect only the files and capabilities needed for this task. Do not scan unrelated directories or install a large toolchain.
+- Prefer the simplest reliable implementation and reuse available rendering or validation tools.
+- Do not spend tokens narrating routine actions or repeating the requirements. Keep progress updates short and factual.
+- When a tool fails, hangs, or stops producing useful progress, inspect the immediate cause and change strategy promptly. Do not repeat an unchanged failing action without new evidence.
+- Distinguish an unavailable tool from a defect in the artwork. Use an available equivalent where possible.
+- Make targeted repairs to identified defects instead of repeatedly rebuilding correct parts.
+- Respect any externally supplied time, token, and tool budgets. Do not silently increase them.
+- Stop improving once the acceptance criteria are satisfied and further changes would add ornament without correcting a meaningful defect.
+
+Do not provide a detailed internal reasoning transcript. Report only the necessary decisions, actions, findings, and verification results.
+
+## 4. Mandatory self-check and repair
+
+Writing the SVG is not sufficient. Validate the actual final file and inspect its rendered appearance.
+
+Perform both technical and visual checks:
+
+1. Parse the SVG and check its dimensions, IDs, references, and absence of prohibited dependencies.
+2. Render the SVG using an available browser or SVG renderer.
+3. Inspect the rendered image at its intended size and at a reduced size.
+4. Check pelican recognizability, bicycle structure, riding contact points, proportions, layering, clipping, contrast, and overall finish.
+5. Repair every significant defect found, then repeat the affected checks against the updated file.
+
+A successful parser or renderer does not establish visual quality. Judge the visible result against the requirements.
+
+Do not mark an unperformed check as passed. If visual inspection is unavailable, clearly identify that limitation and do not claim full visual verification. If a genuine blocker prevents completion within the available resources, preserve the best valid artifact and report the specific blocker without claiming success.
+
+## 5. Deliverables
+
+Save:
+
+- `pelican-bicycle.svg` — the final, editable artwork.
+- `pelican-bicycle.png` — a preview rendered directly from the final SVG, when rendering is available.
+- `verification.md` — a concise record of the checks actually performed, tools used, defects repaired, final SVG SHA-256, and any remaining limitations.
+
+Keep verification factual. Do not invent tool results, timestamps, performance measurements, or quality scores. Ensure the preview and verification record correspond to the final SVG, not an earlier revision.
+
+Deliver only after the artwork satisfies the visual and technical requirements, or explicitly report an unresolved blocker.
+
+Your final response should be brief: provide the artifact paths, verification status, and any remaining limitation. Do not substitute a long explanation for the finished files.

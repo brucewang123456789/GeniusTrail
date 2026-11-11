@@ -1,0 +1,10 @@
+Voder — VeriLoop-Governed Coding Agent
+Copyright 2026 VeriLoop contributors
+
+Voder-original source code is made available under the Apache License, Version 2.0.
+This does not relicense separately attributed upstream or third-party components.
+
+This source distribution includes an adapted Pi coding-agent engine (original
+author Mario Zechner; MIT license), Playwright, KaTeX, and other third-party
+software with their own copyright notices and licenses. See
+THIRD_PARTY_NOTICES.md and the original license texts within each component.

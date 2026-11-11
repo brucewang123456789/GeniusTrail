@@ -1,0 +1,14 @@
+[package]
+name = "voder-gateway"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Trusted operator-configured Rust VGR gateway for model-originated patches"
+
+[workspace]
+
+[dependencies]
+voderd = { path = "../../../crates/voderd" }
+voder-core = { path = "../../../crates/voder-core" }
+voder-runtime = { path = "../../../crates/voder-runtime" }
+voder-protocol = { path = "../../../crates/voder-protocol" }

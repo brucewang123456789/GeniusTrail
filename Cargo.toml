@@ -1,0 +1,4 @@
+[workspace]
+exclude = ["voder-agent/engine/voder-agent-engine/packages/env/daemon"]
+resolver = "2"
+members = ["crates/voder-core", "crates/voder-runtime", "crates/voder-protocol", "crates/voderd"]

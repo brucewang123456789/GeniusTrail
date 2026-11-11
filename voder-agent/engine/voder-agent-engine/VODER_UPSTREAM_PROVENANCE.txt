@@ -1,0 +1,7 @@
+Voder Agent Engine upstream baseline
+Original repository: https://github.com/earendil-works/pi
+Original release: v1.1.0
+Pinned commit: abe508e1b89912adde45528136c3221eb69acdd7
+Selected download mirror: ghproxy
+MIT license retained in LICENSE
+Status: upstream source baseline, not yet VGR-integrated

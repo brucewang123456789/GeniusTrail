@@ -1,0 +1,11 @@
+{
+  "project": "libarchive",
+  "upstream": "https://github.com/libarchive/libarchive",
+  "source_files": [
+    "libarchive/test/test_read_format_rar.rar.uu",
+    "libarchive/test/test_read_format_rar5_stored.rar.uu",
+    "libarchive/test/test_read_format_cab_1.cab.uu"
+  ],
+  "regular-rar4.rar": "Derived by retaining the upstream fixture first regular-file record and archive headers; excludes its symlink fixture.",
+  "other_fixtures": "Generated locally for this change; no user document, credential or model weight is included."
+}

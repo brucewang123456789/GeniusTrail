@@ -1,0 +1,20 @@
+[package]
+name = "voder-retrieval"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.91"
+[workspace]
+[dependencies]
+reqwest = { version = "=0.12.24", default-features = false, features = ["blocking", "json", "rustls-tls", "http2"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+url = "2"
+sha2 = "0.10"
+scraper = "0.24"
+regex = "1"
+base64 = "0.22"
+hickory-proto = { version = "=0.26.1", default-features = false }
+rustls = { version = "0.23", default-features = false }
+[profile.release]
+strip = true
+lto = false

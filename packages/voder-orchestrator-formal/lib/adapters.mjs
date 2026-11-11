@@ -1,0 +1,20 @@
+import {spawn} from 'node:child_process';
+import {readFile,lstat,open} from 'node:fs/promises';
+import {join,resolve} from 'node:path';
+import {randomBytes} from 'node:crypto';
+import {sha,insist,regular} from './safety.mjs';
+export async function boundedSpawn(cmd,args,{cwd,env,ms=180000}={}){return new Promise((resolveResult,reject)=>{const p=spawn(cmd,args,{cwd,env,stdio:['ignore','ignore','pipe']});let bytes=0;let stderr='';let done=false;let timer=setTimeout(()=>{p.kill('SIGKILL');},ms);p.stderr.on('data',b=>{bytes+=b.length;if(bytes<=8192)stderr+=b.toString('utf8');if(bytes>8192)p.kill('SIGKILL');});p.on('error',e=>{if(!done){done=true;clearTimeout(timer);reject(e);}});p.on('close',(code,signal)=>{if(done)return;done=true;clearTimeout(timer);resolveResult({code,signal,stderr:stderr.slice(0,512)});});});}
+async function writeNew(file,bytes){const f=await open(file,'wx',0o600);try{await f.writeFile(bytes);await f.sync();}finally{await f.close();}}
+export function createAdapters(root,policy={}){
+ return {
+ async model(runDir,ordinal,instruction){const {loadState,modelEnvironment}=await import(join(root,'packages/voder-cli/dist/core.js'));const state=await loadState();const env=await modelEnvironment(state,root);const request=join(runDir,`model-${ordinal}.json`), receipt=join(runDir,`model-${ordinal}.receipt.json`);const id=`r-${BigInt('0x'+randomBytes(7).toString('hex'))+1n}`;
+  await writeNew(request,JSON.stringify({protocol:'voder-provider-bridge-v1',runId:id,instruction}));const proc=await boundedSpawn(process.execPath,[join(root,'packages/voder-providers/bin/daemon-provider-bridge.mjs'),request,receipt],{cwd:root,env:{...process.env,...env,NODE_OPTIONS:''},ms:190000});insist(proc.code===0,'MODEL_PROVIDER_FAILED');await regular(receipt,256*1024);const obj=JSON.parse(await readFile(receipt,'utf8'));
+  insist(obj.protocol==='voder-provider-bridge-v1'&&obj.runId===id&&obj.deliveryAllowed===false&&obj.executionAuthorized===false&&typeof obj.proposalText==='string'&&Array.isArray(obj.proposedToolCalls)&&obj.proposedToolCalls.length===0,'MODEL_RECEIPT_INVALID');return {text:obj.proposalText,usage:obj.usage??null,providerId:obj.providerId,model:obj.model};
+ },
+ async sandbox(runDir,ordinal,workspace,validator){const {snapshotWorkspace}=await import(join(root,'packages/voder-sandbox-modal/src/manifest.ts'));const expected=await snapshotWorkspace(workspace,validator.requiredFiles??[]);const request=join(runDir,`sandbox-${ordinal}.json`),receipt=join(runDir,`sandbox-${ordinal}.receipt.json`),stdout=join(runDir,`sandbox-${ordinal}.stdout`),stderr=join(runDir,`sandbox-${ordinal}.stderr`);const id=`r-${BigInt('0x'+randomBytes(6).toString('hex'))+1n}`;const actionId=`v-${ordinal}`;
+  await writeNew(request,JSON.stringify({workspace,program:validator.program,args:validator.args,requiredFiles:validator.requiredFiles??[],timeoutMs:validator.timeoutMs??120000,memoryMiB:validator.memoryMiB??1024,cpu:1,maxOutputBytes:validator.maxOutputBytes??65536,runId:id,actionId}));
+  const proc=await boundedSpawn(process.execPath,['--experimental-strip-types',join(root,'packages/voder-sandbox-modal/src/cli.ts'),request,receipt,stdout,stderr],{cwd:root,env:{...process.env,NODE_OPTIONS:'',VODER_SANDBOX_BACKEND:'modal'},ms:(validator.timeoutMs??120000)+120000});insist(proc.code===0,'MODAL_TRANSPORT_FAILED');await regular(receipt,1024*1024);await regular(stdout,16*1024*1024);await regular(stderr,16*1024*1024);const obj=JSON.parse(await readFile(receipt,'utf8'));const out=await readFile(stdout),err=await readFile(stderr);
+  insist(obj.protocol==='voder-sandbox-receipt-v1'&&obj.provider==='modal'&&obj.status==='EXECUTED'&&obj.runId===id&&obj.actionId===actionId&&obj.stdoutSha256===sha(out)&&obj.stderrSha256===sha(err)&&obj.image===process.env.VODER_MODAL_IMAGE&&obj.inputDigest===expected.digest&&obj.files===expected.files.length&&obj.bytes===expected.totalBytes,'MODAL_RECEIPT_INVALID');
+  return {passed:obj.exitCode===0&&!obj.timeout&&!obj.outputLimited,receipt:obj,stdout:out.toString('utf8'),stderr:err.toString('utf8')};
+ }};
+}

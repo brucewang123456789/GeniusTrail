@@ -1,0 +1,10 @@
+{
+  "name": "@voder/providers",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22"},
+  "exports": {".": {"types": "./dist/src/index.d.ts", "default": "./dist/src/index.js"}},
+  "files": ["dist"],
+  "scripts": {"typecheck": "tsc --noEmit", "build": "tsc", "test": "npm run build && node --test test/*.test.mjs"}
+}

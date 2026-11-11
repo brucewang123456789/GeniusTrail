@@ -1,0 +1,41 @@
+{
+  "schema": "voder.source-path.v1",
+  "valid": [
+    "index.js",
+    "README",
+    "a",
+    "src/input.txt",
+    "src/pkg/a.py",
+    "-file.js",
+    "_file.rs",
+    "src/-x",
+    "src/a_b-c.1",
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  ],
+  "invalid": [
+    "",
+    "/tmp/x",
+    "../x",
+    "src/../x",
+    "./x",
+    "a//b",
+    "a/",
+    "a\\b",
+    "a\u0000b",
+    "a\nb",
+    ".git/config",
+    ".env",
+    "src/.voder/x",
+    "a.",
+    "src/a.",
+    "CON",
+    "nul.txt",
+    "src/com1.log",
+    "C:/x",
+    "a b",
+    "\u4e2d\u6587.js",
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "src/a:b",
+    "~x"
+  ]
+}

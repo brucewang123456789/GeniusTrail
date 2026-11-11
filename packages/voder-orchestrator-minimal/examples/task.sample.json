@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "project": "/absolute/path/to/a/clean/project",
+  "stateRoot": "/absolute/private/orchestrator-state",
+  "goal": "Fix the failing test without regressions",
+  "requiredFiles": ["src/app.py", "tests/test_app.py"],
+  "allowedPaths": ["src/app.py"],
+  "validators": [
+    {"name":"unit","program":"/usr/bin/python3","args":["-m","unittest","discover","-s","tests"],"timeoutMs":120000,"memoryMiB":1024}
+  ],
+  "maxSteps": 3,
+  "maxModelCalls": 3,
+  "maxTokens": 32000,
+  "memoryFiles": []
+}

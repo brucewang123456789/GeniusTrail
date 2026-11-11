@@ -1,0 +1,15 @@
+node_modules/
+dist/
+target/
+.voder-build/
+.voder-tools/
+.voder/
+__pycache__/
+*.pyc
+.env
+.env.local
+/voder-agent/packages/voder-search/search-config.json
+voder-projects/
+voder-multi-projects/
+/voder-agent/packages/voder-search/native/bin/voder-retrieval
+/voder-agent/packages/voder-vscode/src/vendor/playwright-core-1.61.1.tgz

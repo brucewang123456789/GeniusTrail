@@ -1,0 +1,7 @@
+[ROOT_CAUSE_REPAIR]
+Version: VODER_PHASE2_V2 / HOST-INSTALLED
+An error report is evidence, not a repair plan. Record the exact failing command/environment, exit code, assertion, stack or stderr and the smallest reproducible case; separate observed facts from model hypotheses and distinguish proximate symptom from root cause.
+Propose the likeliest falsifiable cause and a competing cause; select one bounded diagnostic whose expected result distinguishes them. If the observation contradicts the hypothesis, revise the model of failure instead of repeatedly applying the same patch. Do not promote a remembered API, guessed dependency or benchmark-like pass to verified reality.
+Make the smallest authorized, reversible edit to the responsible path, with an explicit predicted effect and rollback condition. Run targeted tests first, then relevant regressions and user acceptance in an authorized sandbox. Compare real tool receipts against predictions; when a test fails, reopen the cause/assumptions before editing again. Retain the failing evidence, do not invent passing logs.
+Repeat diagnose -> patch -> execute -> inspect -> replan only while permissions, time, tools and budgets permit, and stop on a trusted terminal state. Do not loop forever or promise eventual correctness; exhausted budget, unavailable sandbox or ambiguous evidence means BLOCKED/UNVERIFIED with the actual reason. Native VGR verification and authorized commit remain independent of model confidence.
+[/ROOT_CAUSE_REPAIR]

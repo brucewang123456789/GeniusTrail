@@ -1,0 +1,281 @@
+{
+	"name": "voder-vscode",
+	"displayName": "Voder – VeriLoop’s coding agent",
+	"description": "A verifiable coding agent for exploring codebases, implementing changes, running tests, and delivering evidence-backed results.",
+	"version": "0.1.47",
+	"publisher": "veriloop",
+	"private": true,
+	"license": "Apache-2.0",
+	"engines": {
+		"vscode": "^1.105.0"
+	},
+	"categories": [
+		"Other",
+		"Machine Learning",
+		"Programming Languages"
+	],
+	"main": "./src/extension.cjs",
+	"extensionKind": [
+		"workspace"
+	],
+	"activationEvents": [
+		"onStartupFinished",
+		"onCommand:voder.openTerminal",
+		"onCommand:voder.submitTask",
+		"onView:voder.chat",
+		"onCommand:voder.openChat",
+		"onCommand:voder.configureFirstRun"
+	],
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": false
+		},
+		"virtualWorkspaces": {
+			"supported": false
+		}
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "voder.previewCurrentFile",
+				"title": "Voder: Preview Current File"
+			},
+			{
+				"command": "voder.configureModel",
+				"title": "Voder: Configure Model API"
+			},
+			{
+				"command": "voder.configureNativeChat",
+				"title": "Voder: Execution Settings"
+			},
+			{
+				"command": "voder.openChat",
+				"title": "Voder: Open Chat"
+			},
+			{
+				"command": "voder.openTerminal",
+				"title": "Voder: New Session Terminal"
+			},
+			{
+				"command": "voder.bindTerminal",
+				"title": "Voder: Bind Active Terminal to Session"
+			},
+			{
+				"command": "voder.submitTask",
+				"title": "Voder: Submit Task"
+			},
+			{
+				"command": "voder.submitWithSelection",
+				"title": "Voder: Submit Task With Selected Code"
+			},
+			{
+				"command": "voder.showStatus",
+				"title": "Voder: Show Session Status"
+			},
+			{
+				"command": "voder.showEvents",
+				"title": "Voder: Show Evidence Events"
+			},
+			{
+				"command": "voder.cancelTask",
+				"title": "Voder: Cancel Active Task"
+			},
+			{
+				"command": "voder.inspectDiff",
+				"title": "Voder: Inspect Verified Session Diff"
+			},
+			{
+				"command": "voder.showDiagnostics",
+				"title": "Voder: Show Editor Diagnostics"
+			},
+			{
+				"command": "voder.exportSession",
+				"title": "Voder: Export Session Metadata"
+			},
+			{
+				"command": "voder.reconnect",
+				"title": "Voder: Reconnect Control Plane"
+			},
+			{
+				"command": "voder.showSessions",
+				"title": "Voder: Browse Sessions"
+			},
+			{
+				"command": "voder.inspectRecovery",
+				"title": "Voder: Inspect Historical Recovery (Read Only)"
+			},
+			{
+				"command": "voder.retryGuardedRecovery",
+				"title": "Voder: Retry VGR-Guarded Recovery"
+			},
+			{
+				"command": "voder.repairFromValidation",
+				"title": "Voder: Repair From Failed Validation"
+			},
+			{
+				"command": "voder.inspectProjectTools",
+				"title": "Voder: Inspect Selected Files (Passive Checks)"
+			},
+			{
+				"command": "voder.restoreProjectSession",
+				"title": "Voder: Restore Project Session Evidence (Read Only)"
+			},
+			{
+				"command": "voder.inspectGeneratedProject",
+				"title": "Voder: Inspect Generated Project Tools"
+			},
+			{
+				"command": "voder.inspectProjectRuntime",
+				"title": "Voder: Inspect Generated Project Runtime"
+			},
+			{
+				"command": "voder.runIsolatedPythonChecks",
+				"title": "Voder: Run Selected Python Tests in Sandbox"
+			},
+			{
+				"command": "voder.addFileContext",
+				"title": "Voder: Add File to Context"
+			},
+			{
+				"command": "voder.addSelectionContext",
+				"title": "Voder: Add Selection to Context"
+			},
+			{
+				"command": "voder.configureVisionModel",
+				"title": "Voder: Configure Vision Model"
+			},
+			{
+				"command": "voder.fileInputDiagnostics",
+				"title": "Voder: File Input Diagnostics"
+			},
+			{
+				"command": "voder.extractArchive",
+				"title": "Voder: Extract Archive"
+			},
+			{
+				"command": "voder.configureFirstRun",
+				"title": "Voder: Configure Models, Modal and Search"
+			}
+		],
+		"views": {
+			"explorer": [
+				{
+					"id": "voder.sessions",
+					"name": "Voder Sessions"
+				}
+			],
+			"voder": [
+				{
+					"type": "webview",
+					"id": "voder.chat",
+					"name": "Voder Chat",
+					"icon": "resources/voder.svg"
+				}
+			]
+		},
+		"menus": {
+			"view/title": [
+				{
+					"command": "voder.showSessions",
+					"when": "view == voder.sessions",
+					"group": "navigation"
+				},
+				{
+					"command": "voder.configureNativeChat",
+					"when": "view == voder.chat",
+					"group": "navigation"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "voder.addSelectionContext",
+					"when": "editorHasSelection",
+					"group": "voder"
+				},
+				{
+					"command": "voder.addFileContext",
+					"group": "voder"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "voder.addFileContext",
+					"when": "!explorerResourceIsFolder && resourceScheme == file",
+					"group": "voder"
+				}
+			]
+		},
+		"configuration": {
+			"title": "Voder",
+			"properties": {
+				"voder.agentRoot": {
+					"type": "string",
+					"default": "",
+					"description": "Optional Voder source root. Automatically detects voder-agent in the open workspace or VODER_AGENT_ROOT on the remote host."
+				},
+				"voder.nodeExecutable": {
+					"type": "string",
+					"default": "node",
+					"description": "Node executable used for the Voder SDK/CLI RPC process (Node 22.19+). No shell execution."
+				},
+				"voder.mode": {
+					"type": "string",
+					"enum": [
+						"native",
+						"draft"
+					],
+					"default": "native",
+					"description": "native requires trusted VGR gateway configuration. draft is explicitly UNVERIFIED text-only."
+				},
+				"voder.nativeGatewayConfig": {
+					"type": "string",
+					"default": "",
+					"description": "Private (0600) native VGR gateway configuration. Uses VODER_NATIVE_GATEWAY_CONFIG from the remote extension host when this setting is empty."
+				},
+				"voder.autoBindTerminals": {
+					"type": "boolean",
+					"default": true,
+					"description": "Create a distinct idle Voder session for each IDE terminal in unambiguous workspaces; no commands are executed automatically."
+				},
+				"voder.showEventMetadata": {
+					"type": "boolean",
+					"default": true,
+					"description": "Display allowlisted VGR/SDK event metadata in Voder output (no task text or raw tool payload)."
+				},
+				"voder.autoRecovery": {
+					"type": "boolean",
+					"default": false,
+					"description": "EXPLICIT OPT-IN. When native VGR is configured, store exact bounded task in VS Code SecretStorage and attempt guarded recovery on reconnect after crash; Rust must independently confirm rollback of all prior actions. Never auto-replay committed or unknown native actions."
+				}
+			}
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "voder",
+					"title": "Voder",
+					"icon": "resources/voder.svg"
+				}
+			]
+		},
+		"chatParticipants": [
+			{
+				"id": "voder.agent",
+				"name": "voder",
+				"fullName": "Voder Coding Agent",
+				"description": "Execute coding tasks through the Voder SDK and native VGR verification boundary.",
+				"isSticky": true
+			}
+		]
+	},
+	"scripts": {
+		"test": "node --test test/*.test.cjs",
+		"check": "node --check src/extension.cjs && node --check src/chat-core.cjs && node --check src/chat-view.cjs && node --check src/native-profile.cjs && node --check src/native-intent.cjs && node --check src/native-env.cjs && node --check src/rpc-client.cjs && node --test test/*.test.cjs"
+	},
+	"icon": "resources/voder-icon.png",
+	"__metadata": {
+		"installedTimestamp": 1794394514714,
+		"targetPlatform": "undefined",
+		"size": 1137297343
+	}
+}

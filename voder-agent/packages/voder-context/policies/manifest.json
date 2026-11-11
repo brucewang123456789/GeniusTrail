@@ -1,0 +1,29 @@
+{
+  "schema": "voder.context.policies.v1",
+  "policies": [
+    {
+      "name": "delivery",
+      "sha256": "e4150c00159b7bb8ba07810d4582f2aba369f76731532ff0eba37b66e495e251"
+    },
+    {
+      "name": "golden-rules",
+      "sha256": "d19af5ba34cdb757c88eb149f91b0d313b5b8976fb99cc6f5a7079f71e4b25c0"
+    },
+    {
+      "name": "next",
+      "sha256": "a67a5f2535e6834f4bf7e3518c55cc810045e7e358210fbe59526e0304153eaf"
+    },
+    {
+      "name": "preflight",
+      "sha256": "669deaea296a8e9ea688398d40640ec368607c8a4486b13318e03b2bde7ad83f"
+    },
+    {
+      "name": "repair",
+      "sha256": "31a84c89247d4175b6f2fb357dfef9046d48f98fe3ae5e29bc679080cb076f1a"
+    },
+    {
+      "name": "strategy",
+      "sha256": "7e07b94fd388f16d07a86b6972cbbe55221be8ffae856c12d53132179c46cae8"
+    }
+  ]
+}

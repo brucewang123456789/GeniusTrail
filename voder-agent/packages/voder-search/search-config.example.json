@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "providers": [
+    {
+      "id": "primary",
+      "preset": "brave",
+      "credentials": {
+        "api_key": {
+          "env": "VODER_SEARCH_BRAVE_API_KEY"
+        }
+      }
+    },
+    {
+      "id": "my-other-api",
+      "endpoint": "https://search.example.com/api/v2/search",
+      "method": "POST",
+      "headers": {
+        "Authorization": "Bearer {{secret:token}}"
+      },
+      "credentials": {
+        "token": {
+          "env": "MY_SEARCH_TOKEN"
+        }
+      },
+      "body": {
+        "input": {
+          "query": "{{query}}"
+        },
+        "count": 8
+      },
+      "response": {
+        "items": "/data/results",
+        "url": "/url",
+        "title": "/title",
+        "excerpt": [
+          "/summary",
+          "/snippet"
+        ]
+      }
+    }
+  ]
+}

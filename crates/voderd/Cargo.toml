@@ -1,0 +1,15 @@
+[package]
+name = "voderd"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Single-writer evidence-governed session daemon for Voder"
+
+[dependencies]
+voder-core = { path = "../voder-core" }
+voder-runtime = { path = "../voder-runtime" }
+voder-protocol = { path = "../voder-protocol" }
+
+[[bin]]
+name = "voderd"
+path = "src/main.rs"

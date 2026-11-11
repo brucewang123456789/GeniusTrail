@@ -1,0 +1,8 @@
+{
+  "schema": "voder.module8.release-contract.v1",
+  "production_candidate_requires_all": ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11", "A12"],
+  "required_integration": "real-model + native Rust VGR authority + Modal real sandbox + programmatic SDK/CLI + GUI VS Code",
+  "never_sufficient": ["unit-test PASS", "source hashes match", "mocked receipt", "LLM assertion", "VS Code simulated API", "draft model answer", "native-only smoke", "historical logs"],
+  "blocking_release_conditions": ["any A01-A12 NOT_VERIFIED/BLOCKED/FAIL", "any source hash drift", "any unknown charged usage", "unverified model/tool version", "unreviewed task-specific diff", "missing explicit release approval"],
+  "note": "Fixed publish boundary is unchanged; this tool cannot authorize Rust commits or create product-level release authority."
+}

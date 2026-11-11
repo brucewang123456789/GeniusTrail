@@ -1,0 +1,9 @@
+{
+  "name": "@voder/provider-open",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=22"},
+  "scripts": {"build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit"},
+  "description": "Installable self-hosted inference endpoint provider for Voder"
+}

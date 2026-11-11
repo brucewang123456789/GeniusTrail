@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# VODER_CLI_MANAGED_V1
+set -Eeuo pipefail
+export VODER_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Prefer the pinned compatible managed runtime; allow a caller-specified trusted binary.
+# Do not use the old bundled v22.16.0: Pi requires Node >=22.19.0.
+if [[ -n "${VODER_NODE_BINARY:-}" ]]; then
+ NODE="$VODER_NODE_BINARY"
+elif [[ -x "$VODER_ROOT/.voder-tools/node-v22.23.3-linux-x64/bin/node" ]]; then
+ NODE="$VODER_ROOT/.voder-tools/node-v22.23.3-linux-x64/bin/node"
+else
+ NODE="$(command -v node || true)"
+fi
+if [[ ! -x "$NODE" ]]; then
+ echo "VODER_NODE_NOT_FOUND: Install Node >=22.19 or run the provided prepare_node_runtime.sh script" >&2
+ exit 78
+fi
+VERSION="$("$NODE" --version 2>/dev/null || true)"
+if [[ ! "$VERSION" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+ echo "VODER_NODE_VERSION_INVALID: $VERSION" >&2
+ exit 78
+fi
+if (( ${BASH_REMATCH[1]} < 22 || ( ${BASH_REMATCH[1]} == 22 && ${BASH_REMATCH[2]} < 19 ) )); then
+ echo "VODER_NODE_TOO_OLD: $VERSION (Pi requires >=22.19.0); install compatible runtime with repair/Voder_CLI_Answer_Fix_20261013/tools/prepare_node_runtime.sh" >&2
+ exit 78
+fi
+MEMORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ "${1:-}" == "memory" ]]; then
+  shift
+  exec "$NODE" "$MEMORY_ROOT/voder-agent/packages/voder-memory/bin/voder-memory.mjs" "$@"
+fi
+case "${1:-}" in
+  run|rpc|status|events|resume|diff|export|help|--help|-h|'')
+    exec "$NODE" "$MEMORY_ROOT/voder-agent/packages/voder-cli/bin/voder-cli.mjs" "$@" ;;
+esac
+exec "$NODE" "$MEMORY_ROOT/packages/voder-cli/dist/cli.js" "$@"
