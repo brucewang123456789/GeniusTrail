@@ -95,7 +95,7 @@ For a scoped native profile, use **Voder: Execution Settings**. Choose an existi
 
 Open **Voder: Configure Models, Modal and Search → 4 · Configure external search provider**. Choose Brave, Tavily, Serper, SerpAPI, BigModel, DeepSeek, SearXNG or a custom JSON endpoint. Give the configuration a unique name. For a custom endpoint, provide the request method, query field, credential placement where required and response mappings. Use **5 · Search configuration status** to inspect the saved entries, then verify the integration with a live search.
 
-**Known 0.1.47 Linux behavior.** The bundled Linux search loader reads the packaged search configuration. The wizard can save a private search profile that this loader does not pick up. The current source candidate corrects the lookup to prefer the private profile. This source fix has yet to ship in the Marketplace package.
+**Linux search configuration.** The GitHub source runtime reads the workspace host’s private search profile at `~/.config/voder/search-config.json`. The bundled Linux runtime in Marketplace 0.1.47 still reads the packaged search configuration and may miss the profile saved by the wizard.
 
 ### Private configuration and advanced settings
 
@@ -261,7 +261,7 @@ The technical report records fixed-denominator local reward audits under the aut
 | Terminal-Bench 4.0 | 30 / 66 | **45.5%** | [Terminal-Bench 4.0 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/terminal-bench-4.0) |
 | SWE-Marathon | 9 / 20 | **45.0%** | [SWE-Marathon evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/swe-marathon) |
 
-These are author-reported reward audits. Official leaderboard standing is outside their scope. SWE-Marathon used reference assistance as an internal control. The public folders contain retained records and may cover only a subset of a suite. Use the report's denominator and inspect `official_evaluation.json` for each task. [Browse all retained evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/evidence).
+These are author-reported reward audits. Official leaderboard standing is outside their scope. SWE-Marathon used reference assistance as an internal control. The public folders contain retained records and may cover only a subset of a suite. Use the report's denominator and inspect `official_evaluation.json` for each task. [Browse all retained evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results).
 
 The report separately records **318/318** component checks, **420/420** stress executions, **11/11** SDK recovery assertions and **3/3** blocked-state daemon restart cases. The **93.3%–98.7%** context reduction is an estimate from synthetic histories. It measures estimated token volume under those fixtures.
 
@@ -281,7 +281,7 @@ These applications demonstrate delivered browser artifacts. The booster and astr
 
 ## Source layout
 
-The [public Voder branch](https://github.com/brucewang123456789/GeniusTrail/tree/voder) currently hosts this README, branding, demos and benchmark evidence. The following paths describe the separate source release candidate.
+The source tree includes the VGR runtime, CLI, SDK and editor adapter. The CLI and SDK can be built and used directly. The Marketplace link provides the installable VS Code extension.
 
 | Path | Contents |
 |---|---|
@@ -291,26 +291,26 @@ The [public Voder branch](https://github.com/brucewang123456789/GeniusTrail/tree
 | `voder-agent/crates/voder-gateway/` | Native gateway build root |
 | `voder-agent/packages/voder-agent-core/` | Agent kernel, model host, broker and policies |
 | `voder-agent/packages/voder-sdk/` and `voder-agent/packages/voder-native-bridge/` | Session control, native confirmation and delivery |
-| `voder-agent/packages/voder-vscode/` | Development extension and regression fixtures |
+| `voder-agent/packages/voder-vscode/` | Editor adapter source and regression fixtures |
 | `voder-agent/packages/voder-search/`, `voder-agent/packages/voder-memory/` and `voder-agent/packages/voder-context/` | Retrieval, memory and context services |
 | `voder-agent/engine/voder-agent-engine/` | Pi-derived engine with upstream attribution |
 | `packages/` | CLI, model adapters and Modal adapter |
-| `scripts/bootstrap-linux.sh` | Build entry for the Linux x64 source candidate |
+| `scripts/bootstrap-linux.sh` | Linux x86-64 source build |
 
-### Build the Linux source candidate
+### Build from source on Linux
 
-Use Node.js 22.19 or later, npm, Rust/Cargo 1.96.0, a C toolchain, Git and Python 3. Run from the root of the extracted **source candidate**.
+Use Linux x86-64, Node.js 22.19 or later, npm, Rust/Cargo 1.96.0, a C toolchain, Git and Python 3. The first build downloads locked dependencies. Run these commands from the repository root.
 
 ```bash
+python3 scripts/verify-source.py
 bash scripts/bootstrap-linux.sh
-bash bin/voder --help
-cargo test --locked --workspace
-npm --prefix packages/voder-cli test
+./bin/voder --help
+bash scripts/test-source.sh
 ```
 
-The bootstrap builds the Pi-derived engine, CLI, Rust daemon, gateway and retrieval executable. Document and archive features may also require Pillow, xlrd, libarchive, Poppler, LibreOffice or Tesseract.
+The bootstrap builds the Pi-derived engine, CLI, Rust daemon, gateway and native retrieval. The test runner covers the Voder Node and Rust suites. See the [configuration guide](docs/CONFIGURATION.md) and [testing prerequisites](docs/TESTING.md), including the tools needed for document and archive tests.
 
-The source candidate's development extension manifest is **0.1.45**. The Marketplace package is **0.1.47**, with a platform-selecting entry point and additional platform packaging. The source candidate has a verified Linux build path and includes the recovered archive and document fixtures. Cross-platform VSIX reconstruction, complete regression acceptance and repository-level licensing remain source-release work.
+The v0.1.47 source distribution was built and tested from a fresh extraction on Linux x86-64. The offline run recorded **1,447 passes, 0 failures and 4 skips** for ownership tests requiring root. Live model and Modal calls are outside those results.
 
 ## Team and attribution
 
@@ -323,9 +323,9 @@ Voder uses a Pi-derived engine for model sessions. Its upstream attribution iden
 
 Related engineering projects include [Codex](https://github.com/openai/codex), [Claude Code](https://github.com/anthropics/claude-code), and [ZCode](https://github.com/zai-org/ZCode).
 
-### License status
+### License
 
-The source candidate retains upstream Pi's MIT license and applicable third-party notices, including the attribution for libarchive test fixtures. The current public branch and source candidate have yet to declare a repository-wide license for Voder-authored code.
+Voder-authored code is released under [Apache-2.0](LICENSE). Pi retains its MIT license, and bundled third-party components and fixtures retain their applicable licenses. See [NOTICE](NOTICE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution.
 
 ## Contact
 
