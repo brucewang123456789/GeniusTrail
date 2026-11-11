@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "7bdbb20988a271e70e4ca50a911c07f80f160403845d7ba4c914e9b70164db3e",
+    "events.jsonl": "820ba021eb01dbef1f52c42746c75c2b96a7fca26109d8669ecd1eb4ec54de6e",
+    "model_generation.json": "e8455f91cf400217bc2de08f88ab7a00ffdf28cd7cb1d868595eafc02e2f1245",
+    "official_evaluation.json": "d53916be58e426039fbc0ed27f5780962da954428566233fadc2bf21a0509522",
+    "provenance.json": "09a23eebedb2f91b0979b6902bcbe3667c95a91f25e0aa5a04e50dd0ee89fc74"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "rust-java-lsp",
+  "task_number": "0013"
+}

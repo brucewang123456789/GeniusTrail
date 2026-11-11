@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 42280,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 10,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "4cf75c4d6d3b1a4c0b39a9b6869d3fc2956bfb7179fd545367575d4561d479ba",
+  "generation_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "generation_finished_at_utc": "2026-10-27T06:09:00.262000Z",
+  "generation_started_at_utc": "2026-10-27T06:04:36.628000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "session-window-debug",
+  "task_number": "0062"
+}

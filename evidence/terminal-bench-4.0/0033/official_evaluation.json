@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 49.511,
+  "evaluation_elapsed_seconds": 40.450646,
+  "evaluation_finished_at_utc": "2026-10-26T21:00:55.961736Z",
+  "evaluation_started_at_utc": "2026-10-26T21:00:15.511090Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "ae7651f0e250d5db1fdd8c7838f26e5c47bfefeee7494d8233d3548d9b682989",
+  "official_reward": 1,
+  "official_task_name": "terminal-bench/atrx-vep-crispr",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 2,
+    "requested_memory_mb": 4096,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "67fd19aedb9d51a6469f396356f724824313a35471ae47daaf8683eefb753cf1",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "atrx-vep-crispr",
+  "task_number": "0033",
+  "test_results": {
+    "reward": 1
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

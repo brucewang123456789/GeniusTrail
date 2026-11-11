@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 90.844,
+  "evaluation_elapsed_seconds": 83.684314,
+  "evaluation_finished_at_utc": "2026-10-26T23:53:44.926466Z",
+  "evaluation_started_at_utc": "2026-10-26T23:52:21.242152Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "d9e7de64d4c8b1a4a298c61ee77a43e0ea298eb39373abe4d8e03baa065c219f",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/vllm-deepseek-streaming",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 2,
+    "requested_memory_mb": 4096,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "1fbc97ed8808b2f16bbe6aeecb387dd51431a07a80452bdbe704fccd8e8df533",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "vllm-deepseek-streaming",
+  "task_number": "0055",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

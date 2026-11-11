@@ -1,0 +1,20 @@
+{
+  "base_commit": "539cbffd0a13b18e9c65eb84dd35e6596e403158",
+  "benchmark": "deepswe-1.1",
+  "benchmark_source_url": "https://github.com/datacurve-ai/deep-swe",
+  "benchmark_version": "v1.1",
+  "evaluator": {
+    "harbor_version": "0.22.0",
+    "modal_version": "1.5.5",
+    "pier_version": "0.3.1"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "a983670bc6aaee7de85eb8aeef1a4f1db44788ecc36905a0bccbec469e0c73cd",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "quill-shared-toolbar-focus",
+  "task_number": "0084"
+}

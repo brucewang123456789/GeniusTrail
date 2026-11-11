@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "fbc07bef612cfc49e2a3c183634f69a2da9496feb6eddb749c591689c0dd1030",
+    "model_generation.json": "5673e4536c534ba9bf523f287fe2ba68032ce384d1fb20a4bde87a405494bf17",
+    "official_evaluation.json": "d2ac5bae9624240c1f93cf22ca0ed442ff4dbe84b5a53117d02ea34699a3b364",
+    "provenance.json": "bd13926e9ab346f36ae7d9ab0dcae05d5719e09a269ff05b4833d9580e9aab6b"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "gsea-proteomics",
+  "task_number": "0027"
+}

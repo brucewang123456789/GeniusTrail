@@ -1,0 +1,20 @@
+{
+  "base_commit": "68dafce",
+  "benchmark": "deepswe-1.1",
+  "benchmark_source_url": "https://github.com/datacurve-ai/deep-swe",
+  "benchmark_version": "v1.1",
+  "evaluator": {
+    "harbor_version": "0.22.0",
+    "modal_version": "1.5.5",
+    "pier_version": "0.3.1"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "7c2af7789aa9e8a722136303a6c97d0f44ee8f7732e4f63af93e57c041fdb821",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "eicrud-keyset-pagination-cursor",
+  "task_number": "0025"
+}

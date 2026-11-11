@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "71b9fcd14581aeaa2e3a34278c000829b094a250f2533227e1ec085f215b46b3",
+    "model_generation.json": "ea60a111b5231698f18ce3912f143f750db7a8b2331c73a03bf7caaff9cb9037",
+    "official_evaluation.json": "171244d7987c843c8a87deba61c835cbcf9b29119e562c8eb8a12b6b20ff8c26",
+    "provenance.json": "9e25bf5cd2a7c6a4401ef3ed9bc67caff9b4c7f52b0308d45a6b710a3a3d8f87"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "geo-shapeindex-serialization",
+  "task_number": "0031"
+}

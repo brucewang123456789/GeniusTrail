@@ -1,0 +1,20 @@
+{
+  "base_commit": "0dd6132e0c58edbd9b1a5f7ffd00dfab1e6085ad",
+  "benchmark": "deepswe-1.1",
+  "benchmark_source_url": "https://github.com/datacurve-ai/deep-swe",
+  "benchmark_version": "v1.1",
+  "evaluator": {
+    "harbor_version": "0.22.0",
+    "modal_version": "1.5.5",
+    "pier_version": "0.3.1"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "53a67fd1336d4b281f47b37e809834369ebd9d1d2178c5da2c80fd1b0e4393f8",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "dasel-html-document-format",
+  "task_number": "0019"
+}

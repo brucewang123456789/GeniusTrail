@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "69b0b59d94b31bdb0cbc81ca9429c408b7162046057be08c03774f07cba09f71",
+    "model_generation.json": "481574e6aee83c2d8b019a61254793dd490c9a7ed1e1bfffc9208f3555e3fb76",
+    "official_evaluation.json": "0ff832d1d5c43962dcf7e119f95789f05200d6bf350285bbd19b8d67261e2aae",
+    "provenance.json": "08b5f1c95de6ab6db270401712a4feffaef58f34f3e1732d0c927130adda3375"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "koota-pair-relation-tracking",
+  "task_number": "0056"
+}

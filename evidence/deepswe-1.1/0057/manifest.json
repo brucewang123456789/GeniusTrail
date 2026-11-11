@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "bacbc287a864c116b3c8dae151bacfbcb7738a297a063f3fac8e6455e9d0462d",
+    "model_generation.json": "b42b28893e4900331b4d5f9df4ecdc761291202e9fad0afe66f684930771b9c1",
+    "official_evaluation.json": "3fa95b690d7f07c54bfe38f37978082a5fb7f9d4c53a6e72f52b7f36ea99f806",
+    "provenance.json": "6443d39c04a47c4074ebba0d331df1c3bae6ce76dee025a4c19300e9ca8dfa4e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "koota-query-predicates",
+  "task_number": "0057"
+}

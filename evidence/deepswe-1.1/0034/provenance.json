@@ -1,0 +1,20 @@
+{
+  "base_commit": "424e9964d3a33c6507a77c126841f2c5897262af",
+  "benchmark": "deepswe-1.1",
+  "benchmark_source_url": "https://github.com/datacurve-ai/deep-swe",
+  "benchmark_version": "v1.1",
+  "evaluator": {
+    "harbor_version": "0.22.0",
+    "modal_version": "1.5.5",
+    "pier_version": "0.3.1"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "4d6c197ad66c5d90b51f52d7db5f539fd164ce9b60e6c0d8bfa356f1f77cea7e",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "go-git-worktree-merge-conflicts",
+  "task_number": "0034"
+}

@@ -1,0 +1,28 @@
+{
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "evaluation_and_integrity_elapsed_seconds": 33.685933,
+  "evaluation_elapsed_seconds": 33.685933,
+  "evaluation_finished_at_utc": "2026-10-28T15:20:23.957940Z",
+  "evaluation_started_at_utc": "2026-10-28T15:19:50.272007Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "not_submitted",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "4ca2f9398aff58751bbd1b0a6c9f8f3188ab0473fec8d49d7aa1e709cf333db1",
+  "official_reward": 1.0,
+  "official_task_name": "vliw-kernel-optimization",
+  "resources": {},
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "6793113ad87928d92e17309e56e52c3e9351cc077fe39c72dee2a622e0429c5c",
+  "submitted_artifact_sha256_basis": "remote_verified_uploaded_archive_before_solver_sha256",
+  "task_id": "vliw-kernel-optimization",
+  "task_number": "0018",
+  "test_results": {
+    "fully_resolved": true,
+    "normalized_reward": 1.0
+  },
+  "time_semantics": "official_verifier_wall_interval_including_its_integrity_checks_if_any_not_a_separate_integrity_timer"
+}

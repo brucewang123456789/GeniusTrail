@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "7a9f7f3b93962a00a01efe50be2fcbc0e66e8f70091a0face6d838f3e0b8291f",
+    "model_generation.json": "1d9bd20badb861535bc75cd9c4c39a4bdb5a24a3a0248e587392e6d25cc4118c",
+    "official_evaluation.json": "6758440056de253b930a848df45523e675bda7b8c9e3926696037171f2bca288",
+    "provenance.json": "0b53324dff0b064d4f872e713f7e0a66b93f3c054fed4e072f4aa3499e3c4302"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "wasmi-trap-coredumps",
+  "task_number": "0108"
+}

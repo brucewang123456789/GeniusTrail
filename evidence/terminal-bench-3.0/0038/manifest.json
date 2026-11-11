@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "b3301465c3663810ec06e4f1a2725f2586621a5b8fcf65bbd2709761e8a8a93d",
+    "model_generation.json": "1fafd5f584d5d76bea7e76db5c29a60867a55753375738d905cad443b8d92c96",
+    "official_evaluation.json": "73fe2f111b5e880d9416c7bc39cd2ab6390c3510024e79b9be774259cc8eca35",
+    "provenance.json": "39ea4a76e677fcd3235ae543cebaebadea4f3e37bef99e268fd914222dc3089c"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "layout-config-recreation",
+  "task_number": "0038"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "ab19f4eeb242ea48a0a8eaf7ecfd561114917edff8245e733a9c636a639518a5",
+    "model_generation.json": "670b6ee673ef11acca90de7c43dc1d1930bf7d45e7e32866712344ad810b8ea3",
+    "official_evaluation.json": "9b5b162a3a4586c873fabe2c6f911fc3434b26dcea60a1b4a686bb7bcacf10d6",
+    "provenance.json": "59454361bca0b0a3151a598bb8929096e7aa8bfadc39ecd7818fd0a9d6788430"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "music-harmony",
+  "task_number": "0040"
+}

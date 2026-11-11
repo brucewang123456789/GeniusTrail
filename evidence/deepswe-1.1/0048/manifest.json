@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "cb43415bafd7a835df9a7d5611fa716a3e7559f41dbf599ffecaef745895f333",
+    "model_generation.json": "b1fb5256d05475c1789a846dba534f6c5760070826db13b4d0c4e77dc055fce6",
+    "official_evaluation.json": "e6914a357d8492cf945ef5bc08e4eac2695edb397edbe9e7744511fe3ee18421",
+    "provenance.json": "49e64dc13073f60474510341498ff3c3392eb1ff9e6454ccf29e9d8852513b45"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "kcp-go-multiplexed-kcp-streams",
+  "task_number": "0048"
+}

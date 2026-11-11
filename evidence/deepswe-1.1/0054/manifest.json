@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "2a63965938e5488dd6d57347370fdfb5ba426e93fc02969a654a5820b2be4ccf",
+    "model_generation.json": "09615274498cad5a21d4eed314dda8fececc5775a04b0ae2f43db1b86072acf5",
+    "official_evaluation.json": "7c3474bf0c2659d5097d7eba6ee65490cd3cf68387240e5e07a8045c358b89ff",
+    "provenance.json": "9b0ca52c3d80de7bd495655508917993dc5e81ba196da06c96f3d6d2691945e9"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "koota-deferred-mutation-buffer",
+  "task_number": "0054"
+}

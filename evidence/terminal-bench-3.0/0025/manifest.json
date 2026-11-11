@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "54806f2d2066f2f33ba2b1fa85f4606e15d1cee923e19bd73bc8b17d4a6553df",
+    "model_generation.json": "b0048a69cd44c66f4b8930897b66c021a6c5c6fe9fc1908688733ca4bb234085",
+    "official_evaluation.json": "5f87687625b6882aebb317250d86a015e674d9252fbab132a1514ac3fb8ef4a6",
+    "provenance.json": "030019e6c961c3fd77cb8bf21181ad1246e41d4b5fc80b62a8d0a8175dae9c41"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "glycan-ms2-elucidation",
+  "task_number": "0025"
+}

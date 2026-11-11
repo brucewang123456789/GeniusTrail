@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "85e44c596d2d6eb50c127bdbf95d6a6157ae8125805fa5bd542117ee66ddb934",
+    "model_generation.json": "91cf80bf290e59ed1120dee18ed21f214654383cc96882c884ecb08fc0100c20",
+    "official_evaluation.json": "fb55ebcb8d098a8562fcee86c1960b671394f873341dadb32c73f79416816f64",
+    "provenance.json": "cc5d86e14131265ccde4059f26cf090946148a809827cb5c4ff3e4df5a689206"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "ipython-session-bundle-replay",
+  "task_number": "0046"
+}

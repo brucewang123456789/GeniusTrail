@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "64fc9a710fe76bfb8db67e964a12b321a27bc8cf93826950777657588b29af83",
+    "model_generation.json": "b71aed488d82823bbdefe073f13f86e125b84e68d311eb95d440952463578d15",
+    "official_evaluation.json": "d24fedff5eb30c15226ecbf941ed9a4aad9124973289e038e601bca05809e539",
+    "provenance.json": "9be0d85b0fc4a15ea38572e7c1e51b28be7e3e7e1b15cdaa7cfab005ca06dfb1"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "photonic-waveguide-routing",
+  "task_number": "0002"
+}

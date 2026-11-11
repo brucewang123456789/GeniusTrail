@@ -1,0 +1,20 @@
+{
+  "base_commit": null,
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_source_url": "https://github.com/harbor-framework/terminal-bench",
+  "benchmark_version": "v4.0.0",
+  "evaluator": {
+    "harbor_version": "0.22.0",
+    "modal_version": "1.5.5",
+    "pier_version": "0.3.1"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "e20d406a83fdfb97a829e71ec1674d2bf2c662257b86c2f3be8755c77a142fab",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "452bf305c6daa62fc59061d22133a7cbc7c1572e",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "ontology-kg-querying",
+  "task_number": "0043"
+}

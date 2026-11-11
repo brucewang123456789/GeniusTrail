@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "ef43f01872a1389935978471c2f860bca11bcabaa268f5dda75d3a91d1df5f77",
+    "model_generation.json": "7aec48b0896bc1c68259d59f6c8f71fb3b23e83c5d2f6c0e5c72f0898f1fd3be",
+    "official_evaluation.json": "366e6263c77fbffb593eec453678ad1f61489be69d6bc43504c5fbf97e5cb3ce",
+    "provenance.json": "b4520c637ca67169eba9bb1e0f00701d4f8083870ab86636e1471a84d7577823"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "katex-multicolumn-array-spans",
+  "task_number": "0047"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "eb323d2773a47e4aca5820ead6c858ed991dd3874864d76bb6ed5bd63ef3e23b",
+    "model_generation.json": "79f8e9242202e7127acc1ca577669b8e0a4901755af67c89ce9fb7bf77e07054",
+    "official_evaluation.json": "59ee8f434f5f41e51de4d9f455569903b523cb7839d50998d9ca9aa787a1be5c",
+    "provenance.json": "8218375d055a7af73121fd4376a7c59ab2bdae357126fe89daf3174686f45f1b"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "termenv-preserve-ansi-resets",
+  "task_number": "0096"
+}

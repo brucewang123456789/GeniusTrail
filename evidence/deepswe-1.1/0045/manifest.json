@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "544c8f075d4678633247af37208d5179828358e801ce58b25003e57863c7cef4",
+    "model_generation.json": "fe3363876e655d5071dcc2da623012de7eb66c4782257532cffe0cb5b2216895",
+    "official_evaluation.json": "5fe597e055fa2179429bf495ad428864e6bf9d691faf31e2af1ad768680f3bc2",
+    "provenance.json": "73e46fff785bde0c83276c0d5b84d57e7242504d2e98f88cded678b0b5ae4360"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "ink-grid-box-layout",
+  "task_number": "0045"
+}

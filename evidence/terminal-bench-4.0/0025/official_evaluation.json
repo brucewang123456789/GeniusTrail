@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 47.083,
+  "evaluation_elapsed_seconds": 40.145636,
+  "evaluation_finished_at_utc": "2026-10-26T20:21:17.285706Z",
+  "evaluation_started_at_utc": "2026-10-26T20:20:37.140070Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "1f366a1209793486525f299573919fdcf42cdbf405c1c0e088a3612b5299ea8c",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/session-window-debug",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 2,
+    "requested_memory_mb": 4096,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "84dfe51ca92ec7e336376eb2dd9071e39ce562da7ac0d5109eb8916977227e9c",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "session-window-debug",
+  "task_number": "0025",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "408b7ef304e14471525c58ecf39bd317765f7829cc6c94e071452bb28250e47e",
+    "model_generation.json": "d42e5ac0335df39b97bda8ca3ee7b0c6eb4410e86037cdcd71eaba52936440bd",
+    "official_evaluation.json": "311525b50e4dbea27ce1471e6f16023b7b85b9c18eebad156443485d85c06986",
+    "provenance.json": "9dd0d7511ba640a0f2bb4ebc05b455c18e7a58397f1406dd10b93880866c4f1e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "obsidian-linter-link-format-conversion",
+  "task_number": "0067"
+}

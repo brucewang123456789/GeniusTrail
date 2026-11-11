@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 48335,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 18,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "61fdc54f87db965d1dfae7878cbc5224a8b9ce1c597c5cf9776b0afb1f721b09",
+  "generation_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "generation_finished_at_utc": "2026-10-27T05:51:22.225000Z",
+  "generation_started_at_utc": "2026-10-27T05:44:08.346000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "risk-scorer-replay",
+  "task_number": "0058"
+}

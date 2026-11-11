@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "4505d3a11084feaa2fa88da0ddc228e4b100a5b02b6dec838cb91bd11da2c078",
+    "model_generation.json": "107252335545589659532e42f7d68ddb0268fea59501e76a659097c318fb15b9",
+    "official_evaluation.json": "895af197b25fd11e6664fe7c7c03e37ec1fc2a67980928a68f283cd6f3966c51",
+    "provenance.json": "6ea715e6d9322fafcdcfe312d4325958d6160050520ba22d2ffedb355e91b1c7"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "true-myth-iterable-collection-combinators",
+  "task_number": "0102"
+}

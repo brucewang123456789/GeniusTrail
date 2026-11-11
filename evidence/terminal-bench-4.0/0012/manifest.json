@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "47bd12cafe487647485c553870cba4f2d5b79eb6992738a96dd6edf9e35c06ca",
+    "model_generation.json": "80232702c734bd6bd88988e793b24f678f499012416baf2769e61e071fd10536",
+    "official_evaluation.json": "3cd912199919aa6282d159880ddcf2538843cf45c3cde3c1488c91a3be779315",
+    "provenance.json": "ae2cac3444fede2d6b95b2630a610287912032ded27c532d3a3d87167e1e130f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "embedding-drift-monitor",
+  "task_number": "0012"
+}

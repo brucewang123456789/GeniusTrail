@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "d2c9b3f9e49432f8838295ee570dfd3521005875cd176a2d995f46ccd30b234b",
+    "model_generation.json": "9f00686535ac3a4596015deb4732c54e3c6dbf2625339328f1b085af60b019df",
+    "official_evaluation.json": "9bfb48fd8e91b042e7f552f32b46c682c5ea7add4859d8e357298e989f5c70ae",
+    "provenance.json": "0f5d3970d51aa68f574433804f7a46ed10dee3dab49ed2261a6980008c127f56"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "memcached-backdoor",
+  "task_number": "0045"
+}

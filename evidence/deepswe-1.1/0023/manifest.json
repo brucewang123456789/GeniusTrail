@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "8ed5b56580ca1aa98ce0b6cdc6e2b787166800d79209b972d9a2ab9453d04ebc",
+    "model_generation.json": "cc8875b68ff28ff4afb1b2354cd6ec29c51bfa299caf10db20875aba198dc98d",
+    "official_evaluation.json": "3036eacc3ef9e72cbaf9943aa33bb44fab4e2c63485fa029191753d70a3b0c37",
+    "provenance.json": "e7eaa9ff72d15661d47d57343bef1c8e5e2361b7cd887e07acfc131ce0fb8e5d"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "dynamodb-toolbox-lazy-recursive-schemas",
+  "task_number": "0023"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "e876d742fee04086e3f08f66406fb67bf8d682dc02b9b0d40bfc1430eac89efc",
+    "model_generation.json": "65ce69751dce51b3e87bf9501cd01d372d9cf1897332bd924616e690898493d7",
+    "official_evaluation.json": "8e1374cf955f97b4b58a57829cf48f36b0fc3e2f060425f631f27d1deb761124",
+    "provenance.json": "014f03736532e27937885a86f06ee2d81a45c6960fc190cdbbf27359bd658411"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "valibot-recursive-schema-composition",
+  "task_number": "0105"
+}

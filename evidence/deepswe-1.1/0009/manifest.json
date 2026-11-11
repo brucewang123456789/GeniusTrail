@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "6914d1f42e1587a16d2edff669ffd83d20e52116d0ef0a2b8bad3d23ddc03b61",
+    "model_generation.json": "e63499d20c9566a566d243533cbadb48d143a4cb8956f46a9ce804cb831b8161",
+    "official_evaluation.json": "8bb5ebde095fc507015c1d7579d3759b7fac070d4425b84570307f82d87903e1",
+    "provenance.json": "095fe8eb3a0cae4e47160258e55d9bed7a2072b1cdd9209f3071ac33c5daca2a"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "awilix-async-container-initialization",
+  "task_number": "0009"
+}

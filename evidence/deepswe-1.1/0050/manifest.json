@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "43ee511c511bb245315652c55a9d60568bebc02a62e570ecd90fd3260bec9096",
+    "model_generation.json": "7a51684adc79f9fde4d08ce5901f4f19960649e1ee9990d86265b2bb80dcc815",
+    "official_evaluation.json": "585ee9230dd142e27cdc82235e4821a6fa81b95d26505514919c55415aa35167",
+    "provenance.json": "9165a99849d20172964186fe8ead3e555da32119a3ba2793aca8d1068bf9b171"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "kgateway-consistent-hash-policy",
+  "task_number": "0050"
+}

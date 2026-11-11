@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "2ae15c86b640d31814a57b76be4dce144a590948f8c5f9c5993d57d3013b1958",
+    "events.jsonl": "ae1fb76396d3a56779b1737f21224959a029f18014049737ab7e68632cd0a96f",
+    "model_generation.json": "bc5d3cb3118be4f28059d57a1bbfc866ebb7a1f638206836c2079c62fa32fa85",
+    "official_evaluation.json": "54a5a073a498b7e9afb15527e22635f73680301c2d2a31828db4bb001c2a80fc",
+    "provenance.json": "e7e16605564905bbaa344700b309c766e859c1f5e57124e76e515ee662d5baf5"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "zstd-decoder",
+  "task_number": "0020"
+}

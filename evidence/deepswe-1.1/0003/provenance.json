@@ -1,0 +1,20 @@
+{
+  "base_commit": "a691069fcadf9131e5f7a5a130a022dc678f3e1d",
+  "benchmark": "deepswe-1.1",
+  "benchmark_source_url": "https://github.com/datacurve-ai/deep-swe",
+  "benchmark_version": "v1.1",
+  "evaluator": {
+    "harbor_version": "0.22.0",
+    "modal_version": "1.5.5",
+    "pier_version": "0.3.1"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "e8e4a39e65723ff56eb35bc9b9183fef4e09677159063abf8189f471cc1b2eac",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "0b9fabbb63b9104d678fe965e1632f2dd9eaa2ea",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "adaptix-name-mapping-aliases",
+  "task_number": "0003"
+}

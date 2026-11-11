@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "14f55ba8720b0e694eac5e1e964a6fdcca7e783430a69452a17317243f369016",
+    "model_generation.json": "ac52f00e9ec5749a4b6533ae4f4df40b81c9813599da2ee5258be0ba28473865",
+    "official_evaluation.json": "703cf3874eff574e1fe90f12484156f55fa327b73d5991ca804a7d4948a87624",
+    "provenance.json": "1ec1bb5e446cbcdff6400a4149f4cf65d8ce7b040ea04d25e9719e5ca75b4fbd"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "fd-deterministic-multi-key-sorting",
+  "task_number": "0030"
+}

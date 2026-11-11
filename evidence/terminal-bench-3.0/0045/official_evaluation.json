@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 233.848,
+  "evaluation_elapsed_seconds": 225.743657,
+  "evaluation_finished_at_utc": "2026-10-27T05:08:02.857365Z",
+  "evaluation_started_at_utc": "2026-10-27T05:04:17.113708Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "cce14d064f5c1b1f9ab9dd11b29996301d9b25e4dbcba1651ec70fbcb7d71baf",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/memcached-backdoor",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 4,
+    "requested_memory_mb": 12288,
+    "requested_storage_mb": 8192,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "15efba3f0d8aa348c657cfa4e20d0ed1defba28b17169b1550327ecd4ac501dd",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "memcached-backdoor",
+  "task_number": "0045",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

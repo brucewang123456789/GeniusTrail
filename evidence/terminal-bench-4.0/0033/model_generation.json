@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 114573,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 11,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "9c2dcb8845fbdeb12a80e248e9e63c5ac243daa50bc0c687d6969d8b0a0b3511",
+  "generation_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "generation_finished_at_utc": "2026-10-26T21:00:13.043000Z",
+  "generation_started_at_utc": "2026-10-26T20:48:50.054000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "atrx-vep-crispr",
+  "task_number": "0033"
+}

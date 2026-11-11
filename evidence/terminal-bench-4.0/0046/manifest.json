@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "19d7d6d8898e2a6d460b69861815e9270630ddbc6e6be61e64de3e29470ddf67",
+    "model_generation.json": "b854e74ccdc451e43d7a34208ec69ffefef35c423b0b82de760295e4ec234734",
+    "official_evaluation.json": "6bc1c1efa3c41b4b28adeacb4481ed50203278790a6fa4e4d1c07f0eddba742c",
+    "provenance.json": "bc70106d0be1a6ae0cda6e08bbd78ea96cee2aeade5ab08eb3a8128af9b398d1"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "vpp-loss-divergence",
+  "task_number": "0046"
+}

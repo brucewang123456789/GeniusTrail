@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "078d2b3449699560cf5305528d8db17bba374ce20f2fcbfeb219aa221c39f76f",
+    "model_generation.json": "903682aaf98732d2233e829e6bed70d627b01dbf58f9a5720c13a4de620d3229",
+    "official_evaluation.json": "b66b54373b0a007760f37f3ca38ccbfc5ed9a855e06ce1e4938993df38cb2264",
+    "provenance.json": "d45e29d537b68809ea418c2f2b014b38a926afa75943eaebeb107cd0bcd6dedc"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "textual-richlog-follow-state",
+  "task_number": "0100"
+}

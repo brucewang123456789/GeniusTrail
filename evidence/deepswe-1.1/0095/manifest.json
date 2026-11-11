@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "93e804dd2d258867a158ed2a886b1eff9cae0985c65f83517496bf7893e2b9ea",
+    "model_generation.json": "343d4b2d6e9b830f0b09ec12661a7e02864a230f51e22247e46fbe13a2e034ea",
+    "official_evaluation.json": "3936b269e5186377713b7fcb365cb1a0fdaafc4605235cb22807996414ba99ba",
+    "provenance.json": "83ed700d72f7c3b729374a1a0ba9b27822fca8f937c887c4661d7fa68f89a38f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "tengo-destructuring-bindings",
+  "task_number": "0095"
+}

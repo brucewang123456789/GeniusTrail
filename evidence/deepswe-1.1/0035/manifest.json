@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "edbf03d579c9d07ce9b374c251b8539fbf084f2a157f4e7b9a6c7b906f2fd770",
+    "model_generation.json": "62b6be3688727c30c04b3737343006d2707dea3c0917c5e1da406789dc1bae63",
+    "official_evaluation.json": "5d91b2042033201df5cf9f06cd7663ffe7e0220348b889f4cb56c59e70df94a0",
+    "provenance.json": "0d69f06adc24e78050fd1d07fdf9b1ec6734b1c7507dc9748aa5c25abc7de850"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "goreleaser-retry-publish-auditing",
+  "task_number": "0035"
+}

@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 75027,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 31,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "deepswe-1.1",
+  "benchmark_version": "v1.1",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "cda7120c049c89f4db0c33e09d7ecabdcf521cf5855bc3988df93a5c062b442d",
+  "generation_artifact_sha256_basis": "file_bytes_sha256",
+  "generation_finished_at_utc": "2026-10-24T09:45:36.696000Z",
+  "generation_started_at_utc": "2026-10-24T09:37:39.956000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "sql-formatter-bigquery-pipe-formatting",
+  "task_number": "0089"
+}

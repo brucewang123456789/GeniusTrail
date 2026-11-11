@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 319.237,
+  "evaluation_elapsed_seconds": 312.120573,
+  "evaluation_finished_at_utc": "2026-10-26T23:29:54.849969Z",
+  "evaluation_started_at_utc": "2026-10-26T23:24:42.729396Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "09c223a37e3620560f3bf1a77bad78c6cc9afacaa2ff2b2fcab5535afadf50b9",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/html-js-filter",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 2,
+    "requested_memory_mb": 8192,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "59fbed1ca4c2597d527b3c5bbcbf3e1707468ed6a7bb7a98598bac5a47ae7c83",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "html-js-filter",
+  "task_number": "0050",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

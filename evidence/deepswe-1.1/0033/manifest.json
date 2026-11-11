@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "8b3c214303035aaf6f87f1fb3ef1b25ab171bdccab93e0e98e7ddcfc8055e516",
+    "model_generation.json": "f9df7df1de8c65e789bc7e0b4f3f86f6b5b8a837a090b2fb62ebec1182890dda",
+    "official_evaluation.json": "f23f274a1506e045534e6179c984b65806160252c6fcb8626610d34f178d6ca3",
+    "provenance.json": "7d9e494155a31432dee03fe0187d3e5ec44a50e4cf55fadb0734f59fa9af3524"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "go-genai-streamed-function-args",
+  "task_number": "0033"
+}

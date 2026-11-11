@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "9f1bbad2871257945e2a89b43eaaa6f6e59e12dfe352abdc33d4d98a28b1db08",
+    "model_generation.json": "1fb2a933e93d3d47b9e6ac540ea697b8b6025757eac6e1a1907df73737917c85",
+    "official_evaluation.json": "74fe11db5e5883fd4b8d82ecdd4588a678d5c6448ced77950199afba153cb181",
+    "provenance.json": "88ca7ddcc4e008cd5d288b6221359f1a0f79c050fa3ba9aad1180c2c201b21fe"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "prometheus-transactional-reload-status",
+  "task_number": "0078"
+}

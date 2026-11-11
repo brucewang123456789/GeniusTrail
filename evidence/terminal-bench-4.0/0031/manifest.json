@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "39f15f945813b1efd57f4b3857f0cf77c367a24af160027a960a4425e05c96d8",
+    "model_generation.json": "4b31da3ee3881cd4d9db17ebcb21b8ecb4767b8a8bf31edfe4a4e016526ff8fa",
+    "official_evaluation.json": "e742375706e17240bf5ff9a2f9d4a62c5225235b1f9c1878ce727c67e7f67070",
+    "provenance.json": "82a6cf7b98039fae9a3a1a4985b27bcf7daa6e4b8b1af1b890e47265943e652b"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "mvcc-lsm-compaction",
+  "task_number": "0031"
+}

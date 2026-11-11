@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "440e4d64788b673d8b56f8a1c67a68f1da707c06521f51aec30b2261a12abdcd",
+    "model_generation.json": "46b70cf3db94c4ddb244a9468618cf9056fa381a60d6616cdb127596755ee720",
+    "official_evaluation.json": "4cef92fd5d6533c7d291f404b3b12b8a791e6d8c76c8f18d36d6089edad360a6",
+    "provenance.json": "176c20822fd5b58763a9c6f8f3b8a9cb04c9c82f30130354e44c8d5583fc71cb"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "heat-pump-warranty",
+  "task_number": "0028"
+}

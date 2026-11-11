@@ -1,0 +1,28 @@
+{
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "evaluation_and_integrity_elapsed_seconds": 44.746263,
+  "evaluation_elapsed_seconds": 44.746263,
+  "evaluation_finished_at_utc": "2026-10-28T18:39:37.587141Z",
+  "evaluation_started_at_utc": "2026-10-28T18:38:52.840878Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "not_submitted",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "0eb6ca5ac353cbde37cad055416df1fc3ccbef08c7702c7e55557322b187f3dd",
+  "official_reward": 1.0,
+  "official_task_name": "stripe-clone",
+  "resources": {},
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "ae3a0b52f53f5f5c745148f2449b1d7431d1d335d07d51205f6331c3256418a1",
+  "submitted_artifact_sha256_basis": "official_verifier_source_tar_gz_sha256",
+  "task_id": "stripe-clone",
+  "task_number": "0016",
+  "test_results": {
+    "fully_resolved": true,
+    "normalized_reward": 1.0
+  },
+  "time_semantics": "official_verifier_wall_interval_including_its_integrity_checks_if_any_not_a_separate_integrity_timer"
+}

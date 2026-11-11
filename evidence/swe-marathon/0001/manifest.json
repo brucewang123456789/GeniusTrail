@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "c838d319b74f17622b75a13e0f9c738c86b00b3f6b7bbe4a9787c3bac2c09eba",
+    "events.jsonl": "498c8ba717876e28eb16438429e9b160dc8dcd2c758e643e2f94f62a3efb887f",
+    "model_generation.json": "eac294ce22382834cb4097b8b1277cee3b763f8b62189bab7fb1880a86641d5a",
+    "official_evaluation.json": "88be91754e9cae0287234b7c2e7a0f28f763a459263140b09045043ae9d1e225",
+    "provenance.json": "62c181ab0b3e2dd903ef4311b449d90b368149d62f67d4c295c6c608a59f5470"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "biofabric-rust-rewrite",
+  "task_number": "0001"
+}

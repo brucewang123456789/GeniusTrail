@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "703d415786b69c53bb561ac9b509ebe895cc465415030e32bb65eca9976326a9",
+    "events.jsonl": "67390d6c4527e8e6e8077044e8c90344cc7b9ae16b89f6524cdaf4c61b1bf6d8",
+    "model_generation.json": "01a4622af8bc595a31360c2404e77e6be9431f490811d6bb88d9dba13c397ffe",
+    "official_evaluation.json": "820c87e24e8e0e83a99390095900a0a30b38a8c0e82d7e00ce7eb6f23b2c76fb",
+    "provenance.json": "cc73ae852ceb8464d3b5a815a3c904945ac3b5b5f0488279ae2aba394995f5b5"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "rust-c-compiler",
+  "task_number": "0012"
+}

@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 101.246,
+  "evaluation_elapsed_seconds": 94.504777,
+  "evaluation_finished_at_utc": "2026-10-26T23:40:27.787914Z",
+  "evaluation_started_at_utc": "2026-10-26T23:38:53.283137Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "97b9a6aad67e8d2927c69f7eb37ac08fc2317163b3b76db69d1f833dd1ee7044",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/interleaved-vigenere",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 4,
+    "requested_memory_mb": 4096,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "6fe701b8221c683a388092c62cda8d8b77b0db681723a8050f8fa95f827d5429",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "interleaved-vigenere",
+  "task_number": "0051",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

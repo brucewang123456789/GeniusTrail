@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "6ba6d7bab7bc2d4eac17175fd28f25777753027e5bbd4ba97290eb8c6cdf4a3b",
+    "model_generation.json": "368e18eb9f7d7e1f7e97c56e7f30bb2e642d8c1b749d4c9e54a256f1f0edc66f",
+    "official_evaluation.json": "cc95b5e23f61afb056c1d8dda9b630399464bf95cf3af030e2bcee107e178cd9",
+    "provenance.json": "37887ce15c009c8323104f10a4e8ec2b84fa741c964972477f6a3f1c6b9ad7c6"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "vulture-persistent-analysis-cache",
+  "task_number": "0107"
+}

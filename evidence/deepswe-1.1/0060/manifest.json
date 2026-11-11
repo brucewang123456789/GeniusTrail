@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "040a72c7c513b677c5d615cc00afa32f9fc7d6e8d1593febdcfda1f7690bb854",
+    "model_generation.json": "9763308eba5565e84577c11e0da8d8321589ca34cdb92153e6afd8730d86acad",
+    "official_evaluation.json": "ce83deff025257fcd4b9286ca667ea930ad5927a157a8fb985646d3440949ea9",
+    "provenance.json": "65871766db1203ef1699d35d283e1ce98ef09324a3845ecdb1defef2d14271db"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "mashumaro-flattened-dataclass-fields",
+  "task_number": "0060"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "07b187341225b5bc19f489dfeae725b71bcfd0244e3121ba05efdc48c8839acc",
+    "model_generation.json": "06c302456a1cc36ddc6d8267d2e2445d731a300c3f56f0f2aeef3520d312b03d",
+    "official_evaluation.json": "7f643a0557e87765f9313cd2a6f534b206f7ae77a56fde468355c641cb05386d",
+    "provenance.json": "2609a44d3d1a0be6233288d1ffc573334795bc0cb2d0f2d706cf49735fb26361"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "helm-array-merge-strategies",
+  "task_number": "0039"
+}

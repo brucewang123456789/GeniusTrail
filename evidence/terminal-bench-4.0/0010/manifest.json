@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "ce98292b87e3ef8574dc294a8873013fde574b0bc366a6d7843c21a83375591f",
+    "model_generation.json": "0a77615cd33a1adebae0e966edef47a8dc629ea023f5b641cfd97f94fae519a1",
+    "official_evaluation.json": "affa0ba9bd08bb7004af5e081a6654ef37ec8ad5027da0bd81ae978ffb9be0d2",
+    "provenance.json": "9940dd17c9045a5013b848db540dcf369723721ba02568cd2da7311269910fc7"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "formal-crypto",
+  "task_number": "0010"
+}

@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 111.178,
+  "evaluation_elapsed_seconds": 103.646089,
+  "evaluation_finished_at_utc": "2026-10-27T00:46:24.024699Z",
+  "evaluation_started_at_utc": "2026-10-27T00:44:40.378610Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "473f6e2d3bed7b2320bf6477cb2546ea15355033e3910f35546a1f1fc91a0be9",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/cli-2ph-simplex",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 1,
+    "requested_memory_mb": 2048,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "a79cb82bd34d1ecad00a2be8c49788acc8cfdb9ce5c5cdbb0858a8ca318657ca",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "cli-2ph-simplex",
+  "task_number": "0007",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "f526b0eb36fd040650dcdc9bde9ac12af416681fb9ff7ed6cb93058d66319364",
+    "model_generation.json": "84649cecc0b1cdd8d894e9bdb75e76ba3a3fc4bb9468ca29cff31f2f82fd6712",
+    "official_evaluation.json": "9a086a1587c1cd7170182032404752340a284209031f20d869c54e3dec61cea1",
+    "provenance.json": "71ae8ffaca5f854586ef6d3e11e06a75e2f3913d1210dbbb22b0667992bf7b92"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "pebble-durability-wait-apis",
+  "task_number": "0076"
+}

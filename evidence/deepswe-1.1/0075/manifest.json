@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "d2e88c005ebf9cfcc5852de6f493f9723b52f3a1c6a163461347c67ecca9b8b4",
+    "model_generation.json": "d509b78822afc8f8b1fd17088993104dd8208de9f83780b3c015c491c065f808",
+    "official_evaluation.json": "204f31f777ce96601f736ee3bb9ce29c297a6d83ce360d05f39dcfe97cb051fb",
+    "provenance.json": "5d086c0abb748b05bb395a30a2ae2bd3d091936177b4cb0de579d72e60701897"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "participle-grammar-conflict-analysis",
+  "task_number": "0075"
+}

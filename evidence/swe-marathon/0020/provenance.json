@@ -1,0 +1,19 @@
+{
+  "base_commit": "3e8827c00c5720f5af343559fd393b6163e55622",
+  "benchmark": "swe-marathon",
+  "benchmark_source_url": "https://github.com/abundant-ai/swe-marathon.git",
+  "benchmark_version": "v1.1-official",
+  "evaluator": {
+    "framework": "Harbor",
+    "reported_version": "0.20.0"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "94a99ff6916d652caf3560cbf51c9b909626c7075004908dbc7b05ee294f6d96",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "7bce7b29e1f2413633eb5ed6eb10dc2efb036712",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "zstd-decoder",
+  "task_number": "0020"
+}

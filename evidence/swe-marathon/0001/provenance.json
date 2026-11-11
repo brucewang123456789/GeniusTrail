@@ -1,0 +1,19 @@
+{
+  "base_commit": "45658b03a204bc2e7a920244bd5dfdf57c2edbd4",
+  "benchmark": "swe-marathon",
+  "benchmark_source_url": "https://gh-proxy.com/https://github.com/abundant-ai/swe-marathon.git",
+  "benchmark_version": "v1.1-official",
+  "evaluator": {
+    "framework": "Harbor",
+    "reported_version": "0.20.0"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "a6094a26fd29f1c00bb3523d7cdbb4076498268f1be61269785f60234a86400d",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "7bce7b29e1f2413633eb5ed6eb10dc2efb036712",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "biofabric-rust-rewrite",
+  "task_number": "0001"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "ac1ddae0354d439b65e90197ce8c5d66425bb4155beaab7ceaddab5ae6d3b191",
+    "model_generation.json": "8194a92f648a9ad372b6b251b6addf75a4d24645bdbd426916fa3123e7574661",
+    "official_evaluation.json": "152ac334ccddeaa6e2e677e974db2c0c1c0787513354833ebd91f506b94ff564",
+    "provenance.json": "0ea3b7db09d1fc7a5c8b43f818da9de2d44cdc1a1e42f948aa47275b25c71894"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "fastapi-deprecation-response-headers",
+  "task_number": "0028"
+}

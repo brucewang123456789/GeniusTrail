@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "62345afd2584f813066c8e42cf5a12c016e3122d4460dcbe2086ae009fcea572",
+    "model_generation.json": "22a842389f479060c623e1865ea2b51be74810307f74f4647941f7f430fa0138",
+    "official_evaluation.json": "bc044aabec096e5b14271879ae104ca64db3c5eda1b11991050f45fdb2fc2dfe",
+    "provenance.json": "972e252a767d0697cb00d3e6aca0b9ce3027744143257df73fba7ec879561d8f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "dasel-html-document-format",
+  "task_number": "0019"
+}

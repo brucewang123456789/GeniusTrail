@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "abf2592db58b50f071dc9cbfb91d4f6fda1970e35450361eec62c5e722e491b5",
+    "model_generation.json": "1b49dc9b4e9f4b39656b9ab619219abfdb0e5fc1c099d55090d0620187c38783",
+    "official_evaluation.json": "1deceec55b6f6ab2e285f1515d19d4a842ff0a7eec72d1a3cb47dc85fb617106",
+    "provenance.json": "20f924a0472552ed47d69647911b8ae8b998f89d1c906add1c1d051bc3c1867e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "igel-persist-feature-schema",
+  "task_number": "0044"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "b44f92bf80f62d117269cff1e6e45cf8b1b9886135daabe53059a75a949a716b",
+    "model_generation.json": "700e6169e75194844e6cd4a05cb54383c7b4e19bac0bfac5562bfd8d8321138b",
+    "official_evaluation.json": "29da33c1bcd5fb9dd1fd47a3d805a3d6b71a2b57327d3fb5f5605eb36089695c",
+    "provenance.json": "a868e55ae9eef106b30bb07c6aaefeab960ad3466f641db4c2c20842daff730f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "ico-path-patch",
+  "task_number": "0031"
+}

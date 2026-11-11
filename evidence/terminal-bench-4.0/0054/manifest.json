@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "2a1c94aa92d41adf12bcf290539d3d3612086845d444a0bb6c4f810c1c340488",
+    "model_generation.json": "a30a2c9e94874036cf8b1eb8a94eb0fbb6dc488bc60259a7f11a324d677b9cc5",
+    "official_evaluation.json": "f1669575f66a590e8328326d7cd9ab19160bde9863d9bec8bb35cead3f8201ba",
+    "provenance.json": "8b1efc2038dd68f50fb46dde58889f3b8b032065cc3ab6a3cd97b47887cca3a4"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "shadow-relay",
+  "task_number": "0054"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "c34eaa08590a6d89d1fdeca5c1ab4962fe7213b5eec8d434da96321ae0f886ad",
+    "model_generation.json": "4b86abbeab17ab66cdb8c1a2198841ea9bf43a21f0cb4275b5fc91fa8dcd3071",
+    "official_evaluation.json": "30ac6de63ecc027b82d08816dce7d6637d7e593286dac24daebb3ba2f5ab5bdc",
+    "provenance.json": "52d976e5de6f9f8810ab7b64f595a09e38cf87aa1517be6f4252ad80e8760981"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "aiomonitor-task-snapshots-diff",
+  "task_number": "0004"
+}

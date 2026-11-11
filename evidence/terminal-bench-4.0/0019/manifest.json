@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "e40369f07d5225380792bb75484c1226130355c936558c7036a2744f8c268845",
+    "model_generation.json": "83b1ffe5bdcb8321e2ea682f561dbd611887fa6791468e710812f032e74ea9c9",
+    "official_evaluation.json": "e6e9b3df02ab02270ad6e3a4a7657b05846d27ba133770b8707a11001e00e12a",
+    "provenance.json": "a247f3d0002e931498f7d6820f0e19c2027f0a32e416aebd78f537ad6fa863f0"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "coq-block-bound",
+  "task_number": "0019"
+}

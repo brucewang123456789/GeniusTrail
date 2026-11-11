@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "8fbb6e1ba0b1bdeb58c8a42e030293e7b5c4d08faa157efbb48731e88ae9accb",
+    "model_generation.json": "32dfb24bf76c5ba8f0eea284fd42f2b16513a4c4d4e93f5748a0fab29032a829",
+    "official_evaluation.json": "3634864116176bffa20c3bdecb624d60cbcc749c2b7eddf15b9beccdbff48c31",
+    "provenance.json": "41083e24ce9362227f42079dbe500ff48abf0126f74c1c15d85bec84f4f50c4e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "oxvg-structural-selector-preservation",
+  "task_number": "0074"
+}

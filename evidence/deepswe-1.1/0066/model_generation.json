@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 76733,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 41,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "deepswe-1.1",
+  "benchmark_version": "v1.1",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "7db9fae5a413625a99394990aad6693db377a9981f2d18906a645dac41411389",
+  "generation_artifact_sha256_basis": "file_bytes_sha256",
+  "generation_finished_at_utc": "2026-10-24T04:13:50.828000Z",
+  "generation_started_at_utc": "2026-10-24T04:06:41.846000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "obsidian-linter-auto-table-of-contents",
+  "task_number": "0066"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "1c05fd5bd3e19f3058fe1ce0d76b6c92689c441e5f71570092200f6b2f760dc4",
+    "model_generation.json": "545fc7d890e82d0c2339df6fff2db6b0884349e63d26353dbe0ccb27f808f696",
+    "official_evaluation.json": "ff15635987a835c7a5642794d3bbeb28b6497f1a7c450d052746de75ba062daa",
+    "provenance.json": "45b3318a4795a23ad4ed6427584f6e1eca2ea6b91bfea4f71422cf8de7250960"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "cargo-flight-dispatch",
+  "task_number": "0020"
+}

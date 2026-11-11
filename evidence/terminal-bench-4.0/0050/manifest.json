@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "361cdabfbd7a42f40f5aed995a5f68643314ce4358f6bea21eb2ff9170eb43d3",
+    "model_generation.json": "9157c0f31a351d885f79f726f2d75b08b742f41c67ae06323f94eba50da7cb27",
+    "official_evaluation.json": "7c94f8e252032ba69ab3840955687203697552ba280b5b9052b97c73d1bcd888",
+    "provenance.json": "6ad54c99b2bb063f78294749cff54ccef295582afdb9340298567b58000815da"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "html-js-filter",
+  "task_number": "0050"
+}

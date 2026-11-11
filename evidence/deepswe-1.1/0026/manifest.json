@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "fb39356b1d67c6df549d8d6e7a2eea069ab000f85b9952c5070ef566e3fde22c",
+    "model_generation.json": "936e368767e06b1f96afb1f136bf63f95b3bc9b805ed0eddc989decb5f0f62b0",
+    "official_evaluation.json": "9fc6d33cd53352805e99e738b05a871b1fe1fb68c491628149650e258aa62500",
+    "provenance.json": "f5526ea775fd6ad299cad657125cdc7cc4f5408820802fe57fd4191572d8e70f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "etree-xml-diff-patch",
+  "task_number": "0026"
+}

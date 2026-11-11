@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "07b5f380a26720662d0e3df908eba873fed89b24baf962daeae9f6f7be8d7e91",
+    "model_generation.json": "a4077045a7da4f8f8d4ca809558bc9823bd5194727bf82b2b2b7ba05214bebde",
+    "official_evaluation.json": "03cef6d36faf33c012bbb3e6df782076a7004377c56ebc419a5599afff1f53f6",
+    "provenance.json": "e2973ed3d164ef6c7aa75a6e6d2c07170cfe58d7484bd0ffff1394b127630f0d"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "python-statemachine-state-data-scoping",
+  "task_number": "0082"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "42685f82780fe5e16ab729f28a9587f96d419042450d64ff0621ab5758191616",
+    "model_generation.json": "6d0827677a59f754aad1b47aa248da7a355e487503efd10f477cd386826ffa27",
+    "official_evaluation.json": "a82ce770ad96470e4dc274dec239146fe4f8e418902591be5df3aa396bcabe7f",
+    "provenance.json": "39511cbe2df3380462d9fdcee9ef01d858cc6834da862bf85b36e6135db42b10"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "quill-shared-toolbar-focus",
+  "task_number": "0084"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "59ec56bbbb1244ec291c2fca267ce5e76580ec24c7b5e413eef8a5d2aa6a1d11",
+    "model_generation.json": "0d9910a6d9542bcb75c49ae47ec23e94757566150e30ada7274cfbc4ab36f85c",
+    "official_evaluation.json": "dc02c6d72cc1b8d864b95b76aa08da795aa76dd67428790778f614649f371d2d",
+    "provenance.json": "aafa3a919a57d834b68587e0613fa83e395d9a8a337762387f9bbf6da2709408"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "dynamodb-toolbox-conditional-attribute-requirements",
+  "task_number": "0022"
+}

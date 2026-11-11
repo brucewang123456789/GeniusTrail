@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "7cbbee3aa435d2d1496dd5cc028ee01d5b46a649db011f34910b6938d3730409",
+    "model_generation.json": "073e1c9a2d3ae10d96363cce59d30d70d4da335084ed7be4fe62d18f9bff6309",
+    "official_evaluation.json": "0714823884c5294e08faa50bf4fc0bdd174530498547e300ae8ec3e0e97545cd",
+    "provenance.json": "c0f731ffaddfa901cab15c3075437c450fc7860f235cae04788a2feae62e7920"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "textual-kitty-key-phases",
+  "task_number": "0099"
+}

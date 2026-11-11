@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "f20f53efdf6072de0e153307599ee6f5a0431f16f19f458894b524edf540b84e",
+    "model_generation.json": "770412db0f725b0945e15e1a06fb0a5c6e398fd31fc20a3e0c18825873547133",
+    "official_evaluation.json": "05459326be8138d04d6b0879bd8955377abc4d1a56035a687876b2a4d062e472",
+    "provenance.json": "f03736158542001f0bc7b17049aea418bb63b792ee40b1c3f252771eff4d0b73"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "ofetch-per-origin-circuit-breaker",
+  "task_number": "0069"
+}

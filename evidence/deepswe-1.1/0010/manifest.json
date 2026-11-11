@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "abacdbedbf33160f6c60d03a45ed3f44b56b21ea95f4f9feaaf03780f3808a86",
+    "model_generation.json": "b2554fb255fcd9e042d50ea4151bb077af55729abc949ed75afb3387c98ecc7b",
+    "official_evaluation.json": "1076de10a3cf1bc8a69c6d309bca6fcfd465bf249aa1eb8e01820171589fa0c7",
+    "provenance.json": "b304c3d32ed40836a4f149390521fc1e242ed9ca31a6eba9f46fa25a110e21bb"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "bandit-incremental-cache-control",
+  "task_number": "0010"
+}

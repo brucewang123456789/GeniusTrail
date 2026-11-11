@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "070569248142fa8fc43afa371f6774f01918f75c6032bd98a888ade2b4391866",
+    "model_generation.json": "aee06df5775f8f40c40c42219a1aeff805ed62fcba6108ef45328c34f7d542fd",
+    "official_evaluation.json": "0174141cd3c445941b5cefd35a5af83d14935e67c579eec2ef40fa747f27cdc0",
+    "provenance.json": "69ed09f2d523d5bbe7925db75dd09aafba356ea639487db4747614b2a68c185f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "gql-incremental-graphql-delivery",
+  "task_number": "0036"
+}

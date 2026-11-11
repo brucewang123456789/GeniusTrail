@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "db0f4df3a9b366c3b5efb4343ca46bc1528262024ed6f83f783fb025b39e344b",
+    "model_generation.json": "08590e150f2d0efe919fa917bc5f973859234cba2688be82ce410eb6477bf1cf",
+    "official_evaluation.json": "92e590d3a60c7ff9b696adb245f564ac78336e7f81ac4af5359f5cdc9a0da7be",
+    "provenance.json": "f39e7b799d62c7ac41cc4956efb8454ed8640034c4de20aedc7ba28c80672312"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "httpx-streaming-json-iteration",
+  "task_number": "0043"
+}

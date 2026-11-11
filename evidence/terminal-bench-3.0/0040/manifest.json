@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "e3126f9c8ae8c9e8b7abc3a9aac35becac1b04f0c0ce2b061f04d0ff78382d3c",
+    "model_generation.json": "ece10ee2e9df2ebd523e5937e8bdcbaf424e0509281a69d39ad24598a395df61",
+    "official_evaluation.json": "fb0e41aeac552bd70096ee6e1662f521ec93a4b1b494094adada02e9ee0c5429",
+    "provenance.json": "8829fc348b6b5229ffcd321d93cf763facdf03258bf88558a14d552ad64bf72e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "lean-midpoint-proof",
+  "task_number": "0040"
+}

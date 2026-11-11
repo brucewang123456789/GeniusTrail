@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "bf428575fb4413a24e7d36e0b3f6035040806cfc2b41df99d5eb95c1010ed9e0",
+    "model_generation.json": "8dd2c526888e9bcd3fa286c8eb5cbd024a7e386c2b0e9199a3ec1b083cd5e115",
+    "official_evaluation.json": "797b15ea326edb61ce281c309244259209d4b9fa27671c19abaa63cf9abd9204",
+    "provenance.json": "8ad037f0ffe7ad5609acadad61f5229c3207c44b5977ec67a71937fdce34ef7e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "arcane-drift-detection-baselines",
+  "task_number": "0007"
+}

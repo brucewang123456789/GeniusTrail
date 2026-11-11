@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "7d557154ce295a0fdf75050774ac4e56914ead31515be60f1a89b50fa44c1568",
+    "model_generation.json": "c510988d5db41672248ea4dd17fb373de735efc879f99c5a60531e8e92f86d5f",
+    "official_evaluation.json": "25d3cccd6bf703f64c2d87a15be3b387debd93ea9557b8894202550ce943e44e",
+    "provenance.json": "e89dcd82c7a1a1b3b85a877c4f4e6bb1a6156275561acf0e64b8f894c43508e0"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "pwntools-tube-multiplexing",
+  "task_number": "0081"
+}

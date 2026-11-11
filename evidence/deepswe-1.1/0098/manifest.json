@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "aab6e504622ba83d6736affe0f5be25f19e102a499a6b435a60af9ee76ebd8a5",
+    "model_generation.json": "7b4a2b7b4a815d5fad66e23fa22cb9d069b84515551abf3755f80201e7e5c731",
+    "official_evaluation.json": "8a5b37eca10a49fcb18353c31bdcd5b715bfaee29c60012b217c82c389f0b945",
+    "provenance.json": "a41a4a78d883c88a4664193b317ae9c7a8ab1102ee0d067f0b8f3876ae4702e0"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "testem-per-launcher-reports",
+  "task_number": "0098"
+}

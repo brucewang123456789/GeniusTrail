@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "d3516a7404cac807bccdfb55fa323218330d00d56ac46a2a2a85fd5f5c029d0e",
+    "model_generation.json": "2a741c5dbeb60670079d7e11c2b0aa8ead6cbaa5d3b98adeff2bef47d91a4b1e",
+    "official_evaluation.json": "760fa6423b5ae6110e52afe1e3dd894f3aa9301e91983fa59a5e8e7fecce9854",
+    "provenance.json": "b956f76d0585031892a731349f6e58e222ffa6ad91c530c92bbe184c8b57fd88"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "ontology-kg-querying",
+  "task_number": "0043"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "d2c38c1ac4afcda75b13a885aa93ad687f798ad963b31901995fedc4b0dd672c",
+    "model_generation.json": "584e4293e9bbc3d384710071b0fbacb7eefbd6a6288c0dd5c417be1a353f0ce0",
+    "official_evaluation.json": "604221f89b042e2d8e451ba02bb7ce68738fd55e6dc3b8c8489f458449d54035",
+    "provenance.json": "2fc9a8962a2fa50652e9b46a77e85bf7034b64ce0184c971dca38bc5bc0f7845"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "helm-unified-manifest-stream",
+  "task_number": "0040"
+}

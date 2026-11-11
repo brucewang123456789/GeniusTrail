@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "c398c0280f692ff6f354e6f809da472ef5dfdd4158b3787d5c6b7d75464dba92",
+    "model_generation.json": "35fe5ff6f31676db3f49c0c7a2f72e87048430803996b37bdae2e8b6d714d4e4",
+    "official_evaluation.json": "4a52346c8d3aa5ffbcebd6055e7c688abc13c63b3f096a39013e386baf4861fb",
+    "provenance.json": "c37a811b56dc32ef0cd2904361dc7b7b81d86a6eaf57456005dfd5be5c016a24"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "vllm-deepseek-streaming",
+  "task_number": "0055"
+}

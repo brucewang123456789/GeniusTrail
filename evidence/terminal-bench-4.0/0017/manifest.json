@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "6859856f1a4251888b626724adb7e385302dfdb9af41acefd2dd6d29ed49490d",
+    "model_generation.json": "31f118727c40122befe984f27bed1a1f5c20f1c6bbcdd52e869e5474247a8c51",
+    "official_evaluation.json": "f8714c23995fbcb86e75a77a7cb9d5f2f550a65a8caac38d013cf0619dd834ae",
+    "provenance.json": "fd3e3528616f36eb2e01dbc7307597cdaaaa2d38bca608fe17ea15ea85642bcc"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "cad-model",
+  "task_number": "0017"
+}

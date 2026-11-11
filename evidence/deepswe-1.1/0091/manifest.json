@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "90f879d0734b65060c5a5ad6465bc7c73305f7054a1e21861b7a6e9ae864489a",
+    "model_generation.json": "603f239a6ea03a2d3bf5bfb3ca4c3ad86a5e0dd5bcd6bea02a25952778bfe28f",
+    "official_evaluation.json": "fb3214d0e074165414e0c67dfd5c3c2738b745b3771f0e07936014666fb3038e",
+    "provenance.json": "567ba26f9e282042ba3d2d5c922a7d512ae5ea324b117fcbff0075c6f3ff8dae"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "sqlite-utils-safe-import-checkpoints",
+  "task_number": "0091"
+}

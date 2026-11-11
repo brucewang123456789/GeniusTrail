@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "0b719955a08ce3532ec562b7b030804082ca882348d306966e1133610320dde1",
+    "model_generation.json": "21e39174d797cd2bb48a17727fe65ba4b00cc1059df14178f7829c35b5b509f1",
+    "official_evaluation.json": "cebf9484845768babffe4f251541656ddf88381182a1e76b2c4a62deefe191e9",
+    "provenance.json": "978104d5a239457df58c74b45065a0d0f2bc59b802be6c27ae7edda5b52b9f57"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "atrx-vep-crispr",
+  "task_number": "0033"
+}

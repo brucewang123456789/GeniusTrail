@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "7bdbb20988a271e70e4ca50a911c07f80f160403845d7ba4c914e9b70164db3e",
+    "events.jsonl": "afbcf13d72a64d614aff40bc90959114b72ca6289e5e534180d0c28e74e5e12f",
+    "model_generation.json": "fcc07e50717d46fd58b18a685f1f026ce41e616945a49df4b2894bd660edbc02",
+    "official_evaluation.json": "c1f92f0cc804c20f78f121913142ed36d59d9d56af246513785592dc939a0a2c",
+    "provenance.json": "7af591efdf3435bcd0201539dd72f48855d6a13c91db3362687777b3b0410f88"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "find-network-alignments",
+  "task_number": "0004"
+}

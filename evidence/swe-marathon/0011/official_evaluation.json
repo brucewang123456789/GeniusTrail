@@ -1,0 +1,28 @@
+{
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "evaluation_and_integrity_elapsed_seconds": 120.04047,
+  "evaluation_elapsed_seconds": 120.04047,
+  "evaluation_finished_at_utc": "2026-10-28T09:29:49.680303Z",
+  "evaluation_started_at_utc": "2026-10-28T09:27:49.639833Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "not_submitted",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "6234cfc2543f3feecd542e76c7ff08216688bb1e75bdb436ddc41408856eeb81",
+  "official_reward": 1.0,
+  "official_task_name": "ruby-rust-port",
+  "resources": {},
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": null,
+  "submitted_artifact_sha256_basis": "not_available_in_official_receipt",
+  "task_id": "ruby-rust-port",
+  "task_number": "0011",
+  "test_results": {
+    "fully_resolved": true,
+    "normalized_reward": 1.0
+  },
+  "time_semantics": "official_verifier_wall_interval_including_its_integrity_checks_if_any_not_a_separate_integrity_timer"
+}

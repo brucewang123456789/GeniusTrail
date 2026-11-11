@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "87de92f727acde9fad4dfe4dd414bed971aee2b4d32e010daaf2a6f9aca0a844",
+    "model_generation.json": "038580e86e37eeb41c6d9728a34a40d711dc8fae0a8cde92c2892c7e36300299",
+    "official_evaluation.json": "8b28bdaf593d8a8dfafb399e2df84d212e23408dbfacec7631ab40ae7f6cfacf",
+    "provenance.json": "27ee8de7c45c1f01651e80ef57c13363234280f94491a623978126f3153f9994"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "sound-change-cascade",
+  "task_number": "0065"
+}

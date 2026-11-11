@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "24fbffb954aed2b10dec886384278fbd615fe5920e88a14936748767af4d053f",
+    "model_generation.json": "157111a3bb798a84bd6ef46a5ca4b889c3945f345a7bc11d6aee44aabd407594",
+    "official_evaluation.json": "dfbc069b7b33c59aa6ab3abe4008e8db38109ad2b56bc8992113212a45c2a659",
+    "provenance.json": "2723812896e5ecb0e678417daba80122939bcd78f5000119ded50c48e1ed9908"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "vba-userform-port",
+  "task_number": "0038"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "588252b3cacefce14837e4847239c011c0b19c2079a43d1e675f53c679c06a5e",
+    "model_generation.json": "d9d87b5a6c85fff5dd22c03a25bde48c22f891e45af229081e382dc7be2d1f0f",
+    "official_evaluation.json": "631d6ca2ddd7f55c114ff15eac3ce4615beb18be8b1815d14ffcb10a101996e5",
+    "provenance.json": "9534894dbf5d917eaeec2dae312ab70b9e0ae2ca5320eb42892860933035681b"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "claude-code-by-agents-recursive-delegation",
+  "task_number": "0016"
+}

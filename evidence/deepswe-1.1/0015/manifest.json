@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "15267263c5b47b85863903f243a9354729064336e52b89a9c02daf2254cd867b",
+    "model_generation.json": "93adf9f249289719de31e1a00db1aa0be0b25daf5c6fabddca234ccb6422a099",
+    "official_evaluation.json": "a99af67a2b56d8d94a2984d689adaa184c461abcae6cf0e9ee39e182a04f78cd",
+    "provenance.json": "cbcfd5bed6043d93eb7e6b0fbc31da19dc441a532f79a9dc98d2f3d5616aff46"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "clack-async-autocomplete-options",
+  "task_number": "0015"
+}

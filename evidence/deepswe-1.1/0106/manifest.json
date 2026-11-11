@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "e2f61eec96fc4823fa2931dad3c0e2b96cf421dce905d39b88f691f7ea6381eb",
+    "model_generation.json": "22d3c4da88bfc3e2ac3bbeeba34d1959840191f90d7ebcb9be48293cfeac5b45",
+    "official_evaluation.json": "8f83d2cc2c2e4c955fe4c41c435f7fa7ac69971a5dac042b3e4e6d706c51e41f",
+    "provenance.json": "d1ed86ab1a6c92a8d0aa82154ac3e9915dbf44f93d662c2e0e278ea53332161e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "vitest-duration-sharding",
+  "task_number": "0106"
+}

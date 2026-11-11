@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 67587,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 9,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "a679e720e113d6421834ef1a1ec71309f1187e629294e85e685282c15ef01047",
+  "generation_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "generation_finished_at_utc": "2026-10-27T06:25:09.167000Z",
+  "generation_started_at_utc": "2026-10-27T06:16:19.128000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "telecom-entity-resolution",
+  "task_number": "0067"
+}

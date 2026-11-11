@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "55e7505e5edbe41e3b23c55901ccaf534aa6773d1a0bf5662d6065d6e767a555",
+    "model_generation.json": "14df403cef88d26318fa84a04c064dbd0bac273f357ebcaa2cca857c8f5b5d1f",
+    "official_evaluation.json": "e220ec384b399b650bf0a7d1b3e009829d68c9ea4d1f8dfcb3634d5a99745a12",
+    "provenance.json": "c75e1b5b6f1de54a6d7e8ce662fee9e8f61028d4ab78ffe071ab3a0275bb13d5"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "effect-sse-httpapi-streaming",
+  "task_number": "0024"
+}

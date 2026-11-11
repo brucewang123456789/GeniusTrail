@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "deepseek-flash",
+  "api_model_identity_basis": "operator_declared_model_and_official_service_at_repair_not_historical_runtime_attestation",
+  "api_output_tokens_observed_in_sdk_events": 257042,
+  "api_provider": "deepseek",
+  "api_requests_observed_in_sdk_events": 15,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "https://api.deepseek.com",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "4beb0bd73ebf0c526ee4d2199aa7c6499a71e6c2d1bd7974c5d812b62f4eb88c",
+  "generation_artifact_sha256_basis": "vgr_delivery_proof_sha256",
+  "generation_finished_at_utc": "2026-10-28T09:27:23.639833Z",
+  "generation_started_at_utc": "2026-10-28T09:10:34.438833Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "ruby-rust-port",
+  "task_number": "0011"
+}

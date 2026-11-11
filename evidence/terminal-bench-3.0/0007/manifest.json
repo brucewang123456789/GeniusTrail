@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "fd11923aa9276d7947483c54fc69c81e840a500f43eca1abf5e2f3e1f63f4806",
+    "model_generation.json": "bd6b276b64c13a201d98fc1dd83135427a60ec35a1a71833babe244f997dc850",
+    "official_evaluation.json": "434a0d119e4bc0c9ccdeeb593c71e146b4c726b81f9382f126911cfbd0ad5820",
+    "provenance.json": "3c24a1839034553f540d5ddd3877c96ef22a2aee3d3fec5fb1bbcb5d7130bbb6"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "cli-2ph-simplex",
+  "task_number": "0007"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "dad99f51454201ac7d6b569f478f0f3d91110ba6f24833da8dc5176d2003267d",
+    "model_generation.json": "3ab440ed6503d5fa370d15675a29cdabfc6f3b3defe5b8793b31b0ce6d55399a",
+    "official_evaluation.json": "083b4baaf7dbe590e2a8df7392011f26584d7bf59ca47abf9cdb7fb18ac3313e",
+    "provenance.json": "0aa0dc45c4adf9fe1a27b75fd534af6d59bd32796e51a2202f9a531fddb01a7f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "kea-atomic-signal-selectors",
+  "task_number": "0049"
+}

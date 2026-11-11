@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "2033b2dba7332ecd5b4bcd722eae911164c288b9deec5c908e12fc246251598e",
+    "events.jsonl": "9af627505de8738626864a111a662bd79b3c3642a6487fc25add8776d5fd433b",
+    "model_generation.json": "9ed068844613ac3be9c23af85aeae9c52709c542c2750516bb1f8f058d0cbc23",
+    "official_evaluation.json": "2cebf9b2fb3f5ec2582fcce07ff7f4dac0cc74489a09b1ddd1114530e21f97ba",
+    "provenance.json": "e6a81d88e2890e93d8c994ff9f81b744e874879ee9cf5a44fae83a73d32fb388"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "stripe-clone",
+  "task_number": "0016"
+}

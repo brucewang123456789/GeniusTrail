@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 4436.193,
+  "evaluation_elapsed_seconds": 576.562388,
+  "evaluation_finished_at_utc": "2026-10-26T23:07:05.421197Z",
+  "evaluation_started_at_utc": "2026-10-26T22:57:28.858809Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "4a2a52e399120276c3af5d4da6cd89b0a290074c6353acafe96dea8f7c513988",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/vpp-loss-divergence",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 2,
+    "requested_memory_mb": 8192,
+    "requested_storage_mb": 15360,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "cc4b67973c69875af067cd6c39b9fcba8ec1be663688969c2df5076500b2d0eb",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "vpp-loss-divergence",
+  "task_number": "0046",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

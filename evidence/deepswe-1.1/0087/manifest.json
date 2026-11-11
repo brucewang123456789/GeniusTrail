@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "b66087f55b0dd2990cf0b93d0785cd63996b662f8084c551f3837b0f2e49b611",
+    "model_generation.json": "19f8df4dc6cee8f0eb23b5d7f738f2a64a665922f41582bc553d3c6b31a0e760",
+    "official_evaluation.json": "73561c754df4a2da2cfd34ff804d699947e0ad70fe800447a27d137e0fc557ad",
+    "provenance.json": "d8aea00bebc90939ea9c140565c622d99e1e67751e0cf5a7429b0952b5209fdd"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "scriggo-method-declarations",
+  "task_number": "0087"
+}

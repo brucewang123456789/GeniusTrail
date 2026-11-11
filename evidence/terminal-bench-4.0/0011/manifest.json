@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "16190f4dc8ae68836828b0e05ecfee9129c2df07f67e6af5db0d5bb5ca96b8f8",
+    "model_generation.json": "5750b74557c30b766d1406908a313f9637cfaf2b1e2ae359748c80e0204485b7",
+    "official_evaluation.json": "0b8c67b0030d81e9bfbf38bbd079742150b9dd352b3595ba9ebd6263f4c8d012",
+    "provenance.json": "df8c16fbafa2b7f99664629778e41872a4c870a825262488691674e71fa80906"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "fin-saccr-rwa",
+  "task_number": "0011"
+}

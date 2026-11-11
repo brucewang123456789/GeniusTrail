@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "64dd901f7c619e8c0399bba347f3a692f454bd59dbae4047a60933a4c2e549ed",
+    "model_generation.json": "9b7b1f2979267a3d85bba15eafd26f11a6e6006478945a36fa8eee009543f4a9",
+    "official_evaluation.json": "fcece54d652ebe82829bac6f4025be59f6dd975a583b045931541574e40c668c",
+    "provenance.json": "e66adfe40d8d4d808bab1c040ce03c056716a01a6e047d4ae58ba5b1c215c289"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "dateutil-rfc5545-timezone-interop",
+  "task_number": "0020"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "c838d319b74f17622b75a13e0f9c738c86b00b3f6b7bbe4a9787c3bac2c09eba",
+    "events.jsonl": "f2706860d7321239d179efcba5a05a0d7972959c2326fc28cddf7752e8a3116c",
+    "model_generation.json": "f944d4c51412ff7232b41c493c29675943e69f6b8234742dcfea1d0e4bbe68a6",
+    "official_evaluation.json": "8751f36918d9aa230fd74485f0ca1fa13ed105ace193cfc129606f2a0f3628aa",
+    "provenance.json": "46301eafd11b754c351c138b04cea276bb3e5ad78a2b044f5597275ba0f656af"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "vliw-kernel-optimization",
+  "task_number": "0018"
+}

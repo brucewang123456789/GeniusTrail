@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "24d3a8de9daf9d3cbc96a6171c7f2c125ada4f7c6c1eada66a6d78b0e3c046f8",
+    "model_generation.json": "463219e74a5fb3237689a403c0e38e956a6b68e8a7be2302fd13fcb60de55518",
+    "official_evaluation.json": "4481e17130a62b6aaf988914c342f2dea7d8c915089b540de47cd38767972244",
+    "provenance.json": "84ed3b8735d9d2bc81a6406ac288f9596626ed9b8fb39f2afee2827ff629841d"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "httpx-multipart-response-parsing",
+  "task_number": "0042"
+}

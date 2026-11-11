@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "2043feecfbc697959657efcd351eb9dc9b27b19652ad01be727b443515e2aac0",
+    "model_generation.json": "544cdb18215af8596b4ea8a7a22c2deacc5c2de0b767a84143705291ab97f4d7",
+    "official_evaluation.json": "d5972cd15905b87080878defbd807d201df46d3d5a9f16b1f14402fbce5072e1",
+    "provenance.json": "cc6ba28c509ba37144810ec9ae1fbb90cee6eab404f9bfe230afcfffb4efb236"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "sqlfmt-create-table-ddl-formatting",
+  "task_number": "0090"
+}

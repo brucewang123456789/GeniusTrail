@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "5a04704a4d4ec6e864d8e69f435076c73d7fc76555ff165fc371f8a5c927826a",
+    "model_generation.json": "6b588e2e3d3bbfcd3dd3622d3c8d36048aee751ee24196b13df71c0ed4d4813c",
+    "official_evaluation.json": "27bdbae747b17e2d7e5022cc17440c69bb81c7148c78ee6ae6019c0b5faba8c9",
+    "provenance.json": "336123f726c0fe49f9bdede25c568427749374a2a0baeb8cfb582e61599ffdeb"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "langchain-request-coalescing",
+  "task_number": "0059"
+}

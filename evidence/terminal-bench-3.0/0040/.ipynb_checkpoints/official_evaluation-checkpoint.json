@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 169.145,
+  "evaluation_elapsed_seconds": 161.136364,
+  "evaluation_finished_at_utc": "2026-10-27T04:58:20.921990Z",
+  "evaluation_started_at_utc": "2026-10-27T04:55:39.785626Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "a96237815f8cee8ce3c9c6cb1b1cf0402e8194c558c4a402decc6eda9a6bc41c",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/lean-midpoint-proof",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 1,
+    "requested_memory_mb": 2048,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "60be37235e712c7547910c2fe75dc6aecb4616371f16f636197b8049b0503bef",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "lean-midpoint-proof",
+  "task_number": "0040",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

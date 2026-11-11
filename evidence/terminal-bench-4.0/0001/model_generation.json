@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 63132,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 7,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "00ade871a306b43a69ecc5bbfbee822a74c3518a20f89842f1ef1ca7259fd07d",
+  "generation_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "generation_finished_at_utc": "2026-10-26T17:19:24.414000Z",
+  "generation_started_at_utc": "2026-10-26T17:13:14.837000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "layout-config-recreation2",
+  "task_number": "0001"
+}

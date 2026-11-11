@@ -1,0 +1,28 @@
+{
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "evaluation_and_integrity_elapsed_seconds": 21.969056,
+  "evaluation_elapsed_seconds": 21.969056,
+  "evaluation_finished_at_utc": "2026-10-28T15:36:42.204780Z",
+  "evaluation_started_at_utc": "2026-10-28T15:36:20.235724Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "not_submitted",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "c7bd19d4a1a79e4f3f61dded83b0a8be9ef4d401ba1a6cedf1888f1c107475d7",
+  "official_reward": 1.0,
+  "official_task_name": "wasm-simd",
+  "resources": {},
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "b70c7db3863f58b33bf741e0516e0b12fedef5292ae4c120aee04d6d57954688",
+  "submitted_artifact_sha256_basis": "remote_verified_uploaded_archive_before_solver_sha256",
+  "task_id": "wasm-simd",
+  "task_number": "0019",
+  "test_results": {
+    "fully_resolved": true,
+    "normalized_reward": 1.0
+  },
+  "time_semantics": "official_verifier_wall_interval_including_its_integrity_checks_if_any_not_a_separate_integrity_timer"
+}

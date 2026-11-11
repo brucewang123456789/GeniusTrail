@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "cdc2809e8d3648081f36ac2457ed422021bf60bdf970124b93e6ec26828770a8",
+    "model_generation.json": "c2abd6209ae02120963199310170a0ad4f4ae77d8c7bb714c7ec235ed391e52c",
+    "official_evaluation.json": "41464d973b426b481789b0cd4cd9b3fc679d2b9e92d89c50c8d6671aaf72bf27",
+    "provenance.json": "9dfae2d9e30a6b37587223b76416b40ec94ab8884f9ba49b7b1d82fbcf12d43e"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "go-git-worktree-merge-conflicts",
+  "task_number": "0034"
+}

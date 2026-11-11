@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "2639c2229289a8363dc84111acaa52f468e2e8f6c41479afdff186b573729498",
+    "model_generation.json": "dcf12917faab22d7caf11584f7bc6292a37893c57b92fbebc3b7cb890399f1a3",
+    "official_evaluation.json": "456d7157a1166ba02c1e62f91cdfcf2af88d65dab90613b0c02df2d1025a5ada",
+    "provenance.json": "38f8d96c43bc59a23bc4c1148ac310b4616698c11ab334aee4a2523afc3095fa"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "satb-audio-transcription",
+  "task_number": "0009"
+}

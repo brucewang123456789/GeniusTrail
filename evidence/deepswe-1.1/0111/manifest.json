@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "53b48c11ca80ce0207d8ac4d98412c5a3aeff08146ca290acf0105da17a92e44",
+    "model_generation.json": "9350a8ef32985e4fed684df5afa63ced3f9d4b6e9a4da6bc8de6bc875e0e7f4a",
+    "official_evaluation.json": "0133857e9f487048530136750c88dfee0576cb17dc55e96537db45a060e0da94",
+    "provenance.json": "8a36a1dcaf2a3175d3ee948ab55739138978ee524dab04f35246b0751952d036"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "yjs-map-conflict-detection",
+  "task_number": "0111"
+}

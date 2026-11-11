@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "24aec15438c2c1f72a06c69ea2b1865d3ebf72b2f1a05c494e1b7b81e548e26e",
+    "model_generation.json": "b1588609cfc30b3a6c9603048e0787be492cf72d4ce821efe69c74284c4b73ce",
+    "official_evaluation.json": "ed3da5a6262f4a0fa82ec012e6b1acbc95b3396fdc129a73fe5495c3115d962f",
+    "provenance.json": "d535ffae78b26b915c7fa4f3c36cdfd7e70920edea7403288728b1524516dc7b"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "koota-composite-trait-aspects",
+  "task_number": "0053"
+}

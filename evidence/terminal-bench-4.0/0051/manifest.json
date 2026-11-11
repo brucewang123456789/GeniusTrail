@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "725be787cd903f30c3245c47abfcaaee6d2110d53f6cabe829dde9b4b9266c0a",
+    "model_generation.json": "e300a26bd55d2c4fbfe4fb0f9331139cbb960251ceb6b8ef47f5236d96af4028",
+    "official_evaluation.json": "f0bc9fc172f21403bde01345633c60f8f297933af0b40d823800d5b9770f095d",
+    "provenance.json": "8b1117d03f403c85e75ea651299b71b049ff2d0d0f74e85e4ff06cb6a326c0b6"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "interleaved-vigenere",
+  "task_number": "0051"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "4ce97ee746bcddbd9597d42935dd04cfe229029c182518756c20fc0013da838f",
+    "model_generation.json": "4bf92cdd1af29629df7cf48af7005ce4cf8cd7b245893f178423fcc76875a795",
+    "official_evaluation.json": "4a356bfbc2f4ebcf94d794da1622db57ef7ee7a3136621dcc5b84353e186aa5d",
+    "provenance.json": "82853124ddc827414d631a6502a9a2fd4ecff3215dc1511de09fd10b59d9619d"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "abs-stepped-slices",
+  "task_number": "0001"
+}

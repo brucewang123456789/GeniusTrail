@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 478.321,
+  "evaluation_elapsed_seconds": 467.123786,
+  "evaluation_finished_at_utc": "2026-10-27T02:08:48.194483Z",
+  "evaluation_started_at_utc": "2026-10-27T02:01:01.070697Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "eca1b3a248b6060e529e49623966f330ff0cc693044901115435d701b0d06d69",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/formal-crypto",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 1,
+    "requested_memory_mb": 2048,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "3b74b3b008fcbf6c8449d4fcf346ec2ad1a1b96e29d6c97eda08327dd4d3382a",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "formal-crypto",
+  "task_number": "0019",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

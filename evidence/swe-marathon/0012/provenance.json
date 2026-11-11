@@ -1,0 +1,19 @@
+{
+  "base_commit": "66ad64fbf112c0bc7593fbfd6e5c1922d28617a1",
+  "benchmark": "swe-marathon",
+  "benchmark_source_url": "https://gh-proxy.com/https://github.com/abundant-ai/swe-marathon.git",
+  "benchmark_version": "v1.1-official",
+  "evaluator": {
+    "framework": "Harbor",
+    "reported_version": "0.20.0"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "fbc9cda2ab6bb7775929095ec840c5d171d459ef74c1df7c48d36b63a136e2a0",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "7bce7b29e1f2413633eb5ed6eb10dc2efb036712",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "rust-c-compiler",
+  "task_number": "0012"
+}

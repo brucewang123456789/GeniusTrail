@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 96195,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 28,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "deepswe-1.1",
+  "benchmark_version": "v1.1",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "0c7a22d6c0365b65051d04e07853741aab6d85582158585c99566d39542a27aa",
+  "generation_artifact_sha256_basis": "file_bytes_sha256",
+  "generation_finished_at_utc": "2026-10-21T21:10:01.238000Z",
+  "generation_started_at_utc": "2026-10-21T21:02:10.334000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "cattrs-partial-structuring-recovery",
+  "task_number": "0014"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "703d415786b69c53bb561ac9b509ebe895cc465415030e32bb65eca9976326a9",
+    "events.jsonl": "028c1fc0c3e33f9b31f490200a9820ed7168476ad4cc7c5abfc1e078e49aae0f",
+    "model_generation.json": "4c1dd152fbab1eae989a0d7fcf01720fb65840e5b2a15810bf41423b999ae4b8",
+    "official_evaluation.json": "b40d2a2fe03fd648acac520a57a6c86f5443f90578a9b2187a268afcd64acb4d",
+    "provenance.json": "968cfa759c3f068ba0c97b1ab5a2eb7a2eaa95d3e6af5cbb87fa313299d514d8"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "ruby-rust-port",
+  "task_number": "0011"
+}

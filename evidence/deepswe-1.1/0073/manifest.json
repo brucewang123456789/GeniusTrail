@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "e98a96fc1e60073c9bd08426c914adffda75b107d2cd4a8b36d8118e39df1eee",
+    "model_generation.json": "707fbcd6fe2518311e9f8a18ba4bc49bbeaa9abc67edfa036f463d9fe1d37de9",
+    "official_evaluation.json": "499fcb0bb3d73797dddd7d13e1dcdb32742f58403fd2471402238d9288e9a795",
+    "provenance.json": "7d5a7eed32dabba5a99406bc1e8b0b683c48a6da5598b43d04e184404766654a"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "optique-conditional-option-dependencies",
+  "task_number": "0073"
+}

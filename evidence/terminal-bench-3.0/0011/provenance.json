@@ -1,0 +1,20 @@
+{
+  "base_commit": null,
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_source_url": "https://github.com/harbor-framework/terminal-bench",
+  "benchmark_version": "v3.0.0",
+  "evaluator": {
+    "harbor_version": "0.22.0",
+    "modal_version": "1.5.5",
+    "pier_version": "0.3.1"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "5863a9f499c6758831197d085b3ab00817e983b9f503c8b06de49960ab87e346",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "2b0442c3c583b710ca8da14c8e601b99f2f1f244",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "data-anonymization",
+  "task_number": "0011"
+}

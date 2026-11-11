@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "benchmark_version": "v4.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 752.725,
+  "evaluation_elapsed_seconds": 746.416723,
+  "evaluation_finished_at_utc": "2026-10-26T18:21:51.638616Z",
+  "evaluation_started_at_utc": "2026-10-26T18:09:25.221893Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "5b295e10e69f982d1b5ebefafd969eb2b5f24c39705d72570cdafa9ad84041c6",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/takens-embedding-lean",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 4,
+    "requested_memory_mb": 16384,
+    "requested_storage_mb": 51200,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "e571729680c1f5ec5d87ec374d478975b7105cdb6383a45c3384a787f65aee41",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "takens-embedding-lean",
+  "task_number": "0008",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

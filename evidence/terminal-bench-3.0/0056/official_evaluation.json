@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 109.368,
+  "evaluation_elapsed_seconds": 97.804697,
+  "evaluation_finished_at_utc": "2026-10-27T05:43:45.279861Z",
+  "evaluation_started_at_utc": "2026-10-27T05:42:07.475164Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "05181e86af80d6a28117133e0595e79f4bacf0fe5b1fd74dcba38d813f79a1dc",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/react-lead-form",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 1,
+    "requested_memory_mb": 2048,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "ce886e167b245fc35133e2a5ad2d1e6e3fd3c1224a10ed9a225a6eea1b0a7947",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "react-lead-form",
+  "task_number": "0056",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

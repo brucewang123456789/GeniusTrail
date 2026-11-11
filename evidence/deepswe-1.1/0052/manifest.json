@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "2b4f317b341f69949e7f5e026fc0db4a013087cfda6ae8f97c77c74f93b356f3",
+    "model_generation.json": "fddad2a9f79aa6a186cafe8105f9500875db1a4539d0c72597b898035fe02d4f",
+    "official_evaluation.json": "46d0382fd2337d259eecc076e9b6f71ddceceb4dcfe062ca0fa4ec60c22eba72",
+    "provenance.json": "2282484ae511cc421a34ddbd2b489687fadf997876c19b4bbfd75ac7e0e1c167"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "kombu-virtual-queue-dead-lettering",
+  "task_number": "0052"
+}

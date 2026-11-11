@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "5b67e5f098e072a15baa14a1db8e61f73e9aebf80eb7433bd26fea2af8d59edf",
+    "model_generation.json": "ea1ee947090c97eba7b0e60d27eccb53d58c2ad329af4927170794b02bb4cd31",
+    "official_evaluation.json": "1f7b404612bcbd63259d46b91ed22f952b18e13fbef601870e9c5bda2441eb18",
+    "provenance.json": "f36302d9e10c567de3e76b8bc2ca408c8fd63cff540ae5d7780977518d44c424"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "narwhals-rolling-window-suite",
+  "task_number": "0064"
+}

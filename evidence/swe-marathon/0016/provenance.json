@@ -1,0 +1,19 @@
+{
+  "base_commit": "ddca2c1feed483f845abbfdeeefd2fc7f61db986",
+  "benchmark": "swe-marathon",
+  "benchmark_source_url": "https://github.com/abundant-ai/swe-marathon.git",
+  "benchmark_version": "v1.1-official",
+  "evaluator": {
+    "framework": "Harbor",
+    "reported_version": "0.20.0"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "6c676d531d4864678511584d025aa00c2f751908d89102e9ad2a1f3ebeef7ce0",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "7bce7b29e1f2413633eb5ed6eb10dc2efb036712",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "stripe-clone",
+  "task_number": "0016"
+}

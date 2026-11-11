@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "deepseek-flash",
+  "api_model_identity_basis": "operator_declared_model_and_official_service_at_repair_not_historical_runtime_attestation",
+  "api_output_tokens_observed_in_sdk_events": 68444,
+  "api_provider": "deepseek",
+  "api_requests_observed_in_sdk_events": 10,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "https://api.deepseek.com",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "81043946f79579933b7055fccf4788154c7b0eef6e81e914caeb1ac911ba3774",
+  "generation_artifact_sha256_basis": "vgr_delivery_proof_sha256",
+  "generation_finished_at_utc": "2026-10-28T07:47:37Z",
+  "generation_started_at_utc": "2026-10-28T07:37:27.390000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "find-network-alignments",
+  "task_number": "0004"
+}

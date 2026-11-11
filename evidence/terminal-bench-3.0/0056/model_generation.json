@@ -1,0 +1,21 @@
+{
+  "api_model_declared": "DeepSeek V4.1 Flash 1017",
+  "api_model_identity_basis": "operator_declared_configuration",
+  "api_output_tokens_observed_in_sdk_events": 94604,
+  "api_provider": "DeepSeek",
+  "api_requests_observed_in_sdk_events": 14,
+  "api_runtime_model_id_declared": "deepseek-flash",
+  "api_service": "DeepSeek API",
+  "api_usage_scope": "local_sdk_event_counts_not_provider_signed_billing_record",
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "final_submission_received": true,
+  "generation_artifact_sha256": "e4b1cb561b5372c7dc28c58900e49724d74ab88fa4eb6afc526ba269c94e4c0d",
+  "generation_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "generation_finished_at_utc": "2026-10-27T05:42:05.482000Z",
+  "generation_started_at_utc": "2026-10-27T05:33:57.554000Z",
+  "harness": "Voder",
+  "schema": "voder.benchmark.public_receipt.v3.model_generation",
+  "task_id": "react-lead-form",
+  "task_number": "0056"
+}

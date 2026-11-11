@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "6a91ef39d4ed6e11a4adced7544df683dc45e4597b93a0b94d034c1f229f479b",
+    "model_generation.json": "db57a6515d20b24f8724194aa9214303afc6d20e15a249991148f62266834951",
+    "official_evaluation.json": "82665a6e2b2354a2d8e8d1cadbfe577fceb5b47eb69d202cadb3a0e08ba769c0",
+    "provenance.json": "81deaa6fd568820f789a4778d37701e42ed28f029966657a5e8e82be96922c4a"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "bandit-structured-nosec-directives",
+  "task_number": "0012"
+}

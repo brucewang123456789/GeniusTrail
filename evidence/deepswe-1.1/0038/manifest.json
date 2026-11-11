@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "dabccf4ea2dd220211ae7aec0ba7d933ff47345c3f1a21a02c779171c3b176a1",
+    "model_generation.json": "2a455a28526c64035a13f29c538c161c7a813d307951fc97f13b5adc4c8acf27",
+    "official_evaluation.json": "5c7fa054dc350cea09cd9fc364b57e595163920f5da852df348bc215f1505627",
+    "provenance.json": "ff15b6966d169122b4b3bdb1d6ceab586a3c35c8c6cf8ae4efc4c28378122219"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "happy-dom-deterministic-intersectionobserver",
+  "task_number": "0038"
+}

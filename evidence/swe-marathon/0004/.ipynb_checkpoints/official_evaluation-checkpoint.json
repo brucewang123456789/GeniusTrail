@@ -1,0 +1,28 @@
+{
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "evaluation_and_integrity_elapsed_seconds": 9.557556,
+  "evaluation_elapsed_seconds": 9.557556,
+  "evaluation_finished_at_utc": "2026-10-28T07:48:12.824083Z",
+  "evaluation_started_at_utc": "2026-10-28T07:48:03.266527Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "not_submitted",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "e4e6bd31abf37f51ce4800e28ae793bb8e3e8b97874fd8d8167e6a5e90555fea",
+  "official_reward": 1.0,
+  "official_task_name": "find-network-alignments",
+  "resources": {},
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": null,
+  "submitted_artifact_sha256_basis": "not_available_in_official_receipt",
+  "task_id": "find-network-alignments",
+  "task_number": "0004",
+  "test_results": {
+    "fully_resolved": true,
+    "normalized_reward": 1.0
+  },
+  "time_semantics": "official_verifier_wall_interval_including_its_integrity_checks_if_any_not_a_separate_integrity_timer"
+}

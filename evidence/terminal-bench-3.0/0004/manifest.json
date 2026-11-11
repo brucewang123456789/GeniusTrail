@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "89a5ac0cd56a5dc7ae4c6e70e8fedfb46d378c4bf1afd9dc2c423f4069248881",
+    "model_generation.json": "ee6b70df9e2d8a3999ea01547fd2c45cdd996513e14c00cbfc3d5267b0ae1643",
+    "official_evaluation.json": "f9861c888040df871b64d814a66e47bccba9ff0527dbe32af976bcc430142fc1",
+    "provenance.json": "f33048f5c5ec5818a46ef77256594ecdbb189e19241b26c2697003f319c63e2a"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "bun-sourcemap-leak",
+  "task_number": "0004"
+}

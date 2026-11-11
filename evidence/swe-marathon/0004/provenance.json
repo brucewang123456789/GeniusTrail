@@ -1,0 +1,19 @@
+{
+  "base_commit": "21ac1216926b39875117c30983d8851858480787",
+  "benchmark": "swe-marathon",
+  "benchmark_source_url": "https://gh-proxy.com/https://github.com/abundant-ai/swe-marathon.git",
+  "benchmark_version": "v1.1-official",
+  "evaluator": {
+    "framework": "Harbor",
+    "reported_version": "0.20.0"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "84f9e9da4302238b6504440ac6684f19875d8be806c86dbebf3ce19da7edb9dd",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "7bce7b29e1f2413633eb5ed6eb10dc2efb036712",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "find-network-alignments",
+  "task_number": "0004"
+}

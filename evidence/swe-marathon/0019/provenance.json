@@ -1,0 +1,19 @@
+{
+  "base_commit": "fe9e9f81275823a1773594c6f17f69b343c83c16",
+  "benchmark": "swe-marathon",
+  "benchmark_source_url": "https://gh-proxy.com/https://github.com/abundant-ai/swe-marathon.git",
+  "benchmark_version": "v1.1-official",
+  "evaluator": {
+    "framework": "Harbor",
+    "reported_version": "0.20.0"
+  },
+  "harness": "Voder",
+  "instruction_sha256": "2786243ece1d800d666d030c041d7a6740963326f75ffe76866eb4a18bdbd093",
+  "model_score_attribution": "not_verified_when_generation_and_submission_hashes_differ",
+  "official_score_scope": "the_evaluated_submission_only",
+  "official_source_commit": "7bce7b29e1f2413633eb5ed6eb10dc2efb036712",
+  "raw_solution_payload_published": false,
+  "schema": "voder.benchmark.public_receipt.v3.provenance",
+  "task_id": "wasm-simd",
+  "task_number": "0019"
+}

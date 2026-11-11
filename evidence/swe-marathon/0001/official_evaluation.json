@@ -1,0 +1,28 @@
+{
+  "benchmark": "swe-marathon",
+  "benchmark_version": "v1.1-official",
+  "evaluation_and_integrity_elapsed_seconds": 64.513512,
+  "evaluation_elapsed_seconds": 64.513512,
+  "evaluation_finished_at_utc": "2026-10-28T14:59:30.911501Z",
+  "evaluation_started_at_utc": "2026-10-28T14:58:26.397989Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "not_submitted",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "4f6addd1bf7b95bb3e381f73a5fcb9f88e80beacdae568bbd198ff0976102389",
+  "official_reward": 1.0,
+  "official_task_name": "biofabric-rust-rewrite",
+  "resources": {},
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "0f04add64d997a1324ff02489fea63e90a2a0781cd5959200c5d21b13553c96c",
+  "submitted_artifact_sha256_basis": "remote_verified_uploaded_archive_before_solver_sha256",
+  "task_id": "biofabric-rust-rewrite",
+  "task_number": "0001",
+  "test_results": {
+    "fully_resolved": true,
+    "normalized_reward": 1.0
+  },
+  "time_semantics": "official_verifier_wall_interval_including_its_integrity_checks_if_any_not_a_separate_integrity_timer"
+}

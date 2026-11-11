@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "6839c6288d896b5364c7053dea5d26594779a18e39434d38bebd3791378b39e4",
+    "model_generation.json": "940321300110ec04dec01ac89e404d0404c6367f4714bd04551befb0c405c724",
+    "official_evaluation.json": "cbbd8235adc62ba0ebb5dc35f0c5d12618dc33179b4a1ac2c3d7b1777eb95aaa",
+    "provenance.json": "f96c0982cdea411647a7e0daa5bd84565f36fd0b34e03798b983ecf95e69751a"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "fastapi-implicit-head-options",
+  "task_number": "0029"
+}

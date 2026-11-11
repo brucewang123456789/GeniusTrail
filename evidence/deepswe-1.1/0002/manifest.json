@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "86c09525ef15129ed6bd06979ad9e76ebd8e1b5c67fd0acb62739c09ed95c96e",
+    "model_generation.json": "bc3d6bd18cbfd8bafaab99b75d71bcec285c0def74e18b2538a057f330a1eb3b",
+    "official_evaluation.json": "1f013f3c2299a46654625c4083de610b2650209e7d999cbf5312c22d9b159d77",
+    "provenance.json": "82f0b4e243535b963ddb4b4424dc6331d907317ffb6f6a81836fc9c6a26a2b60"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "actionlint-action-pinning-lint",
+  "task_number": "0002"
+}

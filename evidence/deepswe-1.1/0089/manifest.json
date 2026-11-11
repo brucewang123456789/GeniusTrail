@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "ff69201533cf39152f2acdcc2b775151c013b6aa9ff08b8a2750bf6dff197f49",
+    "model_generation.json": "b13c6ccfe757075cd78487cefe972f887db9d9a425ef25eb97b2b5440602159a",
+    "official_evaluation.json": "27d85899f5db7677a377787660588f926456d69d83b3c326c71b182db5866cdd",
+    "provenance.json": "3893098045c4cd6f2c4005a8f2f4015b61c47b0353e4a1d5e68f5f0f8f0ebe9f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "sql-formatter-bigquery-pipe-formatting",
+  "task_number": "0089"
+}

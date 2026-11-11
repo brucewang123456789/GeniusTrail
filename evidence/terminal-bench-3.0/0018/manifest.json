@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "bb62565737a5ab2b437f9236e20d359ca2914b4e3983cfea2ae654146cfa80a5",
+    "model_generation.json": "ec71df12b1dee9692aa119d18124e52ee23fea9f4f64401fdd089ddfa5d22393",
+    "official_evaluation.json": "0bd7cc5187da9e658db753e623feba9d7229982a337d0d2e90612fcf07a59575",
+    "provenance.json": "144dad6a36bf92ad94cf254d8414fc2dfb08b187e125250c034d7de39f03c3d2"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "foodstuff-beta-activity",
+  "task_number": "0018"
+}

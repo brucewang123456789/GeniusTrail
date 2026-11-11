@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "f6a9c77ac97d9f3d65188abb1c70c1b00f97d918ae7b55531513ee92678412d3",
+    "model_generation.json": "bd7060ce00bafaa4138295a2cf8fe4140a374bd129dfec3639f9c981475d3476",
+    "official_evaluation.json": "960e7358e3fb8e54d91828c0912b9b800e82accbedcc4d604eb997cafcbd2762",
+    "provenance.json": "6c22ee011997d5594ca31a01e1363a78a59b0cf9f1df2eed0a0b802ac5df7788"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "meriyah-explicit-resource-declarations",
+  "task_number": "0061"
+}

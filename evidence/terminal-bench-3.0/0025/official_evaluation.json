@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 53.112,
+  "evaluation_elapsed_seconds": 43.011026,
+  "evaluation_finished_at_utc": "2026-10-27T02:29:12.595561Z",
+  "evaluation_started_at_utc": "2026-10-27T02:28:29.584535Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "2797034db097ee7cd3946551e7aeb50a052bb00384c19db9dd6fa1265a7e3fe1",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/glycan-ms2-elucidation",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 2,
+    "requested_memory_mb": 4096,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "fe29cf722c7d1b56e44b5c81f752937d9606faf312fb408cc7e3f50547ae28b5",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "glycan-ms2-elucidation",
+  "task_number": "0025",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

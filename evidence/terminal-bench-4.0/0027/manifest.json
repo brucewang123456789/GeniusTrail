@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-4.0",
+  "file_sha256": {
+    "README.md": "1a9b621b03749409209fe87115307e0129266b8c5fc884582136194198867638",
+    "events.jsonl": "41dd2ed400d89b3657d4f9c2edfef52c3b7d9f84a8304874fbcf76ef7a637192",
+    "model_generation.json": "e2d5056548070d204e7ef42cc2c3364c96c280a8f546a1227805327be8689a7e",
+    "official_evaluation.json": "c276f28acee775f914a9a5272f19b3356a5d76d6d572e1e0cb7007a9d78a1c2f",
+    "provenance.json": "b17667ac24339dfc4e4b0f521d3eb422c3752a8af7cd526d9f0af6ced67bdb76"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "wal-recovery-ordering",
+  "task_number": "0027"
+}

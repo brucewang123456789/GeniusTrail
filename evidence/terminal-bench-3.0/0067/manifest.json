@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "d680377581945aeaae929378793f04a75bbedb5f8c6c8b3c7b307ae1a173ee61",
+    "model_generation.json": "c47f5fc1d7890fac163bd63597b84536eac85757e09c0be946a27f2f05b730a7",
+    "official_evaluation.json": "4417f229355f00ef7e0dc5fd13ab2ad6fcabeb0d575c0014a847436f70b00810",
+    "provenance.json": "fae3de6e38969b4c810d91975e272cdcfb661f216035f91bb390f1ef5bd4ac8f"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "telecom-entity-resolution",
+  "task_number": "0067"
+}

@@ -1,0 +1,40 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "benchmark_version": "v3.0.0",
+  "evaluation_and_integrity_elapsed_seconds": 64.626,
+  "evaluation_elapsed_seconds": 56.409927,
+  "evaluation_finished_at_utc": "2026-10-27T00:30:47.768293Z",
+  "evaluation_started_at_utc": "2026-10-27T00:29:51.358366Z",
+  "exception_present": false,
+  "final_submission_received": true,
+  "harness": "Voder",
+  "leaderboard_submission": "NOT_PERFORMED",
+  "official_evaluation_completed": true,
+  "official_pass": true,
+  "official_result_sha256": "b875a51293841a4cb58465457140d5e2addc9559dd75e1b522a907f894e3c56a",
+  "official_reward": 1.0,
+  "official_task_name": "terminal-bench/bun-sourcemap-leak",
+  "resources": {
+    "actual_allocated_cpus": null,
+    "actual_allocated_memory_mb": null,
+    "allocation_attestation": "not_recorded_by_available_receipt",
+    "cpu_enforcement_policy": "auto",
+    "memory_enforcement_policy": "auto",
+    "override_cpus": null,
+    "override_memory_mb": null,
+    "override_storage_mb": null,
+    "requested_cpus": 1,
+    "requested_memory_mb": 2048,
+    "requested_storage_mb": 10240,
+    "timeout_multiplier": 1.0
+  },
+  "schema": "voder.benchmark.public_receipt.v3.official_evaluation",
+  "submitted_artifact_sha256": "92d14d2c95c84b15b946df5d8d8abf87a7512163bc59a9f0a20ce810628abb0a",
+  "submitted_artifact_sha256_basis": "private_tree_sha256_recorded_by_runner",
+  "task_id": "bun-sourcemap-leak",
+  "task_number": "0004",
+  "test_results": {
+    "reward": 1.0
+  },
+  "time_semantics": "recorded_UTC_timestamps_and_observed_elapsed_duration_no_synthetic_times"
+}

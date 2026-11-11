@@ -1,0 +1,14 @@
+{
+  "benchmark": "terminal-bench-3.0",
+  "file_sha256": {
+    "README.md": "6994abdcb9734a1146c7c47112a92d51e341fff7f9b52445ad520b2eb7b26392",
+    "events.jsonl": "c8c081e778791d4468a980848768b0fe10bd215ef012a15380d5ed36f63c27a8",
+    "model_generation.json": "d354b880bbc271f6ebcb94c3da0fc834c49f044f50e09db898482af248dea5ee",
+    "official_evaluation.json": "607711148e0255bea5e7b4180d76337e5e9f9235ea7611643ac0cfe99562c763",
+    "provenance.json": "005f3f98bcf9fc3707786d97a224558d1ccde3730eed9438a6ec89624a071391"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "roy-polymorph-cn",
+  "task_number": "0059"
+}

@@ -1,0 +1,14 @@
+{
+  "benchmark": "swe-marathon",
+  "file_sha256": {
+    "README.md": "98c7a469679744a569ec710e469773cd6fa72ff02b1f5333d02d40fb3136c077",
+    "events.jsonl": "f78ae7c2341768a8d2fa18d899c4b267edd9519f524434304033582a3e8adc70",
+    "model_generation.json": "07b59225ca5fcc4da78e4fd2970d80a53dbbdd2c757001673dd73ef65c451fc4",
+    "official_evaluation.json": "f031d1bc7fd2369c158495714041b337bba891097602df6cf3c64f622dedb75b",
+    "provenance.json": "9551e7d211f4abbb9661cd8d070866807acef01712fe4117c44a84e13939f2a9"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "wasm-simd",
+  "task_number": "0019"
+}

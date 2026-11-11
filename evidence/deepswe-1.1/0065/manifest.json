@@ -1,0 +1,14 @@
+{
+  "benchmark": "deepswe-1.1",
+  "file_sha256": {
+    "README.md": "d720d50362a8ad7598f042b1b3ebeb75e34ba80f65b791d104dfc9554cf444f1",
+    "events.jsonl": "af507a7a65d475dc2a7d08cb129e367bd7e6af50bb75780afd2612990e51552c",
+    "model_generation.json": "27aba9b59e29c054cc98e357951cdd5e53bb60c7863eb0cdd6a7427c72f7aab7",
+    "official_evaluation.json": "07b4691a17352ac9f83ff54b9ff62aaa05c5e979be7634bd38d0e5dcfb0510bb",
+    "provenance.json": "39f64b90bd84d25d26fcd78a557fbf7c1f4766f535a975aa9ff8482f97d62bee"
+  },
+  "policy": "metadata_only_no_code_payload",
+  "schema": "voder.benchmark.public_receipt.v3.manifest",
+  "task_id": "numba-stencil-boundary-modes",
+  "task_number": "0065"
+}
