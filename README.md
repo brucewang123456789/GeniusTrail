@@ -7,17 +7,18 @@
 <p align="center"><strong>A coding agent with independently governed writeback</strong></p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=veriloop.voder-vscode">VS Code Marketplace</a> ·
-  <a href="https://openreview.net/forum?id=11hpVvFso1&amp;noteId=11hpVvFso1">Technical report</a> ·
-  <a href="#interactive-3d-demos">3D demos</a> ·
-  <a href="#benchmark-evidence">Benchmark evidence</a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=veriloop.voder-vscode"><img alt="Install from the VS Code Marketplace" src="https://img.shields.io/badge/VS_Code_Marketplace-005FA3?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNSAyLjVoNm0tMyAydjZtLTIuNy0yLjdMOCAxMC41bDIuNy0yLjdNMi41IDExdjIuNWgxMVYxMSIvPjwvc3ZnPg%3D%3D"></a>
+  <a href="https://openreview.net/forum?id=11hpVvFso1&amp;noteId=11hpVvFso1"><img alt="Read the technical report on OpenReview" src="https://img.shields.io/badge/Technical_Report-344054?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNCAxLjhoNS4ybDIuOCAyLjh2OS42SDR6TTkgMnYzaDNNNiA4aDRtLTQgMi41aDQiLz48L3N2Zz4%3D"></a>
+  <a href="#interactive-3d-demos"><img alt="Explore interactive 3D demos" src="https://img.shields.io/badge/3D_Demos-344054?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJtOCAxLjcgNS41IDMuMXY2LjRMOCAxNC4zbC01LjUtMy4xVjQuOHpNMi41IDQuOCA4IDhsNS41LTMuMk04IDh2Ni4zIi8%2BPC9zdmc%2B"></a>
+  <a href="#benchmark-evidence"><img alt="Review benchmark evidence" src="https://img.shields.io/badge/Benchmark_Evidence-344054?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMi41IDIuNXYxMWgxMU01LjUgMTAuNVY4bTMgMi41VjUuNW0zIDVWMyIvPjwvc3ZnPg%3D%3D"></a>
 </p>
 
 <p align="center">
   <a href="#install-in-vs-code">Install</a> ·
   <a href="#configure-voder">Configure</a> ·
   <a href="#how-vgr-works">How VGR works</a> ·
-  <a href="#source-layout">Source layout</a>
+  <a href="#source-layout">Source layout</a> ·
+  <a href="#contact">Contact</a>
 </p>
 
 Voder is a coding-agent harness developed by the **VeriLoop Team**. It uses a Pi-derived model-session engine for streaming and context management. Voder owns the tool surface, task scope and candidate verification, while a native Rust layer governs evidence admission and commitment.
@@ -157,9 +158,10 @@ flowchart TD
 For a single-file proposal $p=(r,o,x)$, where $r$ is the relative target path, $o$ is the expected original SHA-256 digest, and $x$ is the replacement text, Voder computes the candidate identity as follows.
 
 $$
-d(p)=H\!\left(\operatorname{UTF8}
-\left(\operatorname{JS}([r,o,x])\right)\right).
+d(p)=H(\mathrm{UTF8}(\mathrm{JS}([r,o,x]))).
 $$
+
+Here $H$ is SHA-256, $\mathrm{JS}$ is JavaScript JSON serialization and $\mathrm{UTF8}$ encodes the resulting text as bytes.
 
 The verifier also requires the ordered target paths to equal the operator-approved scope and checks that each live source file still hashes to its pinned preimage. Batch candidates use a separately defined ordered encoding and enforce distinct, sorted targets.
 
@@ -183,16 +185,11 @@ The native journal is append-only and hash-chained. For event sequence $j$, even
 
 $$
 h_j =
-H\!\left(
-\texttt{voder-ledger-v1}\Vert
-\texttt{\textbackslash n}\Vert
-\operatorname{dec}(j)\Vert
-\texttt{\textbackslash n}\Vert
-h_{j-1}\Vert
-\texttt{\textbackslash n}\Vert
-\operatorname{UTF8}(\operatorname{RustJSON}(b_j))
-\right).
+H(L\Vert N\Vert \mathrm{dec}(j)\Vert N\Vert
+h_{j-1}\Vert N\Vert \mathrm{UTF8}(\mathrm{RustJSON}(b_j))).
 $$
+
+Here $L$ is the byte string `voder-ledger-v1`, $N$ is one line feed byte (`0x0A`), and $\Vert$ denotes byte concatenation. The sequence number uses decimal text, the predecessor hash uses its recorded text representation, and the event body uses the journal's Rust JSON serialization.
 
 The dispatch gate checks a valid contiguous journal chain, unique preparation and dispatch records, and an exact match to the session, run, action, reservation, contract and workspace identities.
 
@@ -224,7 +221,7 @@ G_{\mathrm{context}}
 \land
 \bigwedge_{r\in\mathcal R_{\mathrm h}}
 \bigwedge_{v\in\mathcal V(r)}
-\operatorname{FreshPass}(v)
+\mathrm{FreshPass}(v)
 \land
 [W_{\mathrm{after}}=W_{\mathrm{before}}].
 $$
@@ -234,18 +231,18 @@ The final native commit is persisted separately and independently observed after
 For an ordinary evidence-mode delivery request $K$ and candidate $P$, the implemented normal path enforces the following implication under its trusted execution and persistence assumptions.
 
 $$
-\operatorname{DurableDelivery}(K)
+\mathrm{DurableDelivery}(K)
 \Longrightarrow
-\operatorname{CPass}(P)
+\mathrm{CPass}(P)
 \land
-\operatorname{Pinned}(K)
+\mathrm{Pinned}(K)
 \land
 G_{\mathrm{confirm}}
 \land
-\operatorname{Bytes}(K).
+\mathrm{Bytes}(K).
 $$
 
-$\operatorname{CPass}$ denotes the exact-candidate verification result, $\operatorname{Pinned}$ the delivery binding, $G_{\mathrm{confirm}}$ independent native confirmation and $\operatorname{Bytes}$ the destination byte check. The scope depends on what the configured obligations measure.
+$\mathrm{CPass}$ denotes the exact-candidate verification result, $\mathrm{Pinned}$ the delivery binding, $G_{\mathrm{confirm}}$ independent native confirmation and $\mathrm{Bytes}$ the destination byte check. The scope depends on what the configured obligations measure.
 
 ### Research scope
 
@@ -329,3 +326,9 @@ Related engineering projects include [Codex](https://github.com/openai/codex), [
 ### License status
 
 The source candidate retains upstream Pi's MIT license and applicable third-party notices, including the attribution for libarchive test fixtures. The current public branch and source candidate have yet to declare a repository-wide license for Voder-authored code.
+
+## Contact
+
+**Libo Wang** leads Voder development, originated VeriLoop-Governed Recurrence and co-authored the Voder technical report. He is part of the VeriLoop Team at the Intelligent Robotics Laboratory, Tsinghua Shenzhen International Graduate School.
+
+For technical discussions, research collaboration or business inquiries, contact [free.equality.anyone@gmail.com](mailto:free.equality.anyone@gmail.com) or [Libo Wang on LinkedIn](https://www.linkedin.com/in/libo-wang-1612801a2). Explore the [lab’s Hugging Face profile](https://huggingface.co/tsinghua-sigs-robot-lab) for its public research projects.
