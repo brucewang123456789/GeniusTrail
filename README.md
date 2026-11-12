@@ -1,10 +1,15 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/brucewang123456789/GeniusTrail/voder/logo.png" width="144" alt="Voder logo">
+  <img src="https://raw.githubusercontent.com/brucewang123456789/GeniusTrail/voder/logo.png" width="120" alt="Voder logo">
 </p>
 
 <h1 align="center">Voder</h1>
 
-<p align="center"><strong>A coding agent with independently governed writeback</strong></p>
+<p align="center"><strong>An open-source coding agent for verified code changes</strong></p>
+
+<p align="center">
+  Led by <a href="https://www.linkedin.com/in/libo-wang-1612801a2"><strong>Libo Wang</strong></a> ·
+  VeriLoop Team, Tsinghua Shenzhen International Graduate School
+</p>
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=veriloop.voder-vscode"><img alt="Install from the VS Code Marketplace" src="https://img.shields.io/badge/VS_Code_Marketplace-005FA3?style=flat-square&amp;logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS40NSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNSAyLjVoNm0tMyAydjZtLTIuNy0yLjdMOCAxMC41bDIuNy0yLjdNMi41IDExdjIuNWgxMVYxMSIvPjwvc3ZnPg%3D%3D"></a>
@@ -17,13 +22,13 @@
   <a href="#install-in-vs-code">Install</a> ·
   <a href="#configure-voder">Configure</a> ·
   <a href="#how-vgr-works">How VGR works</a> ·
-  <a href="#source-layout">Source layout</a> ·
+  <a href="#build-from-source-on-linux">Build from source</a> ·
   <a href="#contact">Contact</a>
 </p>
 
-Voder is a coding-agent harness developed by the **VeriLoop Team**. It uses a Pi-derived model-session engine for streaming and context management. Voder owns the tool surface, task scope and candidate verification, while a native Rust layer governs evidence admission and commitment.
+**VeriLoop-Governed Recurrence (VGR) separates proposal generation from authorization to change the workspace: the model proposes and revises a change, and the Rust governance layer authorizes it only after independent verification of that exact candidate.**
 
-**The model proposes a change. A separate execution path decides whether the exact change may become persistent.** We call this mechanism **VeriLoop-Governed Recurrence (VGR)**.
+Voder can inspect repositories, implement changes and run project checks. In verified mode, it binds each proposal to the approved files and their starting contents, runs the configured checks in isolation, and records the evidence for commitment and delivery. Review the verified diff and evidence in VS Code, or integrate the harness through the CLI, JSON-RPC interface or SDK. [How VGR works](#how-vgr-works) · [Apache-2.0](#license)
 
 ## Install in VS Code
 
@@ -33,7 +38,11 @@ Voder is a coding-agent harness developed by the **VeriLoop Team**. It uses a Pi
 2. Install **Voder – VeriLoop’s coding agent**. For a Remote SSH or WSL project, install Voder on the workspace host shown in the Extensions view.
 3. Open a project folder you trust. Open the Command Palette with `Ctrl+Shift+P` on Windows/Linux or `Cmd+Shift+P` on macOS.
 4. Run **Voder: Configure Models, Modal and Search**. Start with **1 · Primary model**.
-5. Run **Voder: Open Chat**. For a first check, ask Voder to explain a named file and leave the project unchanged. Then configure Modal and test a small change with an explicit validation command.
+5. Run **Voder: Open Chat** and try the read-only prompt below. To try verified writeback, [configure Modal](#4-configure-modal-for-sandboxed-checks), request a small change in a test project, and provide the validation command you expect Voder to run.
+
+> Read-only: Explain what `src/main.py` does. Leave the project files unchanged.
+
+Substitute an existing file in your project. For the write task, review the approved file scope and validation command, then open **Voder: Inspect Verified Session Diff** after delivery.
 
 You can also open the [Marketplace listing](https://marketplace.visualstudio.com/items?itemName=veriloop.voder-vscode) or install into the VS Code environment targeted by its CLI.
 
@@ -50,6 +59,16 @@ code --install-extension veriloop.voder-vscode
 The standard installation includes Node.js and native components. A custom source-runtime deployment needs Node.js 22.19 or later and the matching native binaries. Settings, private configuration files and paths belong to the workspace host. In Remote SSH, that is the remote machine.
 
 ## Configure Voder
+
+Start with a primary model. Add Modal for sandboxed verification, and configure a secondary model, a dedicated vision model or a search provider as your workflow requires. Run setup in the VS Code window attached to the intended workspace host.
+
+| What you want to do | Where to start |
+|---|---|
+| Connect the model used to start a task | [Primary model](#1-set-the-primary-model) |
+| Make another model available for eligible handoffs | [Secondary model](#2-add-or-replace-a-secondary-model) |
+| Process images when the primary model is text-only | [Vision model](#3-configure-image-input-when-needed) |
+| Run sandboxed checks for verified execution | [Modal credentials](#4-configure-modal-for-sandboxed-checks) |
+| Use a configured web search provider | [Search provider](#5-configure-search-when-needed) |
 
 ### 1. Set the primary model
 
@@ -87,13 +106,20 @@ Run **Voder: Configure Vision Model** if your primary model lacks image support.
 
 ### 4. Configure Modal for sandboxed checks
 
-Open **Voder: Configure Models, Modal and Search → 3 · Modal sandbox credentials**. Enter your Modal token ID, token secret and app name. The app name accepts lowercase letters, digits and hyphens, starts with a letter or digit, and is at most 63 characters. The setup screen saves credentials. A successful sandboxed check verifies that the account and app can actually run the configured workload.
+1. Open your workspace settings in the Modal Dashboard and create an API token. Copy the token ID and secret. [Modal authentication docs](https://modal.com/docs/sdk/js/latest/intro)
+2. Open **Voder: Configure Models, Modal and Search → 3 · Modal sandbox credentials**. Paste the token ID and secret into their respective fields.
+3. Enter the Modal app name for your Voder workload. Use letters, digits and hyphens, start with a letter or digit, and keep it to 63 characters or fewer.
+4. Run a small task that uses a sandboxed validator. A successful check confirms that the saved credentials and app can run the workload.
 
 For a scoped native profile, use **Voder: Execution Settings**. Choose an existing private gateway JSON for the exact workspace, or use the guided profile with an existing clean Git-tracked source file and a separate clean Git-tracked Python validator. Review the approved target paths and validation command before granting execution. Ordinary workspace tasks can also ask for scoped preparation and delivery approval in chat.
 
 ### 5. Configure search when needed
 
-Open **Voder: Configure Models, Modal and Search → 4 · Configure external search provider**. Choose Brave, Tavily, Serper, SerpAPI, BigModel, DeepSeek, SearXNG or a custom JSON endpoint. Give the configuration a unique name. For a custom endpoint, provide the request method, query field, credential placement where required and response mappings. Use **5 · Search configuration status** to inspect the saved entries, then verify the integration with a live search.
+1. Open **Voder: Configure Models, Modal and Search → 4 · Configure external search provider**.
+2. For example, choose `tavily`, name the configuration `tavily-search`, then paste your Tavily API key into the masked field.
+3. Open **5 · Search configuration status** to check that Voder saved the profile. Run a live search from chat and check that it returns source links. See the Linux runtime note below if the profile saves but fails to load.
+
+Other presets include Brave, Serper, SerpAPI, BigModel, DeepSeek and SearXNG. For SearXNG, enter the search endpoint of a running instance that returns JSON. For a custom API, enter the endpoint, HTTP method, query field and authentication, then map the result list, URL, title and snippet using JSON Pointers.
 
 **Linux search configuration.** The GitHub source runtime reads the workspace host’s private search profile at `~/.config/voder/search-config.json`. The bundled Linux runtime in Marketplace 0.1.47 still reads the packaged search configuration and may miss the profile saved by the wizard.
 
@@ -281,7 +307,7 @@ These applications demonstrate delivered browser artifacts. The booster and astr
 
 ## Source layout
 
-The source tree includes the VGR runtime, CLI, SDK and editor adapter. The CLI and SDK can be built and used directly. The Marketplace link provides the installable VS Code extension.
+The GitHub source distribution includes the VGR runtime, CLI, SDK and editor adapter. Use the source build for CLI and SDK development. Editor clients can integrate through `voder rpc` (JSON-RPC 2.0 over standard input and output) or the SDK. Install the official VS Code extension through the Marketplace.
 
 | Path | Contents |
 |---|---|
@@ -290,6 +316,7 @@ The source tree includes the VGR runtime, CLI, SDK and editor adapter. The CLI a
 | `crates/voder-protocol/` and `crates/voderd/` | Typed protocol, durable daemon state and journal |
 | `voder-agent/crates/voder-gateway/` | Native gateway build root |
 | `voder-agent/packages/voder-agent-core/` | Agent kernel, model host, broker and policies |
+| `voder-agent/packages/voder-cli/` | Editor-neutral CLI and JSON-RPC entry point |
 | `voder-agent/packages/voder-sdk/` and `voder-agent/packages/voder-native-bridge/` | Session control, native confirmation and delivery |
 | `voder-agent/packages/voder-vscode/` | Editor adapter source and regression fixtures |
 | `voder-agent/packages/voder-search/`, `voder-agent/packages/voder-memory/` and `voder-agent/packages/voder-context/` | Retrieval, memory and context services |
@@ -308,27 +335,20 @@ bash scripts/bootstrap-linux.sh
 bash scripts/test-source.sh
 ```
 
-The bootstrap builds the Pi-derived engine, CLI, Rust daemon, gateway and native retrieval. The test runner covers the Voder Node and Rust suites. See the [configuration guide](docs/CONFIGURATION.md) and [testing prerequisites](docs/TESTING.md), including the tools needed for document and archive tests.
+The bootstrap builds the Pi-derived engine, CLI, Rust daemon, gateway and native retrieval. The test runner covers the Voder Node and Rust suites. For verified CLI tasks, select a private native gateway profile with `--gateway-config FILE`. The explicit `--draft` mode returns an unverified response. See the [configuration guide](docs/CONFIGURATION.md) and [testing prerequisites](docs/TESTING.md), including the tools needed for document and archive tests.
 
 The v0.1.47 source distribution was built and tested from a fresh extraction on Linux x86-64. The offline run recorded **1,447 passes, 0 failures and 4 skips** for ownership tests requiring root. Live model and Modal calls are outside those results.
 
 ## Team and attribution
 
-Voder and VGR are developed by the **VeriLoop Team** at the **Intelligent Robotics Laboratory, Tsinghua Shenzhen International Graduate School**.
+Voder is developed by the **VeriLoop Team** at the **Intelligent Robotics Laboratory, Tsinghua Shenzhen International Graduate School**. **Libo Wang** leads Voder development and originated VeriLoop-Governed Recurrence. **Professor Houde Liu** is the faculty advisor and corresponding author of the technical report.
 
-- **Libo Wang** leads development and is the originator of VGR.
-- **Professor Houde Liu** is the faculty advisor and the report's corresponding author.
+Voder uses a Pi-derived engine for model sessions, streaming and context compaction. The initial upstream baseline is Pi 1.1.0 at commit `abe508e1b89912adde45528136c3221eb69acdd7`. The VeriLoop Team developed VGR and its verified delivery path. [Pi upstream](https://github.com/earendil-works/pi) · [Upstream attribution](voder-agent/docs/VODER_UPSTREAM_ATTRIBUTION.md)
 
-Voder uses a Pi-derived engine for model sessions. Its upstream attribution identifies Pi 1.1.0 and commit `abe508e1b89912adde45528136c3221eb69acdd7` as the initial baseline. The VGR governance and writeback integration are VeriLoop work. [Pi upstream](https://github.com/earendil-works/pi).
-
-Related engineering projects include [Codex](https://github.com/openai/codex), [Claude Code](https://github.com/anthropics/claude-code), and [ZCode](https://github.com/zai-org/ZCode).
-
-### License
+## License
 
 Voder-authored code is released under [Apache-2.0](LICENSE). Pi retains its MIT license, and bundled third-party components and fixtures retain their applicable licenses. See [NOTICE](NOTICE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution.
 
 ## Contact
 
-**Libo Wang** leads Voder development, originated VeriLoop-Governed Recurrence and co-authored the Voder technical report. He is part of the VeriLoop Team at the Intelligent Robotics Laboratory, Tsinghua Shenzhen International Graduate School.
-
-For technical discussions, research collaboration or business inquiries, contact [free.equality.anyone@gmail.com](mailto:free.equality.anyone@gmail.com) or [Libo Wang on LinkedIn](https://www.linkedin.com/in/libo-wang-1612801a2). Explore the [lab’s Hugging Face profile](https://huggingface.co/tsinghua-sigs-robot-lab) for its public research projects.
+For technical discussions, research collaboration or business inquiries, reach **Libo Wang** by [email](mailto:free.equality.anyone@gmail.com) or [LinkedIn](https://www.linkedin.com/in/libo-wang-1612801a2). For the lab’s public research projects, see the [Intelligent Robotics Laboratory on Hugging Face](https://huggingface.co/tsinghua-sigs-robot-lab).
