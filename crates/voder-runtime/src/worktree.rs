@@ -8,6 +8,44 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
+// Keep canonical paths for internal safety checks; only adapt Git subprocess arguments.
+#[cfg(windows)]
+const WORKTREE_CONFIG: &[&str] = &["-c", "core.hooksPath=/dev/null", "-c", "core.longpaths=true"];
+#[cfg(not(windows))]
+const WORKTREE_CONFIG: &[&str] = &["-c", "core.hooksPath=/dev/null"];
+
+#[cfg(not(windows))]
+fn git_path(path: &Path) -> Result<std::borrow::Cow<'_, Path>> {
+    Ok(std::borrow::Cow::Borrowed(path))
+}
+
+#[cfg(windows)]
+fn git_path(path: &Path) -> Result<std::borrow::Cow<'_, Path>> {
+    use std::{
+        borrow::Cow,
+        ffi::OsString,
+        os::windows::ffi::{OsStrExt, OsStringExt},
+        path::{Component, Prefix},
+    };
+
+    let Some(Component::Prefix(prefix)) = path.components().next() else {
+        return Ok(Cow::Borrowed(path));
+    };
+    let wide: Vec<_> = match prefix.kind() {
+        Prefix::VerbatimDisk(_) => path.as_os_str().encode_wide().skip(4).collect(),
+        Prefix::VerbatimUNC(..) => [92u16, 92].into_iter()
+            .chain(path.as_os_str().encode_wide().skip(8))
+            .collect(),
+        Prefix::DeviceNS(_) | Prefix::Verbatim(_) => {
+            return Err(RuntimeError::UnsafePath(
+                "unsupported Windows namespace for Git worktree".into(),
+            ));
+        }
+        _ => return Ok(Cow::Borrowed(path)),
+    };
+    Ok(Cow::Owned(PathBuf::from(OsString::from_wide(&wide))))
+}
+
 #[derive(Debug)]
 pub struct OwnedWorktree {
     path: PathBuf,
@@ -42,11 +80,11 @@ impl OwnedWorktree {
         }
         // Git enforces HEAD attachment and repository origin.
         let out = std::process::Command::new("/usr/bin/git")
-            .args(["-c", "core.hooksPath=/dev/null"])
+            .args(WORKTREE_CONFIG)
             .arg("-C")
-            .arg(repo.root())
+            .arg(git_path(repo.root())?.as_ref())
             .args(["worktree", "add", "--detach", "--"])
-            .arg(&path)
+            .arg(git_path(&path)?.as_ref())
             .arg(&repo.head)
             .output()?;
         if !out.status.success() {
@@ -75,11 +113,11 @@ impl OwnedWorktree {
         }
         // No rm -rf: Git owns its own detached worktree cleanup.
         let out = std::process::Command::new("/usr/bin/git")
-            .args(["-c", "core.hooksPath=/dev/null"])
+            .args(WORKTREE_CONFIG)
             .arg("-C")
-            .arg(&self.repository)
+            .arg(git_path(&self.repository)?.as_ref())
             .args(["worktree", "remove", "--force", "--"])
-            .arg(&self.path)
+            .arg(git_path(&self.path)?.as_ref())
             .output()?;
         if !out.status.success() {
             return Err(RuntimeError::Execution(
