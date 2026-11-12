@@ -1,5 +1,5 @@
 /** Separate browser inspection capability. Existing candidate sandbox and Rust authority are unchanged. */
-import {createRequire} from 'node:module';import {readFile} from 'node:fs/promises';import {join} from 'node:path';import {createHash} from 'node:crypto';
+import {createRequire} from 'node:module';import {pathToFileURL} from 'node:url';import {readFile} from 'node:fs/promises';import {join} from 'node:path';import {createHash} from 'node:crypto';
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const BROWSER_ARCHIVE_SHA256='3740bba3a3e93b4c7bd7c0f6e3c0e5f8cdce498bef13511e4d534cc99a8ce198';
 export const BROWSER_IMAGE='mcr.microsoft.com/playwright:v1.61.1-noble';
@@ -28,7 +28,7 @@ export async function inspectHtml(input,{agentRoot,signal,driver,onStage=()=>{}}
  if(!driver){
   if(process.env.VODER_ALLOW_MODAL_CHARGES!=='YES')fail('HTML_BROWSER_AUTH_REQUIRED','Browser inspection needs authorized remote sandbox usage');
   const require=createRequire(join(agentRoot,'../packages/voder-sandbox-modal/package.json'));
-  const sdk=await import(require.resolve('modal')),ModalClient=sdk.ModalClient??sdk.default?.ModalClient;if(typeof ModalClient!=='function')fail('HTML_BROWSER_SETUP_FAILED','Installed Modal SDK does not expose ModalClient');const modal=new ModalClient();
+  const sdk=await import(pathToFileURL(require.resolve('modal')).href),ModalClient=sdk.ModalClient??sdk.default?.ModalClient;if(typeof ModalClient!=='function')fail('HTML_BROWSER_SETUP_FAILED','Installed Modal SDK does not expose ModalClient');const modal=new ModalClient();
   driver={async create(){const app=await modal.apps.fromName(process.env.VODER_MODAL_APP,{createIfMissing:true});return modal.sandboxes.create(app,modal.images.fromRegistry(BROWSER_IMAGE),{timeoutMs:86400000,idleTimeoutMs:3600000,memoryMiB:2048,memoryLimitMiB:2048,cpu:1,cpuLimit:1,blockNetwork:true,workdir:'/tmp'});}};
  }
  let sandbox,expired=false,rejectEnd;
