@@ -35,6 +35,6 @@ jobs:
 
       - name: Publish through GitHub OIDC
         run: |
-          npx --yes @vscode/vsce@4.0.2 publish \
+          npx --yes @vscode/vsce@4.1.0 publish \
             --oidc \
             --packagePath Voder.vsix
