@@ -28,7 +28,7 @@ jobs:
 
       - name: Publish Marketplace
         env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT || secrets.VSCE_TOKEN }}
         run: |
           test -n "$VSCE_PAT"
           npx --yes @vscode/vsce publish \
