@@ -1,0 +1,36 @@
+name: Publish Voder to VS Code Marketplace
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release VSIX
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.1.49 \
+            --repo brucewang123456789/Voder \
+            --pattern Voder.vsix
+
+      - name: Verify SHA256
+        run: |
+          echo "c763a0dd1d74e7a5afbc40df94e08ca22eb5b768c6fa8c35f5710c7f71185f75  Voder.vsix" | sha256sum -c -
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Publish Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          test -n "$VSCE_PAT"
+          npx --yes @vscode/vsce publish \
+            --packagePath Voder.vsix \
+            --pat "$VSCE_PAT"
