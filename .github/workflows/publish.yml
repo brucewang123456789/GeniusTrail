@@ -5,32 +5,36 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
     steps:
-      - name: Download release VSIX
+      - name: Download Voder v0.1.49
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release download v0.1.49 \
             --repo brucewang123456789/Voder \
-            --pattern Voder.vsix
+            --pattern Voder.vsix \
+            --clobber
 
-      - name: Verify SHA256
+      - name: Verify release SHA256
         run: |
           echo "c763a0dd1d74e7a5afbc40df94e08ca22eb5b768c6fa8c35f5710c7f71185f75  Voder.vsix" | sha256sum -c -
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Publish Marketplace
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT || secrets.VSCE_TOKEN }}
+      - name: Publish through GitHub OIDC
         run: |
-          test -n "$VSCE_PAT"
-          npx --yes @vscode/vsce publish \
-            --packagePath Voder.vsix \
-            --pat "$VSCE_PAT"
+          npx --yes @vscode/vsce@4.0.2 publish \
+            --oidc \
+            --packagePath Voder.vsix
