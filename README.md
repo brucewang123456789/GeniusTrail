@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/brucewang123456789/GeniusTrail/voder/logo.png" width="120" alt="Voder logo">
+  <img src="https://raw.githubusercontent.com/brucewang123456789/Voder/voder/logo.png" width="120" alt="Voder logo">
 </p>
 
 <h1 align="center">Voder</h1>
@@ -32,7 +32,7 @@ Voder can inspect repositories, implement changes and run project checks. In ver
 
 ## Install in VS Code
 
-**Marketplace release 0.1.47** · **VS Code 1.105.0 or later** · extension ID `veriloop.voder-vscode`.
+**Marketplace release 0.1.49** · **VS Code 1.105.0 or later** · extension ID `veriloop.voder-vscode`.
 
 1. Open **Extensions** in VS Code and search for `@id:veriloop.voder-vscode`.
 2. Install **Voder – VeriLoop’s coding agent**. For a Remote SSH or WSL project, install Voder on the workspace host shown in the Extensions view.
@@ -50,13 +50,17 @@ You can also open the [Marketplace listing](https://marketplace.visualstudio.com
 code --install-extension veriloop.voder-vscode
 ```
 
-| Workspace host | Runtime packaged in 0.1.47 |
+| Workspace host | Bundled runtime platform |
 |---|---|
 | Windows local | Windows x64 and ARM64 |
 | macOS local | macOS 13+ x64 and ARM64 |
 | Linux, including Remote SSH or WSL | Linux x64 |
 
 The standard installation includes Node.js and native components. A custom source-runtime deployment needs Node.js 22.19 or later and the matching native binaries. Settings, private configuration files and paths belong to the workspace host. In Remote SSH, that is the remote machine.
+
+**Release v0.1.49.** The [GitHub release](https://github.com/brucewang123456789/Voder/releases/tag/v0.1.49) includes a Windows-focused update for Git workspace path matching and Modal SDK loading. Windows local projects use the bundled local host runtime; Remote SSH workspaces continue to use the runtime on the remote Linux workspace host. Treat these as separate execution environments: a successful Remote SSH task does not establish that a local Windows task has passed the same end-to-end checks.
+
+For the exact v0.1.49 release artifact, download [Voder.vsix](https://github.com/brucewang123456789/Voder/releases/download/v0.1.49/Voder.vsix). The release asset was verified at publication with SHA-256 `c763a0dd1d74e7a5afbc40df94e08ca22eb5b768c6fa8c35f5710c7f71185f75`. This integrity check does not certify every native runtime or local writeback scenario.
 
 ## Configure Voder
 
@@ -77,13 +81,13 @@ Open **Voder: Configure Models, Modal and Search → 1 · Primary model** and en
 | Prompt | What to enter |
 |---|---|
 | Exact model ID | The identifier exposed by your provider and account. Use the API identifier, including its punctuation. |
-| Model API protocol | `openai-completions` for OpenAI-compatible Chat Completions, `openai-responses` for Responses, or `anthropic-messages` for Messages. The 0.1.47 primary runtime accepts these three protocols. |
+| Model API protocol | `openai-completions` for OpenAI-compatible Chat Completions, `openai-responses` for Responses, or `anthropic-messages` for Messages. The documented primary runtime accepts these three protocols. |
 | Inference API endpoint | The provider's HTTPS API base URL. For example, `https://api.deepseek.com/v1`. Do not append the operation path such as `/chat/completions`. |
 | API key | Enter your own key in the masked input field. |
 | Context window | The documented capacity of that exact model and endpoint. The setup accepts 1,024–1,048,576 tokens and saves an initial output cap of the smaller of the context limit and 8,192. |
 | Model vendor label | Use a supported lowercase label such as `deepseek`, `openai`, `anthropic`, `gemini`, `kimi`, `glm`, `grok`, `qwen`, `openrouter` or `custom`. |
 
-The wizard also lists `google-generative-ai`. In 0.1.47, use that protocol through a supported secondary or vision entry. For the primary model, use the provider's OpenAI-compatible HTTPS endpoint if it supplies one.
+The wizard also lists `google-generative-ai`. For the documented primary-model setup, use that protocol through a supported secondary or vision entry. For the primary model, use the provider's OpenAI-compatible HTTPS endpoint if it supplies one.
 
 For a DeepSeek example, select `openai-completions`, use vendor `deepseek`, and enter the exact model ID and context limit exposed by your account.
 
@@ -98,7 +102,7 @@ A self-hosted model can be used through a compatible, already-running inference 
 
 The chat UI provides model configuration. Programmatic selection by provider and model ID is available through the SDK's `switchModel` method. The default start model is the configured primary. A vision-only entry is excluded from the ordinary text-model handoff list.
 
-**Linux and Remote SSH troubleshooting.** An older external runtime can reject a dotted alias with `INVALID_ADDITIONAL_MODEL_ID` before the first model call, even when the installed extension shows 0.1.47. Check which runtime the workspace host selected via `voder.agentRoot` or its existing runtime configuration. Use a runtime with the current catalog validator, or replace the alias in the private catalog with a hyphenated alias. Keep the provider's actual model ID unchanged and remove the invalid stale alias from the catalog.
+**Linux and Remote SSH troubleshooting.** An older external runtime can reject a dotted alias with `INVALID_ADDITIONAL_MODEL_ID` before the first model call, even when a newer extension is installed. Check which runtime the workspace host selected via `voder.agentRoot` or its existing runtime configuration. Use a runtime with the current catalog validator, or replace the alias in the private catalog with a hyphenated alias. Keep the provider's actual model ID unchanged and remove the invalid stale alias from the catalog.
 
 ### 3. Configure image input when needed
 
@@ -121,7 +125,7 @@ For a scoped native profile, use **Voder: Execution Settings**. Choose an existi
 
 Other presets include Brave, Serper, SerpAPI, BigModel, DeepSeek and SearXNG. For SearXNG, enter the search endpoint of a running instance that returns JSON. For a custom API, enter the endpoint, HTTP method, query field and authentication, then map the result list, URL, title and snippet using JSON Pointers.
 
-**Linux search configuration.** The GitHub source runtime reads the workspace host’s private search profile at `~/.config/voder/search-config.json`. The bundled Linux runtime in Marketplace 0.1.47 still reads the packaged search configuration and may miss the profile saved by the wizard.
+**Linux search configuration.** The GitHub source runtime reads the workspace host’s private search profile at `~/.config/voder/search-config.json`. Earlier packaged Linux runtimes may read a bundled search configuration instead of the profile saved by the wizard. If a search profile is not applied, check which workspace-host runtime Voder actually selected before changing credentials or paths.
 
 ### Private configuration and advanced settings
 
@@ -282,26 +286,26 @@ The technical report records fixed-denominator local reward audits under the aut
 
 | Benchmark | Confirmed passes | Score | Retained records |
 |---|---:|---:|---|
-| DeepSWE v1.1 | 89 / 113 | **78.8%** | [DeepSWE v1.1 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/deepswe-1.1) |
-| Terminal-Bench 3.0 | 31 / 74 | **41.9%** | [Terminal-Bench 3.0 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/terminal-bench-3.0) |
-| Terminal-Bench 4.0 | 30 / 66 | **45.5%** | [Terminal-Bench 4.0 evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/terminal-bench-4.0) |
-| SWE-Marathon | 9 / 20 | **45.0%** | [SWE-Marathon evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results/swe-marathon) |
+| DeepSWE v1.1 | 89 / 113 | **78.8%** | [DeepSWE v1.1 evidence](https://github.com/brucewang123456789/Voder/tree/voder/.eval_results/deepswe-1.1) |
+| Terminal-Bench 3.0 | 31 / 74 | **41.9%** | [Terminal-Bench 3.0 evidence](https://github.com/brucewang123456789/Voder/tree/voder/.eval_results/terminal-bench-3.0) |
+| Terminal-Bench 4.0 | 30 / 66 | **45.5%** | [Terminal-Bench 4.0 evidence](https://github.com/brucewang123456789/Voder/tree/voder/.eval_results/terminal-bench-4.0) |
+| SWE-Marathon | 9 / 20 | **45.0%** | [SWE-Marathon evidence](https://github.com/brucewang123456789/Voder/tree/voder/.eval_results/swe-marathon) |
 
-These are author-reported reward audits. Official leaderboard standing is outside their scope. SWE-Marathon used reference assistance as an internal control. The public folders contain retained records and may cover only a subset of a suite. Use the report's denominator and inspect `official_evaluation.json` for each task. [Browse all retained evidence](https://github.com/brucewang123456789/GeniusTrail/tree/voder/.eval_results).
+These are author-reported reward audits. Official leaderboard standing is outside their scope. SWE-Marathon used reference assistance as an internal control. The public folders contain retained records and may cover only a subset of a suite. Use the report's denominator and inspect `official_evaluation.json` for each task. [Browse all retained evidence](https://github.com/brucewang123456789/Voder/tree/voder/.eval_results).
 
 The report separately records **318/318** component checks, **420/420** stress executions, **11/11** SDK recovery assertions and **3/3** blocked-state daemon restart cases. The **93.3%–98.7%** context reduction is an estimate from synthetic histories. It measures estimated token volume under those fixtures.
 
 ## Interactive 3D demos
 
-Download the HTML for a demo and open it in a browser. The files are linked individually for inspection and comparison. [Browse all demo files](https://github.com/brucewang123456789/GeniusTrail/tree/voder/demos).
+Download the HTML for a demo and open it in a browser. The files are linked individually for inspection and comparison. [Browse all demo files](https://github.com/brucewang123456789/Voder/tree/voder/demos).
 
 | Demo | DeepSeek V4.1 Flash 1017 | GPT-6 Astra |
 |---|---|---|
-| Cycling pelican | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/pelican/deepseek-v4.1-flash-1017.html) | — |
-| Reusable-booster recovery | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/rocket/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/rocket/gpt-6-astra.html) |
-| Black-hole visualization | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/black-hole/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/black-hole/gpt-6-astra.html) |
-| Wormhole exploration | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/wormhole/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/wormhole/gpt-6-astra.html) |
-| Interactive racing | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/racing-game/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/GeniusTrail/blob/voder/demos/racing-game/gpt-6-astra.html) |
+| Cycling pelican | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/pelican/deepseek-v4.1-flash-1017.html) | — |
+| Reusable-booster recovery | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/rocket/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/rocket/gpt-6-astra.html) |
+| Black-hole visualization | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/black-hole/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/black-hole/gpt-6-astra.html) |
+| Wormhole exploration | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/wormhole/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/wormhole/gpt-6-astra.html) |
+| Interactive racing | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/racing-game/deepseek-v4.1-flash-1017.html) | [HTML](https://github.com/brucewang123456789/Voder/blob/voder/demos/racing-game/gpt-6-astra.html) |
 
 These applications demonstrate delivered browser artifacts. The booster and astronomy scenes are authored visualizations. Their scope does not include aerospace or relativistic simulation validation.
 
@@ -337,7 +341,7 @@ bash scripts/test-source.sh
 
 The bootstrap builds the Pi-derived engine, CLI, Rust daemon, gateway and native retrieval. The test runner covers the Voder Node and Rust suites. For verified CLI tasks, select a private native gateway profile with `--gateway-config FILE`. The explicit `--draft` mode returns an unverified response. See the [configuration guide](docs/CONFIGURATION.md) and [testing prerequisites](docs/TESTING.md), including the tools needed for document and archive tests.
 
-The v0.1.47 source distribution was built and tested from a fresh extraction on Linux x86-64. The offline run recorded **1,447 passes, 0 failures and 4 skips** for ownership tests requiring root. Live model and Modal calls are outside those results.
+As a historical baseline, the v0.1.47 source distribution was built and tested from a fresh extraction on Linux x86-64. The offline run recorded **1,447 passes, 0 failures and 4 skips** for ownership tests requiring root. Live model and Modal calls are outside those results.
 
 ## Team and attribution
 
